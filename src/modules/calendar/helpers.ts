@@ -22,7 +22,6 @@ import {
   differenceInMinutes,
   eachDayOfInterval,
   startOfDay,
-  endOfDay,
   differenceInDays,
   isValid,
 } from "date-fns";
@@ -31,14 +30,13 @@ import type { TCalendarView } from "@/modules/calendar/types";
 import type { ICalendarCell, IEvent } from "@/modules/calendar/interfaces";
 
 
+
 export function rangeText(view: TCalendarView, date: Date) {
   const formatString = "MMM d, yyyy";
   let start: Date;
   let end: Date;
 
   switch (view) {
-    case "year":
-      return format(date, "yyyy");
     case "month":
       start = startOfMonth(date);
       end = endOfMonth(date);
@@ -50,58 +48,47 @@ export function rangeText(view: TCalendarView, date: Date) {
     case "day":
       return format(date, formatString);
     default:
-      return "Error while formatting";
+      return "Error while formatting ";
   }
 
   return `${format(start, formatString)} - ${format(end, formatString)}`;
 }
 
 export function navigateDate(date: Date, view: TCalendarView, direction: "previous" | "next"): Date {
-    const operations = {
-        year: direction === "next" ? addYears : subYears,
-        month: direction === "next" ? addMonths : subMonths,
-        week: direction === "next" ? addWeeks : subWeeks,
-        day: direction === "next" ? addDays : subDays,
-    };
+  const operations = {
+    month: direction === "next" ? addMonths : subMonths,
+    week: direction === "next" ? addWeeks : subWeeks,
+    day: direction === "next" ? addDays : subDays,
+    year: direction === "next" ? addYears : subYears,
+  };
 
-    return operations[view](date, 1);
+  return operations[view](date, 1);
 }
 
 export function getEventsCount(events: IEvent[], date: Date, view: TCalendarView): number {
-    const compareFns = {
-        year: isSameYear,
-        day: isSameDay,
-        week: isSameWeek,
-        month: isSameMonth,
-    };
+  const compareFns = {
+    day: isSameDay,
+    week: isSameWeek,
+    month: isSameMonth,
+    year: isSameYear,
+  };
 
-    return events.filter(event => {
-      const eventDate = new Date(event.startDate);
-      return isValid(eventDate) && compareFns[view](eventDate, date);
-    }).length;
+  return events.filter(event => compareFns[view](new Date(event.startDate), date)).length;
 }
 
 export function groupEvents(dayEvents: IEvent[]) {
-  if (!dayEvents || dayEvents.length === 0) return [];
-  
-  const sortedEvents = [...dayEvents].sort((a, b) => {
-    const aDate = parseISO(a.startDate);
-    const bDate = parseISO(b.startDate);
-    return isValid(aDate) && isValid(bDate) ? aDate.getTime() - bDate.getTime() : 0;
-  });
-  
+  const sortedEvents = dayEvents.sort((a, b) => parseISO(a.startDate).getTime() - parseISO(b.startDate).getTime());
   const groups: IEvent[][] = [];
 
   for (const event of sortedEvents) {
     const eventStart = parseISO(event.startDate);
-    if (!isValid(eventStart)) continue;
 
     let placed = false;
     for (const group of groups) {
       const lastEventInGroup = group[group.length - 1];
       const lastEventEnd = parseISO(lastEventInGroup.endDate);
-      
-      if (isValid(lastEventEnd) && eventStart >= lastEventEnd) {
+
+      if (eventStart >= lastEventEnd) {
         group.push(event);
         placed = true;
         break;
@@ -114,43 +101,14 @@ export function groupEvents(dayEvents: IEvent[]) {
   return groups;
 }
 
-export function formatTime(date: Date | string, use24HourFormat: boolean) {
-  if (typeof date === 'string') {
-    date = parseISO(date);
-  }
-  
-  if (!isValid(date)) return '';
-  
-  return format(date, use24HourFormat ? 'HH:mm' : 'h:mm a');
-}
-
-export const getFirstLetters = (str: string): string => {
-  if (!str) return '';
-  
-  const words = str.split(" ");
-
-  if (words.length === 1) {
-    return words[0].charAt(0).toUpperCase();
-  }
-
-  const firstLetterFirstWord = words[0].charAt(0).toUpperCase();
-  const firstLetterSecondWord = words[1].charAt(0).toUpperCase();
-
-  return `${firstLetterFirstWord}${firstLetterSecondWord}`;
-};
-
 export function getEventBlockStyle(event: IEvent, day: Date, groupIndex: number, groupSize: number) {
   const startDate = parseISO(event.startDate);
-  if (!isValid(startDate) || !isValid(day)) {
-    return { top: '0%', width: '100%', left: '0%' };
-  }
-  
-  const dayStart = startOfDay(new Date(day));
+  const dayStart = new Date(day.setHours(0, 0, 0, 0));
   const eventStart = startDate < dayStart ? dayStart : startDate;
   const startMinutes = differenceInMinutes(eventStart, dayStart);
 
   const top = (startMinutes / 1440) * 100;
-  const width = 100 / Math.max(1, groupSize);
+  const width = 100 / groupSize;
   const left = groupIndex * width;
 
   return { top: `${top}%`, width: `${width}%`, left: `${left}%` };
@@ -159,10 +117,6 @@ export function getEventBlockStyle(event: IEvent, day: Date, groupIndex: number,
 // ================ Month view helper functions ================ //
 
 export function getCalendarCells(selectedDate: Date): ICalendarCell[] {
-  if (!isValid(selectedDate)) {
-    selectedDate = new Date();
-  }
-  
   const currentYear = selectedDate.getFullYear();
   const currentMonth = selectedDate.getMonth();
 
@@ -196,10 +150,6 @@ export function getCalendarCells(selectedDate: Date): ICalendarCell[] {
 }
 
 export function calculateMonthEventPositions(multiDayEvents: IEvent[], singleDayEvents: IEvent[], selectedDate: Date) {
-  if (!isValid(selectedDate)) {
-    selectedDate = new Date();
-  }
-  
   const monthStart = startOfMonth(selectedDate);
   const monthEnd = endOfMonth(selectedDate);
 
@@ -207,39 +157,21 @@ export function calculateMonthEventPositions(multiDayEvents: IEvent[], singleDay
   const occupiedPositions: { [key: string]: boolean[] } = {};
 
   eachDayOfInterval({ start: monthStart, end: monthEnd }).forEach(day => {
-    occupiedPositions[startOfDay(day).toISOString()] = [false, false, false];
+    occupiedPositions[day.toISOString()] = [false, false, false];
   });
 
   const sortedEvents = [
-    ...(multiDayEvents || []).sort((a, b) => {
-      const aStart = parseISO(a.startDate);
-      const aEnd = parseISO(a.endDate);
-      const bStart = parseISO(b.startDate);
-      const bEnd = parseISO(b.endDate);
-      
-      if (!isValid(aStart) || !isValid(aEnd) || !isValid(bStart) || !isValid(bEnd)) {
-        return 0;
-      }
-      
-      const aDuration = differenceInDays(aEnd, aStart);
-      const bDuration = differenceInDays(bEnd, bStart);
-      return bDuration - aDuration || aStart.getTime() - bStart.getTime();
+    ...multiDayEvents.sort((a, b) => {
+      const aDuration = differenceInDays(parseISO(a.endDate), parseISO(a.startDate));
+      const bDuration = differenceInDays(parseISO(b.endDate), parseISO(b.startDate));
+      return bDuration - aDuration || parseISO(a.startDate).getTime() - parseISO(b.startDate).getTime();
     }),
-    ...(singleDayEvents || []).sort((a, b) => {
-      const aStart = parseISO(a.startDate);
-      const bStart = parseISO(b.startDate);
-      return isValid(aStart) && isValid(bStart) ? aStart.getTime() - bStart.getTime() : 0;
-    }),
+    ...singleDayEvents.sort((a, b) => parseISO(a.startDate).getTime() - parseISO(b.startDate).getTime()),
   ];
 
   sortedEvents.forEach(event => {
     const eventStart = parseISO(event.startDate);
     const eventEnd = parseISO(event.endDate);
-    
-    if (!isValid(eventStart) || !isValid(eventEnd)) {
-      return;
-    }
-    
     const eventDays = eachDayOfInterval({
       start: eventStart < monthStart ? monthStart : eventStart,
       end: eventEnd > monthEnd ? monthEnd : eventEnd,
@@ -249,10 +181,10 @@ export function calculateMonthEventPositions(multiDayEvents: IEvent[], singleDay
 
     for (let i = 0; i < 3; i++) {
       if (
-        eventDays.every(day => {
-          const dayPositions = occupiedPositions[startOfDay(day).toISOString()];
-          return dayPositions && !dayPositions[i];
-        })
+          eventDays.every(day => {
+            const dayPositions = occupiedPositions[startOfDay(day).toISOString()];
+            return dayPositions && !dayPositions[i];
+          })
       ) {
         position = i;
         break;
@@ -272,35 +204,51 @@ export function calculateMonthEventPositions(multiDayEvents: IEvent[], singleDay
 }
 
 export function getMonthCellEvents(date: Date, events: IEvent[], eventPositions: Record<string, number>) {
-  if (!isValid(date) || !events || !eventPositions) {
-    return [];
-  }
-  
   const eventsForDate = events.filter(event => {
     const eventStart = parseISO(event.startDate);
     const eventEnd = parseISO(event.endDate);
-    
-    if (!isValid(eventStart) || !isValid(eventEnd)) {
-      return false;
-    }
-    
     return (date >= eventStart && date <= eventEnd) || isSameDay(date, eventStart) || isSameDay(date, eventEnd);
   });
 
   return eventsForDate
-    .map(event => ({
-      ...event,
-      position: eventPositions[event.id] ?? -1,
-      isMultiDay: event.startDate !== event.endDate,
-    }))
-    .sort((a, b) => {
-      if (a.isMultiDay && !b.isMultiDay) return -1;
-      if (!a.isMultiDay && b.isMultiDay) return 1;
-      return a.position - b.position;
-    });
+      .map(event => ({
+        ...event,
+        position: eventPositions[event.id] ?? -1,
+        isMultiDay: event.startDate !== event.endDate,
+      }))
+      .sort((a, b) => {
+        if (a.isMultiDay && !b.isMultiDay) return -1;
+        if (!a.isMultiDay && b.isMultiDay) return 1;
+        return a.position - b.position;
+      });
 }
 
-// Year view helper functions
+
+export function formatTime(date: Date | string, use24HourFormat: boolean) {
+  if (typeof date === 'string') {
+    date = parseISO(date);
+  }
+  
+  if (!isValid(date)) return '';
+  
+  return format(date, use24HourFormat ? 'HH:mm' : 'h:mm a');
+}
+
+export const getFirstLetters = (str: string): string => {
+  if (!str) return '';
+  
+  const words = str.split(" ");
+
+  if (words.length === 1) {
+    return words[0].charAt(0).toUpperCase();
+  }
+
+  const firstLetterFirstWord = words[0].charAt(0).toUpperCase();
+  const firstLetterSecondWord = words[1].charAt(0).toUpperCase();
+
+  return `${firstLetterFirstWord}${firstLetterSecondWord}`;
+};
+
 export function getEventsForYear(events: IEvent[], year: number): IEvent[] {
   const startOfYearDate = startOfYear(new Date(year, 0, 1));
   const endOfYearDate = endOfYear(new Date(year, 0, 1));

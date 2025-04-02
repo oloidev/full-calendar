@@ -12,7 +12,6 @@ export default async function Calendar(){
     const [events, users] = await Promise.all([getEvents(), getUsers()]);
 
 
-
     return (
         <DragDropProvider>
             <CalendarProvider users={users} events={events} view="month" >

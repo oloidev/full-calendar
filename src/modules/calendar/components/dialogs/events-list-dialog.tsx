@@ -6,24 +6,24 @@ import { ReactNode } from "react";
 import {IEvent} from "@/modules/calendar/interfaces";
 import {dayCellVariants} from "@/modules/calendar/components/month-view/day-cell";
 import {EventBullet} from "@/modules/calendar/components/month-view/event-bullet";
+import {useCalendar} from "@/modules/calendar/contexts/calendar-context";
 
 interface EventListDialogProps {
   date: Date;
   events: IEvent[];
   maxVisibleEvents?: number;
-  badgeVariant?: "colored" | "dot";
   children?: ReactNode;
 }
 
 export function EventListDialog({ 
   date, 
   events, 
-  maxVisibleEvents = 3, 
-  badgeVariant = "dot",
+  maxVisibleEvents = 3,
   children 
 }: EventListDialogProps) {
   const cellEvents = events;
   const hiddenEventsCount = Math.max(cellEvents.length - maxVisibleEvents, 0);
+  const {badgeVariant} = useCalendar()
 
   const defaultTrigger = (
     <span className="cursor-pointer">

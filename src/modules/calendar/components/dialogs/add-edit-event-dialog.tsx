@@ -43,6 +43,7 @@ import {useCalendar} from "@/modules/calendar/contexts/calendar-context";
 import {ReactNode} from "react";
 import {IEvent} from "@/modules/calendar/interfaces";
 import {COLORS} from "@/modules/calendar/constants";
+import {toast} from "sonner";
 
 
 interface IProps {
@@ -113,14 +114,17 @@ export function AddEditEventDialog({children, startDate, startTime, event}: IPro
 
             if (isEditing) {
                 updateEvent(formattedEvent);
+                toast.success("Event updated successfully");
             } else {
                 addEvent(formattedEvent);
+                toast.success("Event created successfully");
             }
 
             onClose();
             form.reset();
         } catch (error) {
             console.error(`Error ${isEditing ? 'editing' : 'adding'} event:`, error);
+            toast.error(`Failed to ${isEditing ? 'edit' : 'add'} event`);
         }
     };
 

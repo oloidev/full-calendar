@@ -55,7 +55,6 @@ export function ClientContainer() {
   });
 
   const handleEventUpdate = (event: IEvent, newStartDate: Date, newEndDate: Date) => {
-    // Create a new event with updated dates
     try {
       const updatedEvent = {
         ...event,
@@ -69,12 +68,6 @@ export function ClientContainer() {
         toast.error("Failed to update event");
     }
 
-    // Update the event in your state or API
-    // This will depend on how your app manages events
-    // For example:
-    // updateEvent(updatedEvent);
-
-    // For now, let's just log it
   };
 
   return (
