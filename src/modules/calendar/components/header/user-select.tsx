@@ -15,7 +15,7 @@ export function UserSelect() {
 
   return (
     <Select value={selectedUserId!} onValueChange={setSelectedUserId}>
-      <SelectTrigger className="w-[180px]">
+      <SelectTrigger className="w-full">
         <SelectValue placeholder="Select a user" />
       </SelectTrigger>
       <SelectContent align="end">

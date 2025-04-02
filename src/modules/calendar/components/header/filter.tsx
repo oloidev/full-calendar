@@ -1,4 +1,4 @@
-import {Filter} from "lucide-react";
+import {CheckIcon, Filter} from "lucide-react";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -8,10 +8,11 @@ import {
 import {useCalendar} from "@/modules/calendar/contexts/calendar-context";
 import type {TEventColor} from "@/modules/calendar/types";
 import {Toggle} from "@/components/ui/toggle";
+import {useDisclosure} from "@/modules/calendar/hooks";
 
 
 export default function FilterEvents() {
-    const {filterEventsByColor, resetFilter} = useCalendar();
+    const {selectedColors, filterEventsBySelectedColors} = useCalendar();
 
     const colors: TEventColor[] = [
         "blue",
@@ -27,6 +28,7 @@ export default function FilterEvents() {
             <DropdownMenuTrigger asChild>
                 <Toggle
                     variant="outline"
+                    className="cursor-pointer w-fit"
                 >
                     <Filter className="h-4 w-4"/>
                 </Toggle>
@@ -35,13 +37,26 @@ export default function FilterEvents() {
                 {colors.map((color, index) => (
                     <DropdownMenuItem
                         key={index}
-                        className="flex items-center gap-2"
-                        onClick={() => filterEventsByColor(color)}
+                        className="flex items-center gap-2 cursor-pointer"
+                        onClick={(e) => {
+                            e.preventDefault()
+                            filterEventsBySelectedColors(color);
+                        }}
                     >
                         <div
                             className={`size-3.5 rounded-full bg-${color}-600 dark:bg-${color}-700`}
                         />
-                        <span className="capitalize">{color}</span>
+                        <span className="capitalize flex justify-center items-center gap-2">
+                            {color}
+                            <span>
+                                {selectedColors.includes(color) && (
+                                    <span className="text-blue-500">
+                                        <CheckIcon className="size-4" />
+                                    </span>
+                                )}
+                            </span>
+
+                        </span>
                     </DropdownMenuItem>
                 ))}
             </DropdownMenuContent>
