@@ -1,0 +1,59 @@
+import { useCalendar } from "@/modules/calendar/contexts/calendar-context";
+
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import {
+  Select,
+  SelectItem,
+  SelectContent,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { AvatarGroup } from "@/components/ui/avatar-group";
+
+export function UserSelect() {
+  const { users, selectedUserId, setSelectedUserId } = useCalendar();
+
+  return (
+    <Select value={selectedUserId!} onValueChange={setSelectedUserId}>
+      <SelectTrigger className="w-[180px]">
+        <SelectValue placeholder="Select a user" />
+      </SelectTrigger>
+      <SelectContent align="end">
+        <SelectItem value="all">
+          <AvatarGroup className="mx-2 flex items-center" max={3}>
+            {users.map((user) => (
+              <Avatar key={user.id} className="size-6 text-xxs">
+                <AvatarImage
+                  src={user.picturePath ?? undefined}
+                  alt={user.name}
+                />
+                <AvatarFallback className="text-xxs">
+                  {user.name[0]}
+                </AvatarFallback>
+              </Avatar>
+            ))}
+          </AvatarGroup>
+          All
+        </SelectItem>
+
+        {users.map((user) => (
+          <SelectItem key={user.id} value={user.id} className="flex-1">
+            <div className="flex items-center gap-2">
+              <Avatar key={user.id} className="size-6">
+                <AvatarImage
+                  src={user.picturePath ?? undefined}
+                  alt={user.name}
+                />
+                <AvatarFallback className="text-xxs">
+                  {user.name[0]}
+                </AvatarFallback>
+              </Avatar>
+
+              <p className="truncate">{user.name}</p>
+            </div>
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
+}
