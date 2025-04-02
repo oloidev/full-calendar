@@ -10,10 +10,11 @@ import { CalendarHeader } from "@/modules/calendar/components/header/calendar-he
 import { CalendarMonthView } from "@/modules/calendar/components/month-view/calendar-month-view";
 import { CalendarDayView } from "@/modules/calendar/components/week-and-day-view/calendar-day-view";
 import { CalendarWeekView } from "@/modules/calendar/components/week-and-day-view/calendar-week-view";
-import { AgendaEvents } from "@/modules/calendar/components/agenda-events";
+import { AgendaEvents } from "@/modules/calendar/components/agenda-view/agenda-events";
 import {EventUpdateHandler} from "@/modules/calendar/components/event-update-handler";
 import {IEvent} from "@/modules/calendar/interfaces";
 import {toast} from "sonner";
+import {CalendarYearView} from "@/modules/calendar/components/year-view/calendar-year-view";
 
 export function ClientContainer() {
   const { selectedDate, view, isAgendaMode, selectedUserId, events , updateEvent} =
@@ -122,6 +123,12 @@ export function ClientContainer() {
             )}
             {view === "day" && (
               <CalendarDayView
+                singleDayEvents={singleDayEvents}
+                multiDayEvents={multiDayEvents}
+              />
+            )}
+            {view === "year" && (
+              <CalendarYearView
                 singleDayEvents={singleDayEvents}
                 multiDayEvents={multiDayEvents}
               />

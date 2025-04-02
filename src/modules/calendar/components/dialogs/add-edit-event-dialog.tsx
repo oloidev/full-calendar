@@ -42,6 +42,7 @@ import {eventSchema, TEventFormData} from "@/modules/calendar/schemas";
 import {useCalendar} from "@/modules/calendar/contexts/calendar-context";
 import {ReactNode} from "react";
 import {IEvent} from "@/modules/calendar/interfaces";
+import {COLORS} from "@/modules/calendar/constants";
 
 
 interface IProps {

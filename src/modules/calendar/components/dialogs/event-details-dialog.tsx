@@ -19,6 +19,7 @@ import {useCalendar} from "../../contexts/calendar-context";
 import {formatTime} from "../../helpers";
 import {AddEditEventDialog} from "@/modules/calendar/components/dialogs/add-edit-event-dialog";
 import {Button} from "@/components/ui/button";
+import {toast} from "sonner";
 
 interface IProps {
     event: IEvent;
@@ -29,6 +30,15 @@ export function EventDetailsDialog({event, children}: IProps) {
     const startDate = parseISO(event.startDate);
     const endDate = parseISO(event.endDate);
     const {use24HourFormat, removeEvent} = useCalendar()
+
+    const deleteEvent = (eventId : number) => {
+        try {
+            removeEvent(eventId);
+            toast.success("Event deleted successfully.");
+        }catch(err) {
+            toast.error("Error deleting event.");
+        }
+    }
 
     return (
         <Dialog>
@@ -55,6 +65,10 @@ export function EventDetailsDialog({event, children}: IProps) {
                             <div>
                                 <p className="text-sm font-medium">Start Date</p>
                                 <p className="text-sm text-muted-foreground">
+                                    {format(startDate, "EEEE dd MMMM")}
+                                    <span className="mx-1">
+                                        at
+                                    </span>
                                     {formatTime(parseISO(event.startDate), use24HourFormat)}
                                 </p>
                             </div>
@@ -65,7 +79,12 @@ export function EventDetailsDialog({event, children}: IProps) {
                             <div>
                                 <p className="text-sm font-medium">End Date</p>
                                 <p className="text-sm text-muted-foreground">
-                                    {formatTime(parseISO(event.endDate), use24HourFormat)}                                </p>
+                                    {format(endDate, "EEEE dd MMMM")}
+                                    <span className="mx-1">
+                                        at
+                                    </span>
+                                    {formatTime(parseISO(event.endDate), use24HourFormat)}
+                                </p>
                             </div>
                         </div>
 
@@ -88,7 +107,7 @@ export function EventDetailsDialog({event, children}: IProps) {
                     </AddEditEventDialog>
                     <Button variant="destructive" onClick={
                         () => {
-                            removeEvent(event.id);
+                            deleteEvent(event.id);
                         }
                     }>
                         Delete

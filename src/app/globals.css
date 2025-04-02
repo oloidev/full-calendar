@@ -136,8 +136,8 @@
   content: '';
   position: absolute;
   inset: 0;
-  background-color: rgba(var(--primary-rgb), 0.05);
-  border: 2px dashed rgba(var(--primary-rgb), 0.3);
+  background-color: rgba(var(--primary), 0.05);
+  border: 2px dashed rgba(var(--primary), 0.3);
   pointer-events: none;
   z-index: 10;
   opacity: 0;
@@ -165,8 +165,8 @@
   content: '';
   position: absolute;
   inset: 0;
-  background-color: rgba(var(--primary-rgb), 0.05);
-  border: 2px dashed rgba(var(--primary-rgb), 0.3);
+  background-color: rgba(var(--primary), 0.05);
+  border: 2px dashed rgba(var(--primary), 0.3);
   pointer-events: none;
   z-index: 10;
   opacity: 0;

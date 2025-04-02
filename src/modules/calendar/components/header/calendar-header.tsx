@@ -1,6 +1,6 @@
 import {
   CalendarRange, Clock,
-  Columns,
+  Columns, Grid2X2,
   Grid3X3,
   LayoutList,
   List,
@@ -25,7 +25,6 @@ import FilterEvents from "@/modules/calendar/components/header/filter";
 import type { IEvent } from "@/modules/calendar/interfaces";
 import { ButtonGroup } from "@/components/ui/button-group";
 import { useCalendar } from "@/modules/calendar/contexts/calendar-context";
-import { TCalendarView } from "@/modules/calendar/types";
 import { Toggle } from "@/components/ui/toggle";
 import { ModeToggle } from "@/components/mode-toggle";
 
@@ -116,6 +115,16 @@ export function CalendarHeader({ events }: IProps) {
               >
                 <Grid3X3 className="h-4 w-4" />
               </MotionButton>
+                <MotionButton
+                    variant={view === "year" ? "default" : "outline"}
+                    aria-label="View by year"
+                    onClick={() => setView("year")}
+                    variants={buttonHover}
+                    whileHover="hover"
+                    whileTap="tap"
+                >
+                    <Grid2X2 className="h-4 w-4" />
+                </MotionButton>
             </ButtonGroup>
             <ModeToggle />
           </div>

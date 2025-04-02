@@ -1,4 +1,4 @@
-import {FC, useState} from "react";
+import {FC} from "react";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {
     Command,
@@ -11,10 +11,10 @@ import {
 import {format} from "date-fns";
 import {Repeat} from "lucide-react";
 import {cn} from "@/lib/utils";
-import {useCalendar} from "../contexts/calendar-context";
 import {getBgColor, getColorClass, useGetEventsByMode} from "@/modules/calendar/hooks";
 import {EventDetailsDialog} from "@/modules/calendar/components/dialogs/event-details-dialog";
 import {getFirstLetters} from "@/modules/calendar/helpers";
+import {useCalendar} from "@/modules/calendar/contexts/calendar-context";
 
 export const AgendaEvents: FC = () => {
     const {events} = useCalendar();

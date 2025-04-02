@@ -1,8 +1,9 @@
 import { useState } from "react";
 import {useCalendar} from "@/modules/calendar/contexts/calendar-context";
-import {addDays, endOfMonth, isSameDay, startOfDay, startOfMonth, startOfWeek} from "date-fns";
+import {addDays, endOfMonth, endOfYear, isSameDay, isValid, parseISO, startOfDay, startOfMonth, startOfWeek, startOfYear} from "date-fns";
 import {IEvent} from "@/modules/calendar/interfaces";
 import {TEventColor} from "@/modules/calendar/types";
+
 
 
 export function useDisclosure({ defaultIsOpen = false }: { defaultIsOpen?: boolean } = {}) {
@@ -72,6 +73,27 @@ export const getEventsForMonth = (events: IEvent[], date: Date): IEvent[] => {
   });
 }
 
+export const getEventsForYear = (events: IEvent[], date: Date): IEvent[] => {
+  if (!events || !Array.isArray(events) || !isValid(date)) {
+    return [];
+  }
+
+  const year = date.getFullYear();
+  const startOfYearDate = startOfYear(new Date(year, 0, 1));
+  const endOfYearDate = endOfYear(new Date(year, 0, 1));
+
+  return events.filter((event) => {
+    const eventStart = parseISO(event.startDate);
+    const eventEnd = parseISO(event.endDate);
+
+    if (!isValid(eventStart) || !isValid(eventEnd)) {
+      return false;
+    }
+
+    return eventStart <= endOfYearDate && eventEnd >= startOfYearDate;
+  });
+}
+
 
 
 export const getColorClass = (color: string): string => {
@@ -110,6 +132,9 @@ export const useGetEventsByMode = (events: IEvent[]) => {
     }
     case 'month': {
       return getEventsForMonth(events, selectedDate);
+    }
+    case 'year': {
+      return getEventsForYear(events, selectedDate);
     }
     default: {
       return [];

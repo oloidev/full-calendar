@@ -1,37 +1,38 @@
 "use client";
 
-import { useMemo } from "react";
-import { isToday, startOfDay, format } from "date-fns";
-import { motion } from "framer-motion";
+import {useMemo} from "react";
+import {isToday, startOfDay, format} from "date-fns";
+import {motion} from "framer-motion";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
 } from "@/components/ui/dialog";
 
-import { EventBullet } from "@/modules/calendar/components/month-view/event-bullet";
-import { MonthEventBadge } from "@/modules/calendar/components/month-view/month-event-badge";
+import {EventBullet} from "@/modules/calendar/components/month-view/event-bullet";
+import {MonthEventBadge} from "@/modules/calendar/components/month-view/month-event-badge";
 
-import { getMonthCellEvents } from "@/modules/calendar/helpers";
-import { staggerContainer, transition } from "@/modules/calendar/animations";
+import {getMonthCellEvents} from "@/modules/calendar/helpers";
+import {staggerContainer, transition} from "@/modules/calendar/animations";
 
-import type { ICalendarCell, IEvent } from "@/modules/calendar/interfaces";
-import { cn } from "@/lib/utils";
+import type {ICalendarCell, IEvent} from "@/modules/calendar/interfaces";
+import {cn} from "@/lib/utils";
 import {cva} from "class-variance-authority";
 import {useCalendar} from "@/modules/calendar/contexts/calendar-context";
-import { DroppableArea } from "@/modules/calendar/components/dnd/droppable-area";
+import {DroppableArea} from "@/modules/calendar/components/dnd/droppable-area";
+import {EventListDialog} from "@/modules/calendar/components/dialogs/events-list-dialog";
 
 interface IProps {
-  cell: ICalendarCell;
-  events: IEvent[];
-  eventPositions: Record<string, number>;
+    cell: ICalendarCell;
+    events: IEvent[];
+    eventPositions: Record<string, number>;
 }
 
 const MAX_VISIBLE_EVENTS = 3;
 
-const dayCellVariants = cva(
+export const dayCellVariants = cva(
     "text-white", {
         variants: {
             color: {
@@ -51,136 +52,141 @@ const dayCellVariants = cva(
 )
 
 
-export function DayCell({ cell, events, eventPositions }: IProps) {
-  const { day, currentMonth, date } = cell;
+export function DayCell({cell, events, eventPositions}: IProps) {
+    const {day, currentMonth, date} = cell;
 
-  const {badgeVariant} = useCalendar()
+    const {badgeVariant} = useCalendar()
 
 
-  const cellEvents = useMemo(
-      () => getMonthCellEvents(date, events, eventPositions),
-      [date, events, eventPositions]
-  );
-  const isSunday = date.getDay() === 0;
+    const cellEvents = useMemo(
+        () => getMonthCellEvents(date, events, eventPositions),
+        [date, events, eventPositions]
+    );
+    const isSunday = date.getDay() === 0;
 
-  return (
-      <motion.div
-          className={cn(
-              "flex flex-col gap-1 border-l border-t py-1.5 lg:py-2",
-              isSunday && "border-l-0"
-          )}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={transition}
-      >
-              <DroppableArea date={date}>
-
-        <motion.span
-            className={cn(
-                "h-6 px-1 text-xs font-semibold lg:px-2",
-                !currentMonth && "text-muted-foreground",
-                isToday(date) &&
-                "flex w-6 translate-x-1 items-center justify-center rounded-full bg-primary text-primary-foreground"
-            )}
-            whileHover={{ scale: 1.1 }}
-            transition={transition}
-        >
-          {day}
-        </motion.span>
-
+    return (
         <motion.div
             className={cn(
-                "flex h-6 gap-1 px-2 lg:h-[94px] lg:flex-col lg:gap-2 lg:px-0",
-                !currentMonth && "opacity-50"
+                "flex flex-col gap-1 border-l border-t py-1.5 lg:py-2",
+                isSunday && "border-l-0"
             )}
-            variants={staggerContainer}
+            initial={{opacity: 0, y: 10}}
+            animate={{opacity: 1, y: 0}}
+            transition={transition}
         >
-          {[0, 1, 2].map((position) => {
-            const event = cellEvents.find((e) => e.position === position);
-            const eventKey = event
-                ? `event-${event.id}-${position}`
-                : `empty-${position}`;
+            <DroppableArea date={date}>
 
-            return (
-                <motion.div
-                    key={eventKey}
-                    className="lg:flex-1"
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: position * 0.1, ...transition }}
+                <motion.span
+                    className={cn(
+                        "h-6 px-1 text-xs font-semibold lg:px-2",
+                        !currentMonth && "text-muted-foreground",
+                        isToday(date) &&
+                        "flex w-6 translate-x-1 items-center justify-center rounded-full bg-primary text-primary-foreground"
+                    )}
+                    whileHover={{scale: 1.1}}
+                    transition={transition}
                 >
-                  {event && (
-                      <>
-                        <EventBullet className="lg:hidden" color={event.color} />
-                        <MonthEventBadge
-                            className="hidden lg:flex"
-                            event={event}
-                            cellDate={startOfDay(date)}
-                        />
-                      </>
-                  )}
-                </motion.div>
-            );
-          })}
-        </motion.div>
+                    {day}
+                </motion.span>
 
-        {cellEvents.length > MAX_VISIBLE_EVENTS && (
-            <motion.div
-                className={cn(
-                    "h-4.5 px-1.5 text-xs font-semibold text-muted-foreground",
-                    !currentMonth && "opacity-50"
+                <motion.div
+                    className={cn(
+                        "flex h-6 gap-1 px-2 lg:h-[94px] lg:flex-col lg:gap-2 lg:px-0",
+                        !currentMonth && "opacity-50"
+                    )}
+                    variants={staggerContainer}
+                >
+                    {[0, 1, 2].map((position) => {
+                        const event = cellEvents.find((e) => e.position === position);
+                        const eventKey = event
+                            ? `event-${event.id}-${position}`
+                            : `empty-${position}`;
+
+                        return (
+                            <motion.div
+                                key={eventKey}
+                                className="lg:flex-1"
+                                initial={{opacity: 0, x: -10}}
+                                animate={{opacity: 1, x: 0}}
+                                transition={{delay: position * 0.1, ...transition}}
+                            >
+                                {event && (
+                                    <>
+                                        <EventBullet className="lg:hidden" color={event.color}/>
+                                        <MonthEventBadge
+                                            className="hidden lg:flex"
+                                            event={event}
+                                            cellDate={startOfDay(date)}
+                                        />
+                                    </>
+                                )}
+                            </motion.div>
+                        );
+                    })}
+                </motion.div>
+
+                {cellEvents.length > MAX_VISIBLE_EVENTS && (
+                    <motion.div
+                        className={cn(
+                            "h-4.5 px-1.5 text-xs font-semibold text-muted-foreground",
+                            !currentMonth && "opacity-50"
+                        )}
+                        initial={{opacity: 0, y: 5}}
+                        animate={{opacity: 1, y: 0}}
+                        transition={{delay: 0.3, ...transition}}
+                    >
+                       <EventListDialog date={date} events={cellEvents} />
+                    </motion.div>
                 )}
-                initial={{ opacity: 0, y: 5 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3, ...transition }}
-            >
-              <Dialog>
-                <DialogTrigger asChild>
+
+            </DroppableArea>
+        </motion.div>
+    );
+}
+
+
+/*
+ <Dialog>
+                            <DialogTrigger asChild>
               <span className="cursor-pointer">
                 <span className="sm:hidden">
                   +{cellEvents.length - MAX_VISIBLE_EVENTS}
                 </span>
                 <span className="hidden sm:inline py-0.5 px-2 my-1 rounded-xl border">
                   {cellEvents.length - MAX_VISIBLE_EVENTS}
-                  <span className="mx-1">more...</span>
+                    <span className="mx-1">more...</span>
                 </span>
               </span>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px]">
-                  <DialogHeader>
-                    <DialogTitle>
-                      Events for {format(date, "MMMM d, yyyy")}
-                    </DialogTitle>
-                  </DialogHeader>
-                  <div className="max-h-[60vh] overflow-y-auto space-y-2">
-                    {cellEvents.map((event) => (
-                        <div
-                            key={event.id}
-                            className={
-                            cn("flex items-center gap-2 p-2 border rounded-md hover:bg-muted" , {
-                                [dayCellVariants({color: event.color})]: badgeVariant === "colored",
-                            })
-                            }
-                        >
-                          <EventBullet color={event.color} className={""} />
-                          <div className="flex-1">
-                            <p className="text-sm font-medium">{event.title}</p>
-                            <p className={cn("text-xs" , {
-                                "text-muted" : badgeVariant === "colored",
-                                "text-muted-foreground" : badgeVariant === "dot",
-                            })}>
-                              {format(event.startDate, "h:mm a")}
-                            </p>
-                          </div>
-                        </div>
-                    ))}
-                  </div>
-                </DialogContent>
-              </Dialog>
-            </motion.div>
-        )}
-
-              </DroppableArea>
-      </motion.div>
-  );
-}
+                            </DialogTrigger>
+                            <DialogContent className="sm:max-w-[425px]">
+                                <DialogHeader>
+                                    <DialogTitle>
+                                        Events for {format(date, "MMMM d, yyyy")}
+                                    </DialogTitle>
+                                </DialogHeader>
+                                <div className="max-h-[60vh] overflow-y-auto space-y-2">
+                                    {cellEvents.map((event) => (
+                                        <div
+                                            key={event.id}
+                                            className={
+                                                cn("flex items-center gap-2 p-2 border rounded-md hover:bg-muted", {
+                                                    [dayCellVariants({color: event.color})]: badgeVariant === "colored",
+                                                })
+                                            }
+                                        >
+                                            <EventBullet color={event.color} className={""}/>
+                                            <div className="flex-1">
+                                                <p className="text-sm font-medium">{event.title}</p>
+                                                <p className={cn("text-xs", {
+                                                    "text-muted": badgeVariant === "colored",
+                                                    "text-muted-foreground": badgeVariant === "dot",
+                                                })}>
+                                                    {format(event.startDate, "h:mm a")}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </DialogContent>
+                        </Dialog>
+* */
