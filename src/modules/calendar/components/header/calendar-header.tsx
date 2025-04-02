@@ -27,6 +27,7 @@ import { ButtonGroup } from "@/components/ui/button-group";
 import { useCalendar } from "@/modules/calendar/contexts/calendar-context";
 import { TCalendarView } from "@/modules/calendar/types";
 import { Toggle } from "@/components/ui/toggle";
+import {ModeToggle} from "@/components/mode-toggle";
 
 interface IProps {
   events: IEvent[];
@@ -121,6 +122,8 @@ export function CalendarHeader({ events }: IProps) {
               Add Event
             </MotionButton>
           </AddEventDialog>
+
+          <ModeToggle />
         </div>
       </motion.div>
     </div>

@@ -94,7 +94,6 @@ export function groupEvents(dayEvents: IEvent[]) {
 
 export function getEventBlockStyle(event: IEvent, day: Date, groupIndex: number, groupSize: number) {
   const startDate = parseISO(event.startDate);
-  console.log(day)
   const dayStart = new Date(day.setHours(0, 0, 0, 0));
   const eventStart = startDate < dayStart ? dayStart : startDate;
   const startMinutes = differenceInMinutes(eventStart, dayStart);
