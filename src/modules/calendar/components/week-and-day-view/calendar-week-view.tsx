@@ -10,7 +10,7 @@ import {
 
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-import { AddEventDialog } from "@/modules/calendar/components/dialogs/add-event-dialog";
+import { AddEditEventDialog } from "@/modules/calendar/components/dialogs/add-edit-event-dialog";
 import { CalendarTimeline } from "@/modules/calendar/components/week-and-day-view/calendar-time-line";
 import { WeekViewMultiDayEventsRow } from "@/modules/calendar/components/week-and-day-view/week-view-multi-day-events-row";
 
@@ -18,6 +18,7 @@ import { groupEvents } from "@/modules/calendar/helpers";
 
 import type { IEvent } from "@/modules/calendar/interfaces";
 import { RenderGroupedEvents } from "@/modules/calendar/components/week-and-day-view/render-grouped-events";
+import { DroppableArea } from "@/modules/calendar/components/dnd/droppable-area";
 
 interface IProps {
     singleDayEvents: IEvent[];
@@ -125,47 +126,53 @@ export function CalendarWeekView({ singleDayEvents, multiDayEvents }: IProps) {
                                     const groupedEvents = groupEvents(dayEvents);
 
                                     return (
-                    <motion.div
-                      key={dayIndex}
-                      className="relative"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: dayIndex * 0.1, ...transition }}
-                    >
-                                            {hours.map((hour, index) => (
-                        <motion.div
-                          key={hour}
-                          className="relative"
-                          style={{ height: "96px" }}
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          transition={{ delay: index * 0.01, ...transition }}
-                        >
-                          {index !== 0 && (
-                            <div className="pointer-events-none absolute inset-x-0 top-0 border-b"></div>
-                          )}
-                          <AddEventDialog
-                            startDate={day}
-                            startTime={{ hour, minute: 0 }}
-                          >
-                            <div className="absolute inset-x-0 top-0 h-[48px] cursor-pointer transition-colors hover:bg-bg-primary-hover" />
-                                                    </AddEventDialog>
+                                      <motion.div
+                                        key={dayIndex}
+                                        className="relative"
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        transition={{ delay: dayIndex * 0.1, ...transition }}
+                                      >
+                                          {hours.map((hour, index) => (
+                                              <motion.div
+                                                  key={hour}
+                                                  className="relative"
+                                                  style={{ height: "96px" }}
+                                                  initial={{ opacity: 0 }}
+                                                  animate={{ opacity: 1 }}
+                                                  transition={{ delay: index * 0.01, ...transition }}
+                                              >
+                                                  {index !== 0 && (
+                                                      <div className="pointer-events-none absolute inset-x-0 top-0 border-b"></div>
+                                                  )}
 
-                          <div className="pointer-events-none absolute inset-x-0 top-1/2 border-b border-dashed border-b-tertiary"></div>
+                                                  <DroppableArea date={day} hour={hour} minute={0} className="absolute inset-x-0 top-0 h-[48px]">
+                                                      <AddEditEventDialog
+                                                          startDate={day}
+                                                          startTime={{ hour, minute: 0 }}
+                                                      >
+                                                          <div className="absolute inset-x-0 top-0 h-[48px] cursor-pointer transition-colors hover:bg-bg-primary-hover" />
+                                                      </AddEditEventDialog>
+                                                  </DroppableArea>
 
-                          <AddEventDialog
-                            startDate={day}
-                            startTime={{ hour, minute: 30 }}
-                          >
-                            <div className="absolute inset-x-0 top-[48px] h-[48px] cursor-pointer transition-colors hover:bg-bg-primary-hover" />
-                                                    </AddEventDialog>
-                        </motion.div>
-                                            ))}
-                      <RenderGroupedEvents
-                        groupedEvents={groupedEvents}
-                        day={day}
-                      />
-                    </motion.div>
+                                                  <div className="pointer-events-none absolute inset-x-0 top-1/2 border-b border-dashed border-b-tertiary"></div>
+
+                                                  <DroppableArea date={day} hour={hour} minute={30} className="absolute inset-x-0 top-[48px] h-[48px]">
+                                                      <AddEditEventDialog
+                                                          startDate={day}
+                                                          startTime={{ hour, minute: 30 }}
+                                                      >
+                                                          <div className="absolute inset-x-0 top-[48px] h-[48px] cursor-pointer transition-colors hover:bg-bg-primary-hover" />
+                                                      </AddEditEventDialog>
+                                                  </DroppableArea>
+                                              </motion.div>
+                                          ))}
+                                        
+                                        <RenderGroupedEvents
+                                          groupedEvents={groupedEvents}
+                                          day={day}
+                                        />
+                                      </motion.div>
                                     );
                                 })}
                             </div>

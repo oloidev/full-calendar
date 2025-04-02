@@ -15,6 +15,10 @@ import {ScrollArea} from "@/components/ui/scroll-area";
 
 import type {IEvent} from "@/modules/calendar/interfaces";
 import {ReactNode} from "react";
+import {useCalendar} from "../../contexts/calendar-context";
+import {formatTime} from "../../helpers";
+import {AddEditEventDialog} from "@/modules/calendar/components/dialogs/add-edit-event-dialog";
+import {Button} from "@/components/ui/button";
 
 interface IProps {
     event: IEvent;
@@ -24,6 +28,7 @@ interface IProps {
 export function EventDetailsDialog({event, children}: IProps) {
     const startDate = parseISO(event.startDate);
     const endDate = parseISO(event.endDate);
+    const {use24HourFormat, removeEvent} = useCalendar()
 
     return (
         <Dialog>
@@ -50,7 +55,7 @@ export function EventDetailsDialog({event, children}: IProps) {
                             <div>
                                 <p className="text-sm font-medium">Start Date</p>
                                 <p className="text-sm text-muted-foreground">
-                                    {format(startDate, "MMM d, yyyy h:mm a")}
+                                    {formatTime(parseISO(event.startDate), use24HourFormat)}
                                 </p>
                             </div>
                         </div>
@@ -60,8 +65,7 @@ export function EventDetailsDialog({event, children}: IProps) {
                             <div>
                                 <p className="text-sm font-medium">End Date</p>
                                 <p className="text-sm text-muted-foreground">
-                                    {format(endDate, "MMM d, yyyy h:mm a")}
-                                </p>
+                                    {formatTime(parseISO(event.endDate), use24HourFormat)}                                </p>
                             </div>
                         </div>
 
@@ -76,6 +80,20 @@ export function EventDetailsDialog({event, children}: IProps) {
                         </div>
                     </div>
                 </ScrollArea>
+                <div className="flex justify-end gap-2">
+                    <AddEditEventDialog event={event}>
+                        <Button variant="outline">
+                            Edit
+                        </Button>
+                    </AddEditEventDialog>
+                    <Button variant="destructive" onClick={
+                        () => {
+                            removeEvent(event.id);
+                        }
+                    }>
+                        Delete
+                    </Button>
+                </div>
                 <DialogClose/>
             </DialogContent>
         </Dialog>

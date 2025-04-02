@@ -11,9 +11,12 @@ import { CalendarMonthView } from "@/modules/calendar/components/month-view/cale
 import { CalendarDayView } from "@/modules/calendar/components/week-and-day-view/calendar-day-view";
 import { CalendarWeekView } from "@/modules/calendar/components/week-and-day-view/calendar-week-view";
 import { AgendaEvents } from "@/modules/calendar/components/agenda-events";
+import {EventUpdateHandler} from "@/modules/calendar/components/event-update-handler";
+import {IEvent} from "@/modules/calendar/interfaces";
+import {toast} from "sonner";
 
 export function ClientContainer() {
-  const { selectedDate, view, isAgendaMode, selectedUserId, events } =
+  const { selectedDate, view, isAgendaMode, selectedUserId, events , updateEvent} =
     useCalendar();
 
   const filteredEvents = events.filter((event) => {
@@ -50,6 +53,29 @@ export function ClientContainer() {
     return !isSameDay(startDate, endDate);
   });
 
+  const handleEventUpdate = (event: IEvent, newStartDate: Date, newEndDate: Date) => {
+    // Create a new event with updated dates
+    try {
+      const updatedEvent = {
+        ...event,
+        startDate: newStartDate.toISOString(),
+        endDate: newEndDate.toISOString(),
+      };
+
+      updateEvent(updatedEvent);
+      toast.success("Event updated successfully");
+    }catch {
+        toast.error("Failed to update event");
+    }
+
+    // Update the event in your state or API
+    // This will depend on how your app manages events
+    // For example:
+    // updateEvent(updatedEvent);
+
+    // For now, let's just log it
+  };
+
   return (
     <motion.div
       className="rounded-xl border"
@@ -59,6 +85,7 @@ export function ClientContainer() {
       variants={fadeIn}
       transition={transition}
     >
+      <EventUpdateHandler onEventUpdate={handleEventUpdate} />
       <CalendarHeader events={filteredEvents} />
       <AnimatePresence mode="wait">
         {isAgendaMode ? (

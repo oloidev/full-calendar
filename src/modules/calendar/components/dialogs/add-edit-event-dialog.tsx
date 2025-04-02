@@ -41,76 +41,99 @@ import {CalendarIcon} from "lucide-react";
 import {eventSchema, TEventFormData} from "@/modules/calendar/schemas";
 import {useCalendar} from "@/modules/calendar/contexts/calendar-context";
 import {ReactNode} from "react";
+import {IEvent} from "@/modules/calendar/interfaces";
+
 
 interface IProps {
     children: ReactNode;
     startDate?: Date;
     startTime?: { hour: number; minute: number };
+    event?: IEvent;
 }
 
-export function AddEventDialog({children, startDate, startTime}: IProps) {
+export function AddEditEventDialog({children, startDate, startTime, event}: IProps) {
     const {isOpen, onClose, onToggle} = useDisclosure();
-    const {addEvent} = useCalendar();
-    const colors = ["blue", "green", "red", "yellow", "purple", "orange"]
+    const {addEvent, updateEvent} = useCalendar();
+    const isEditing = !!event;
+
     const form = useForm<TEventFormData>({
         resolver: zodResolver(eventSchema),
-        defaultValues: {
+        defaultValues: event ? {
+            title: event.title,
+            description: event.description,
+            startDate: new Date(event.startDate),
+            startTime: {
+                hour: new Date(event.startDate).getHours(),
+                minute: new Date(event.startDate).getMinutes(),
+            },
+            endDate: new Date(event.endDate),
+            endTime: {
+                hour: new Date(event.endDate).getHours(),
+                minute: new Date(event.endDate).getMinutes(),
+            },
+            color: event.color,
+        } : {
             title: "",
             description: "",
-            startDate: startDate ?? undefined,
-            startTime: startTime ?? undefined,
-            endDate: undefined,
-            endTime: undefined,
-            color: undefined,
+            startDate: startDate ?? new Date(), // Default to current date
+            startTime: startTime ?? { hour: 0, minute: 0 }, // Default to midnight
+            endDate: startDate ?? new Date(), // Default to current date
+            endTime: { hour: 1, minute: 0 }, // Default to 1 AM
+            color: "blue" as const, // Default color
         },
     });
 
     const onSubmit = (values: TEventFormData) => {
         try {
             // Combine startDate and startTime
-            const startDateTime = values.startDate && values.startTime
-                ? set(values.startDate, {
-                    hours: values.startTime.hour,
-                    minutes: values.startTime.minute,
-                })
-                : values.startDate || new Date(); // Fallback to current date if incomplete
+            const startDateTime = set(values.startDate, {
+                hours: values.startTime.hour,
+                minutes: values.startTime.minute,
+            });
 
-            // Combine endDate and endTime (optional, fallback to startDateTime if not provided)
-            const endDateTime = values.endDate && values.endTime
-                ? set(values.endDate, {
-                    hours: values.endTime.hour,
-                    minutes: values.endTime.minute,
-                })
-                : values.endDate || startDateTime;
+            // Combine endDate and endTime
+            const endDateTime = set(values.endDate, {
+                hours: values.endTime.hour,
+                minutes: values.endTime.minute,
+            });
 
-            addEvent({
+            const formattedEvent: IEvent = {
                 ...values,
                 startDate: format(startDateTime, "yyyy-MM-dd'T'HH:mm:ss"),
                 endDate: format(endDateTime, "yyyy-MM-dd'T'HH:mm:ss"),
-                id: Math.floor(Math.random() * 1000000),
-                user: {
+                id: isEditing ? event.id : Math.floor(Math.random() * 1000000),
+                user: isEditing ? event.user : {
                     id: Math.floor(Math.random() * 1000000).toString(),
                     name: "John Doe",
                     picturePath: null,
                 },
-            });
+                color: values.color,
+            };
+
+            if (isEditing) {
+                updateEvent(formattedEvent);
+            } else {
+                addEvent(formattedEvent);
+            }
 
             onClose();
             form.reset();
         } catch (error) {
-            console.error("Error adding event:", error);
+            console.error(`Error ${isEditing ? 'editing' : 'adding'} event:`, error);
         }
     };
 
     return (
         <Dialog open={isOpen} onOpenChange={onToggle}>
-            <DialogTrigger asChild>{children}</DialogTrigger>
+            <DialogTrigger asChild>
+                {children}
+            </DialogTrigger>
 
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Add New Event</DialogTitle>
+                    <DialogTitle>{isEditing ? "Edit Event" : "Add New Event"}</DialogTitle>
                     <DialogDescription>
-                        Create a new event for your calendar.
+                        {isEditing ? "Modify your existing event." : "Create a new event for your calendar."}
                     </DialogDescription>
                 </DialogHeader>
 
@@ -226,7 +249,7 @@ export function AddEventDialog({children, startDate, startTime}: IProps) {
                                                     mode="single"
                                                     selected={field.value}
                                                     onSelect={field.onChange}
-                                                    disabled={(date) => startDate ? date < startDate : date < new Date()}
+                                                    disabled={(date) => date < (form.getValues("startDate") || new Date())}
                                                 />
                                             </PopoverContent>
                                         </Popover>
@@ -268,17 +291,15 @@ export function AddEventDialog({children, startDate, startTime}: IProps) {
                                                 <SelectValue placeholder="Select a variant"/>
                                             </SelectTrigger>
                                             <SelectContent>
-                                                {
-                                                    colors.map(color => (
-                                                        <SelectItem value={color} key={color}>
-                                                            <div className="flex items-center gap-2">
-                                                                <div
-                                                                    className={`size-3.5 rounded-full bg-${color}-600 dark:bg-${color}-700`}/>
-                                                                {color}
-                                                            </div>
-                                                        </SelectItem>
-                                                    ))
-                                                }
+                                                {COLORS.map(color => (
+                                                    <SelectItem value={color} key={color}>
+                                                        <div className="flex items-center gap-2">
+                                                            <div
+                                                                className={`size-3.5 rounded-full bg-${color}-600 dark:bg-${color}-700`}/>
+                                                            {color}
+                                                        </div>
+                                                    </SelectItem>
+                                                ))}
                                             </SelectContent>
                                         </Select>
                                     </FormControl>
@@ -292,10 +313,11 @@ export function AddEventDialog({children, startDate, startTime}: IProps) {
                             name="description"
                             render={({field, fieldState}) => (
                                 <FormItem>
-                                    <FormLabel>Description</FormLabel>
+                                    <FormLabel className="required">Description</FormLabel>
                                     <FormControl>
                                         <Textarea
                                             {...field}
+                                            placeholder="Enter a description"
                                             className={fieldState.invalid ? "border-red-500" : ""}
                                         />
                                     </FormControl>
@@ -313,7 +335,7 @@ export function AddEventDialog({children, startDate, startTime}: IProps) {
                         </Button>
                     </DialogClose>
                     <Button form="event-form" type="submit">
-                        Create Event
+                        {isEditing ? "Save Changes" : "Create Event"}
                     </Button>
                 </DialogFooter>
             </DialogContent>

@@ -11,6 +11,8 @@ interface ICalendarContext {
     setView: (view: TCalendarView) => void;
     isAgendaMode: boolean;
     toggleAgendaMode: (isAgenda?: boolean) => void;
+    use24HourFormat: boolean;
+    toggleTimeFormat: () => void;
     setSelectedDate: (date: Date | undefined) => void;
     selectedUserId: IUser["id"] | "all";
     setSelectedUserId: (userId: IUser["id"] | "all") => void;
@@ -21,6 +23,8 @@ interface ICalendarContext {
     users: IUser[];
     events: IEvent[];
     addEvent: (event: IEvent) => void;
+    updateEvent: (event: IEvent) => void;
+    removeEvent: (eventId : number) => void;
 }
 
 const CalendarContext = createContext({} as ICalendarContext);
@@ -43,6 +47,7 @@ export function CalendarProvider({
     const [selectedUserId, setSelectedUserId] = useState<IUser["id"] | "all">("all");
     const [currentView, setCurrentView] = useState(view);
     const [isAgendaMode, setAgendaMode] = useState(false);
+    const [use24HourFormat, setUse24HourFormat] = useState(true);
     const [selectedColors, setSelectedColors] = useState<TEventColor[]>([]);
     const [data, setData] = useState(events || []);
 
@@ -71,6 +76,10 @@ export function CalendarProvider({
         setAgendaMode(newMode);
     };
 
+    const toggleTimeFormat = () => {
+        setUse24HourFormat(prev => !prev);
+      };
+      
     const handleSelectDate = (date: Date | undefined) => {
         if (!date) return;
         setSelectedDate(date);
@@ -84,8 +93,23 @@ export function CalendarProvider({
         setData((prevEvents) => [...prevEvents, event]);
     };
 
-    const resetFilter = () => {
-        setData(events);
+    const updateEvent = (event: IEvent) => {
+        const newEvent: IEvent = event;
+        newEvent.startDate = new Date(event.startDate).toISOString();
+        newEvent.endDate = new Date(event.endDate).toISOString();
+        setData((prevEvents) => {
+            const index = prevEvents.findIndex((e) => e.id === event.id);
+            if (index !== -1) {
+                const updatedEvents = [...prevEvents];
+                updatedEvents[index] = newEvent;
+                return updatedEvents;
+            }
+            return prevEvents;
+        });
+    };
+
+    const removeEvent = (eventId: number) => {
+        setData((prevEvents) => prevEvents.filter((event) => event.id !== eventId));
     };
 
     const value = {
@@ -100,11 +124,14 @@ export function CalendarProvider({
         filterEventsBySelectedColors,
         events: data,
         view: currentView,
+        use24HourFormat,
+        toggleTimeFormat,
         setView,
         isAgendaMode,
         toggleAgendaMode,
         addEvent,
-        resetFilter,
+        updateEvent,
+        removeEvent,
     };
 
     return (

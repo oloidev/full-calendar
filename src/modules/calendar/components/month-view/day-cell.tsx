@@ -21,6 +21,7 @@ import type { ICalendarCell, IEvent } from "@/modules/calendar/interfaces";
 import { cn } from "@/lib/utils";
 import {cva} from "class-variance-authority";
 import {useCalendar} from "@/modules/calendar/contexts/calendar-context";
+import { DroppableArea } from "@/modules/calendar/components/dnd/droppable-area";
 
 interface IProps {
   cell: ICalendarCell;
@@ -72,6 +73,8 @@ export function DayCell({ cell, events, eventPositions }: IProps) {
           animate={{ opacity: 1, y: 0 }}
           transition={transition}
       >
+              <DroppableArea date={date}>
+
         <motion.span
             className={cn(
                 "h-6 px-1 text-xs font-semibold lg:px-2",
@@ -176,6 +179,8 @@ export function DayCell({ cell, events, eventPositions }: IProps) {
               </Dialog>
             </motion.div>
         )}
+
+              </DroppableArea>
       </motion.div>
   );
 }

@@ -1,5 +1,6 @@
 import type { TEventColor } from "@/modules/calendar/types";
 import type { IEvent, IUser } from "@/modules/calendar/interfaces";
+import {COLORS} from "@/modules/calendar/constants";
 
 export const USERS_MOCK: IUser[] = [
   {
@@ -26,7 +27,6 @@ export const USERS_MOCK: IUser[] = [
 
 // ================================== //
 
-const colors: TEventColor[] = ["blue", "green", "red", "yellow", "purple", "orange"];
 const events = [
   "Doctor's appointment",
   "Dental cleaning",
@@ -135,7 +135,7 @@ const mockGenerator = (numberOfEvents: number): IEvent[] => {
     startDate: new Date(now.getTime() - 30 * 60000).toISOString(),
     endDate: new Date(now.getTime() + 30 * 60000).toISOString(),
     title: events[Math.floor(Math.random() * events.length)],
-    color: colors[Math.floor(Math.random() * colors.length)],
+    color: COLORS[Math.floor(Math.random() * COLORS.length)],
     description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
     user: randomUser,
   };
@@ -169,7 +169,7 @@ const mockGenerator = (numberOfEvents: number): IEvent[] => {
       startDate: startDate.toISOString(),
       endDate: endDate.toISOString(),
       title: events[Math.floor(Math.random() * events.length)],
-      color: colors[Math.floor(Math.random() * colors.length)],
+      color: COLORS[Math.floor(Math.random() * COLORS.length)],
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
       user: USERS_MOCK[Math.floor(Math.random() * USERS_MOCK.length)],
     });

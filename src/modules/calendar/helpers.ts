@@ -92,6 +92,10 @@ export function groupEvents(dayEvents: IEvent[]) {
   return groups;
 }
 
+export function formatTime(date: Date, use24HourFormat: boolean) {
+  return format(date, use24HourFormat ? 'HH:mm' : 'h:mm a');
+}
+
 export const getFirstLetters = (str: string): string => {
   const words = str.split(" ");
 

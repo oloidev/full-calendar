@@ -6,7 +6,7 @@ import { useCalendar } from "@/modules/calendar/contexts/calendar-context";
 import { DayPicker } from "@/components/ui/day-picker";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-import { AddEventDialog } from "@/modules/calendar/components/dialogs/add-event-dialog";
+import { AddEditEventDialog } from "@/modules/calendar/components/dialogs/add-edit-event-dialog";
 import { CalendarTimeline } from "@/modules/calendar/components/week-and-day-view/calendar-time-line";
 import { DayViewMultiDayEventsRow } from "@/modules/calendar/components/week-and-day-view/day-view-multi-day-events-row";
 
@@ -14,6 +14,7 @@ import { groupEvents } from "@/modules/calendar/helpers";
 
 import type { IEvent } from "@/modules/calendar/interfaces";
 import {RenderGroupedEvents} from "@/modules/calendar/components/week-and-day-view/render-grouped-events";
+import { DroppableArea } from "@/modules/calendar/components/dnd/droppable-area";
 
 interface IProps {
   singleDayEvents: IEvent[];
@@ -82,20 +83,25 @@ export function CalendarDayView({ singleDayEvents, multiDayEvents }: IProps) {
             {/* Day grid */}
             <div className="relative flex-1 border-l">
               <div className="relative">
+
                 {hours.map((hour, index) => (
-                  <div key={hour} className="relative" style={{ height: "96px" }}>
-                    {index !== 0 && <div className="pointer-events-none absolute inset-x-0 top-0 border-b"></div>}
+                    <div key={hour} className="relative" style={{ height: "96px" }}>
+                      {index !== 0 && <div className="pointer-events-none absolute inset-x-0 top-0 border-b"></div>}
 
-                    <AddEventDialog startDate={selectedDate} startTime={{ hour, minute: 0 }}>
-                      <div className="absolute inset-x-0 top-0 h-[48px] cursor-pointer transition-colors hover:bg-bg-primary-hover" />
-                    </AddEventDialog>
+                      <DroppableArea date={selectedDate} hour={hour} minute={0} className="absolute inset-x-0 top-0 h-[48px]">
+                        <AddEditEventDialog startDate={selectedDate} startTime={{ hour, minute: 0 }}>
+                          <div className="absolute inset-x-0 top-0 h-[48px] cursor-pointer transition-colors hover:bg-bg-primary-hover" />
+                        </AddEditEventDialog>
+                      </DroppableArea>
 
-                    <div className="pointer-events-none absolute inset-x-0 top-1/2 border-b border-dashed border-b-tertiary"></div>
+                      <div className="pointer-events-none absolute inset-x-0 top-1/2 border-b border-dashed border-b-tertiary"></div>
 
-                    <AddEventDialog startDate={selectedDate} startTime={{ hour, minute: 30 }}>
-                      <div className="absolute inset-x-0 top-[48px] h-[48px] cursor-pointer transition-colors hover:bg-bg-primary-hover" />
-                    </AddEventDialog>
-                  </div>
+                      <DroppableArea date={selectedDate} hour={hour} minute={30} className="absolute inset-x-0 top-[48px] h-[48px]">
+                        <AddEditEventDialog startDate={selectedDate} startTime={{ hour, minute: 30 }}>
+                          <div className="absolute inset-x-0 top-[48px] h-[48px] cursor-pointer transition-colors hover:bg-bg-primary-hover" />
+                        </AddEditEventDialog>
+                      </DroppableArea>
+                    </div>
                 ))}
 
                 <RenderGroupedEvents groupedEvents={groupedEvents} day={selectedDate} />

@@ -9,6 +9,8 @@ import { cn } from "@/lib/utils";
 import type { HTMLAttributes } from "react";
 import type { IEvent } from "@/modules/calendar/interfaces";
 import type { VariantProps } from "class-variance-authority";
+import { DraggableEvent } from "@/modules/calendar/components/dnd/draggable-event";
+import { formatTime } from "../../helpers";
 
 const calendarWeekEventCardVariants = cva(
   "flex select-none flex-col gap-0.5 truncate whitespace-nowrap rounded-md border px-2 py-1.5 text-xs focus-visible:outline-offset-2",
@@ -55,7 +57,7 @@ interface IProps
 }
 
 export function EventBlock({ event, className }: IProps) {
-  const { badgeVariant } = useCalendar();
+  const { badgeVariant , use24HourFormat } = useCalendar();
 
   const start = parseISO(event.startDate);
   const end = parseISO(event.endDate);
@@ -73,28 +75,30 @@ export function EventBlock({ event, className }: IProps) {
 
   return (
     <EventDetailsDialog event={event}>
-      <div
-        role="button"
-        tabIndex={0}
-        className={calendarWeekEventCardClasses}
-        style={{ height: `${heightInPixels}px` }}
-      >
-        <div className="flex items-center gap-1.5 truncate">
-          {badgeVariant === "dot" && (
-            <svg width="8" height="8" viewBox="0 0 8 8" className="shrink-0">
-              <circle cx="4" cy="4" r="4" />
-            </svg>
+      <DraggableEvent event={event}>
+        <div
+          role="button"
+          tabIndex={0}
+          className={calendarWeekEventCardClasses}
+          style={{ height: `${heightInPixels}px` }}
+        >
+          <div className="flex items-center gap-1.5 truncate">
+            {badgeVariant === "dot" && (
+              <svg width="8" height="8" viewBox="0 0 8 8" className="shrink-0">
+                <circle cx="4" cy="4" r="4" />
+              </svg>
+            )}
+
+            <p className="truncate font-semibold">{event.title}</p>
+          </div>
+
+          {durationInMinutes > 25 && (
+            <p>
+              {formatTime(start, use24HourFormat)} - {formatTime(end, use24HourFormat)}
+            </p>
           )}
-
-          <p className="truncate font-semibold">{event.title}</p>
         </div>
-
-        {durationInMinutes > 25 && (
-          <p>
-            {format(start, "HH:mm a")} - {format(end, "HH:mm a")}
-          </p>
-        )}
-      </div>
+      </DraggableEvent>
     </EventDetailsDialog>
   );
 }
