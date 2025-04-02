@@ -18,7 +18,7 @@ customizable and interactive calendar experience with multiple views, event mana
 
 - **Description**: Displays a full year with mini-calendars for each month.
 - **Implementation**:
-    - Component: `CalendarYearView.tsx`
+    - Component: `CalendarYearView`
     - Uses `date-fns` for date calculations and `framer-motion` for animations.
     - Each month shows days with event indicators (dots); clicking a day with events opens a dialog with event details.
     - Days without events are non-clickable.
@@ -27,7 +27,7 @@ customizable and interactive calendar experience with multiple views, event mana
 
 - **Description**: Toggleable agenda mode to display events in a list format.
 - **Implementation**:
-    - Integrated in `CalendarHeader.tsx` with a toggle button (`<LayoutList />` or `<CalendarRange />`).
+    - Integrated in `CalendarHeader` with a toggle button (`<LayoutList />` or `<CalendarRange />`).
     - Context: `useCalendar` provides `isAgendaMode` and `toggleAgendaMode`.
     - When enabled, it modifies the week/day view to show events as a list (implementation pending in week/day views).
 
@@ -37,16 +37,16 @@ customizable and interactive calendar experience with multiple views, event mana
 - **Implementation**:
     - Context: `useCalendar` provides `use24HourFormat` and `toggleTimeFormat`.
     - Components:
-        - `CalendarHeader.tsx`: Toggle button (`12` or `24` with `<Clock />`).
-        - `CalendarWeekView.tsx`: Hours column uses `format(..., use24HourFormat ? "HH:00" : "h a")`.
-        - `CalendarDayView.tsx`: Hours column and "Happening now" section use `use24HourFormat ? "HH:mm" : "hh:mm a"`.
+        - `CalendarHeader`: Toggle button (`12` or `24` with `<Clock />`).
+        - `CalendarWeekView`: Hours column uses `format(..., use24HourFormat ? "HH:00" : "h a")`.
+        - `CalendarDayView`: Hours column and "Happening now" section use `use24HourFormat ? "HH:mm" : "hh:mm a"`.
     - Fully responsive to user preference across all views.
 
 ### 4. Drag and Drop (DnD)
 
 - **Description**: Drag events to reschedule them within the week/day views.
 - **Implementation**:
-    - Component: `DroppableArea.tsx` wraps time slots in `CalendarWeekView.tsx` and `CalendarDayView.tsx`.
+    - Component: `DroppableArea` wraps time slots in `CalendarWeekView` and `CalendarDayView`.
     - Uses a DnD library (assumed to be `@dnd-kit/core` or similar) for drag functionality.
     - Time slots (every 30 minutes) accept drops and trigger `AddEditEventDialog` for new events.
 
@@ -54,7 +54,7 @@ customizable and interactive calendar experience with multiple views, event mana
 
 - **Description**: Toggle between light and dark themes.
 - **Implementation**:
-    - Component: `ModeToggle.tsx` (ShadCN component) in `CalendarHeader.tsx`.
+    - Component: `ModeToggle` (ShadCN component) in `CalendarHeader`.
     - Uses Tailwind CSS dark mode classes (`dark:` prefix) throughout components.
     - Fully compatible with all ShadCN components and custom styles.
 
@@ -69,7 +69,7 @@ customizable and interactive calendar experience with multiple views, event mana
 
 - **Description**: Filter events by their assigned colors.
 - **Implementation**:
-    - Component: `FilterEvents.tsx` in `CalendarHeader.tsx`.
+    - Component: `FilterEvents` in `CalendarHeader`.
     - Uses `useCalendar` context (`selectedColors`, `filterEventsBySelectedColors`).
     - Dropdown menu with color options; clicking a color toggles its inclusion without closing the menu (`onSelect` with
       `e.preventDefault()`).
@@ -78,15 +78,15 @@ customizable and interactive calendar experience with multiple views, event mana
 
 - **Description**: View detailed event information in a dialog.
 - **Implementation**:
-    - Component: `EventListDialog.tsx`.
-    - Triggered from `CalendarYearView.tsx` (days with events), shows event title, time, and color-coded bullet.
+    - Component: `EventListDialog`.
+    - Triggered from `CalendarYearView` (days with events), shows event title, time, and color-coded bullet.
     - Supports "dot" and "colored" variants for event representation.
 
 ### 9. Create/Update/Delete Events
 
 - **Description**: Full CRUD operations for events.
 - **Implementation**:
-    - Component: `AddEditEventDialog.tsx`.
+    - Component: `AddEditEventDialog`.
         - **Create**: Opens with empty form; submits to `addEvent` from `useCalendar`.
         - **Update**: Opens with pre-filled event data; submits to `editEvent`.
         - **Delete**: (Assumed to be implemented elsewhere, e.g., within the dialog or event list; requires
@@ -115,7 +115,7 @@ customizable and interactive calendar experience with multiple views, event mana
 
 1. **Clone the repository**:
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/yassir-jeraidi/full-calendar
    cd calendar-app
    ```
 
@@ -157,7 +157,3 @@ customizable and interactive calendar experience with multiple views, event mana
 3. Commit changes (`git commit -m "Add new feature"`).
 4. Push to the branch (`git push origin feature/new-feature`).
 5. Open a pull request.
-
-## License
-
-MIT License
