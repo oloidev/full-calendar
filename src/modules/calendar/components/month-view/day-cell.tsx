@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"; // Assuming shadcn/ui components are installed
+} from "@/components/ui/dialog";
 
 import { EventBullet } from "@/modules/calendar/components/month-view/event-bullet";
 import { MonthEventBadge } from "@/modules/calendar/components/month-view/month-event-badge";

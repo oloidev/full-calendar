@@ -92,6 +92,19 @@ export function groupEvents(dayEvents: IEvent[]) {
   return groups;
 }
 
+export const getFirstLetters = (str: string): string => {
+  const words = str.split(" ");
+
+  if (words.length < 2) {
+    return str;
+  }
+
+  const firstLetterFirstWord = words[0].charAt(0);
+  const firstLetterSecondWord = words[1].charAt(0);
+
+  return `${firstLetterFirstWord}${firstLetterSecondWord}`;
+};
+
 export function getEventBlockStyle(event: IEvent, day: Date, groupIndex: number, groupSize: number) {
   const startDate = parseISO(event.startDate);
   const dayStart = new Date(day.setHours(0, 0, 0, 0));

@@ -13,22 +13,8 @@ import {Repeat} from "lucide-react";
 import {cn} from "@/lib/utils";
 import {useCalendar} from "../contexts/calendar-context";
 import {getBgColor, getColorClass, useGetEventsByMode} from "@/modules/calendar/hooks";
-import {IEvent} from "@/modules/calendar/interfaces";
 import {EventDetailsDialog} from "@/modules/calendar/components/dialogs/event-details-dialog";
-
-const getFirstLetters = (str: string): string => {
-    const words = str.split(" ");
-
-    if (words.length < 2) {
-        return str;
-    }
-
-    const firstLetterFirstWord = words[0].charAt(0);
-    const firstLetterSecondWord = words[1].charAt(0);
-
-    return `${firstLetterFirstWord}${firstLetterSecondWord}`;
-};
-
+import {getFirstLetters} from "@/modules/calendar/helpers";
 
 export const AgendaEvents: FC = () => {
     const {events} = useCalendar();
@@ -88,7 +74,6 @@ export const AgendaEvents: FC = () => {
                 </CommandGroup>
                 <CommandEmpty>No results found.</CommandEmpty>
             </CommandList>
-
         </Command>
     );
 };
