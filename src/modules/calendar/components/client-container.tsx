@@ -72,7 +72,7 @@ export function ClientContainer() {
 
   return (
     <motion.div
-      className="rounded-xl border"
+      className="w-full rounded-xl border"
       initial="initial"
       animate="animate"
       exit="exit"

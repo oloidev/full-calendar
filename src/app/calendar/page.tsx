@@ -4,8 +4,8 @@ import Link from "next/link";
 
 export default function Page() {
     return (
-        <div className="flex flex-col  h-screen">
-            <div className="info mx-auto my-10">
+        <div className="h-screen">
+            <div className="info mx-8 md:mx-40 my-10">
                 <h1 className="text-5xl font-bold">Calendar App</h1>
                 <p className="text-lg text-gray-600">Developed by Jeraidi Yassir
 
