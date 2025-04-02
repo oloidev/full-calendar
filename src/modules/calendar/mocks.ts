@@ -1,4 +1,3 @@
-import type { TEventColor } from "@/modules/calendar/types";
 import type { IEvent, IUser } from "@/modules/calendar/interfaces";
 import {COLORS} from "@/modules/calendar/constants";
 

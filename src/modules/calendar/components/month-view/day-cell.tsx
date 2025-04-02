@@ -1,15 +1,8 @@
 "use client";
 
 import {useMemo} from "react";
-import {isToday, startOfDay, format} from "date-fns";
+import {isToday, startOfDay} from "date-fns";
 import {motion} from "framer-motion";
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog";
 
 import {EventBullet} from "@/modules/calendar/components/month-view/event-bullet";
 import {MonthEventBadge} from "@/modules/calendar/components/month-view/month-event-badge";
@@ -20,7 +13,6 @@ import {staggerContainer, transition} from "@/modules/calendar/animations";
 import type {ICalendarCell, IEvent} from "@/modules/calendar/interfaces";
 import {cn} from "@/lib/utils";
 import {cva} from "class-variance-authority";
-import {useCalendar} from "@/modules/calendar/contexts/calendar-context";
 import {DroppableArea} from "@/modules/calendar/components/dnd/droppable-area";
 import {EventListDialog} from "@/modules/calendar/components/dialogs/events-list-dialog";
 
@@ -54,9 +46,6 @@ export const dayCellVariants = cva(
 
 export function DayCell({cell, events, eventPositions}: IProps) {
     const {day, currentMonth, date} = cell;
-
-    const {badgeVariant} = useCalendar()
-
 
     const cellEvents = useMemo(
         () => getMonthCellEvents(date, events, eventPositions),

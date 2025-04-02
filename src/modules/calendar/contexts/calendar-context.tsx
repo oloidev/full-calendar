@@ -1,6 +1,6 @@
 "use client";
 
-import {createContext, useContext, useState, useCallback} from "react";
+import {createContext, useContext, useState} from "react";
 
 import type {IEvent, IUser} from "@/modules/calendar/interfaces";
 import {TCalendarView, TEventColor} from "@/modules/calendar/types";
@@ -39,7 +39,7 @@ export function CalendarProvider({
     children: React.ReactNode;
     users: IUser[];
     events: IEvent[];
-    view?: "day" | "week" | "month";
+    view?: TCalendarView;
     badge?: "dot" | "colored";
 }) {
     const [badgeVariant, setBadgeVariant] = useState<"dot" | "colored">(badge);
@@ -85,7 +85,7 @@ export function CalendarProvider({
         setSelectedDate(date);
     };
 
-    const setView = (view: "day" | "week" | "month") => {
+    const setView = (view: TCalendarView) => {
         setCurrentView(view);
     };
 

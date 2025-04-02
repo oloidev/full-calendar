@@ -1,5 +1,5 @@
 import { cva } from "class-variance-authority";
-import { format, differenceInMinutes, parseISO } from "date-fns";
+import { differenceInMinutes, parseISO } from "date-fns";
 
 import { useCalendar } from "@/modules/calendar/contexts/calendar-context";
 

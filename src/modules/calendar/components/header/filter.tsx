@@ -8,8 +8,6 @@ import {
 import {useCalendar} from "@/modules/calendar/contexts/calendar-context";
 import type {TEventColor} from "@/modules/calendar/types";
 import {Toggle} from "@/components/ui/toggle";
-import {useDisclosure} from "@/modules/calendar/hooks";
-
 
 export default function FilterEvents() {
     const {selectedColors, filterEventsBySelectedColors} = useCalendar();

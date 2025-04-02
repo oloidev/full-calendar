@@ -1,4 +1,3 @@
-import {ClientContainer} from "@/modules/calendar/components/client-container";
 import Calendar from "@/modules/calendar/calendar";
 import { GithubIcon, LinkIcon} from "lucide-react";
 import Link from "next/link";

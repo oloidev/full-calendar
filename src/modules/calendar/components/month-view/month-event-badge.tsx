@@ -1,5 +1,5 @@
 import {cva} from "class-variance-authority";
-import {endOfDay, format, isSameDay, parseISO, startOfDay} from "date-fns";
+import {endOfDay, isSameDay, parseISO, startOfDay} from "date-fns";
 
 import type {VariantProps} from "class-variance-authority";
 import {useCalendar} from "@/modules/calendar/contexts/calendar-context";
@@ -7,7 +7,7 @@ import {IEvent} from "@/modules/calendar/interfaces";
 import {cn} from "@/lib/utils";
 import {EventDetailsDialog} from "@/modules/calendar/components/dialogs/event-details-dialog";
 import {DraggableEvent} from "@/modules/calendar/components/dnd/draggable-event";
-import { formatTime } from "../../helpers";
+import { formatTime } from "@/modules/calendar/helpers";
 
 const eventBadgeVariants = cva(
     "mx-1 flex size-auto h-6.5 select-none items-center justify-between gap-1.5 truncate whitespace-nowrap rounded-md border px-2 text-xs",

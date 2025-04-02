@@ -6,8 +6,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useCalendar } from "@/modules/calendar/contexts/calendar-context";
 import {
   buttonHover,
-  slideFromLeft,
-  slideFromRight,
   transition,
 } from "@/modules/calendar/animations";
 

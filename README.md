@@ -94,6 +94,23 @@ customizable and interactive calendar experience with multiple views, event mana
     - Form validation with `zod` via `eventSchema.ts`.
     - Integrated in week/day views via `DroppableArea` and in header via "Add Event" button.
 
+### 10. Responsive Design
+
+- **Description**: Fully responsive layout for all views.
+- **Implementation**:
+    - Uses Tailwind CSS for responsive design.
+    - Media queries and utility classes ensure proper display on various screen sizes.
+    - Components adapt to different viewports (e.g., `CalendarYearView` stacks months on smaller screens).
+
+### 11. Animations
+
+- **Description**: Smooth transitions and animations for UI interactions.
+- **Implementation**:
+    - Uses `framer-motion` for animations.
+    - Components like `CalendarYearView`, `CalendarWeekView`, and `AddEditEventDialog` utilize motion variants for
+      entrance/exit animations.
+    - Animations enhance user experience without overwhelming the interface.
+
 ## Installation
 
 1. **Clone the repository**:

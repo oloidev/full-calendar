@@ -35,7 +35,7 @@ export function EventDetailsDialog({event, children}: IProps) {
         try {
             removeEvent(eventId);
             toast.success("Event deleted successfully.");
-        }catch(err) {
+        }catch {
             toast.error("Error deleting event.");
         }
     }

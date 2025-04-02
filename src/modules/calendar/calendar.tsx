@@ -1,10 +1,6 @@
-
-
 import {getEvents, getUsers} from "@/modules/calendar/requests";
-import {IEvent} from "@/modules/calendar/interfaces";
 import {DragDropProvider} from "@/modules/calendar/contexts/drag-drop-context";
 import {CalendarProvider} from "@/modules/calendar/contexts/calendar-context";
-import {EventUpdateHandler} from "@/modules/calendar/components/event-update-handler";
 import {ChangeBadgeVariantInput} from "@/modules/calendar/components/change-badge-variant-input";
 import {ClientContainer} from "@/modules/calendar/components/client-container";
 
