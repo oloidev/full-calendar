@@ -47,6 +47,10 @@ export function rangeText(view: TCalendarView, date: Date) {
       break;
     case "day":
       return format(date, formatString);
+    case "year":
+        start = startOfYear(date);
+        end = endOfYear(date);
+        break;
     default:
       return "Error while formatting ";
   }
