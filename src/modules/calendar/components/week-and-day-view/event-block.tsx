@@ -10,7 +10,7 @@ import type { HTMLAttributes } from "react";
 import type { IEvent } from "@/modules/calendar/interfaces";
 import type { VariantProps } from "class-variance-authority";
 import { DraggableEvent } from "@/modules/calendar/components/dnd/draggable-event";
-import { formatTime } from "../../helpers";
+import { formatTime } from "@/modules/calendar/helpers";
 
 const calendarWeekEventCardVariants = cva(
   "flex select-none flex-col gap-0.5 truncate whitespace-nowrap rounded-md border px-2 py-1.5 text-xs focus-visible:outline-offset-2",
