@@ -4,16 +4,16 @@ import {CalendarProvider} from "@/modules/calendar/contexts/calendar-context";
 import {ChangeBadgeVariantInput} from "@/modules/calendar/components/change-badge-variant-input";
 import {ClientContainer} from "@/modules/calendar/components/client-container";
 
-export default async function Calendar(){
+export default async function Calendar() {
     const [events, users] = await Promise.all([getEvents(), getUsers()]);
 
 
     return (
         <DragDropProvider>
-            <CalendarProvider users={users} events={events} view="month" >
+            <CalendarProvider users={users} events={events} view="month">
                 <div className="mx-auto flex max-w-screen-2xl flex-col gap-4 px-8 py-4">
-                <ClientContainer />
-                    <ChangeBadgeVariantInput />
+                    <ClientContainer/>
+                    <ChangeBadgeVariantInput/>
                 </div>
             </CalendarProvider>
         </DragDropProvider>
