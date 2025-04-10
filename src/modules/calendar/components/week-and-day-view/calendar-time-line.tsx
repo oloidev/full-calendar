@@ -1,7 +1,10 @@
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
+import {formatTime} from "@/modules/calendar/helpers";
+import {useCalendar} from "@/modules/calendar/contexts/calendar-context";
 
 export function CalendarTimeline() {
+  const {use24HourFormat} = useCalendar()
   const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
@@ -15,7 +18,7 @@ export function CalendarTimeline() {
   };
 
   const formatCurrentTime = () => {
-    return format(currentTime, "hh:mm a");
+    return formatTime(currentTime, use24HourFormat);
   };
 
   return (
