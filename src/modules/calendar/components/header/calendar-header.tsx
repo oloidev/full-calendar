@@ -32,7 +32,7 @@ interface IProps {
     events: IEvent[];
 }
 
-const MotionButton = motion(Button);
+const MotionButton = motion.create(Button);
 
 export function CalendarHeader({events}: IProps) {
     const {view, setView, isAgendaMode, toggleAgendaMode, use24HourFormat, toggleTimeFormat} = useCalendar();
