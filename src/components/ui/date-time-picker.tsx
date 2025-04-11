@@ -49,7 +49,13 @@ export function DateTimePicker({form, field}: DatePickerProps) {
     }
     return (
         <FormItem className="flex flex-col">
-            <FormLabel>Enter your date & time (12h)</FormLabel>
+            <FormLabel>
+                {
+                    field.name === "startDate"
+                        ? "Start Date"
+                            : "End Date"
+                }
+            </FormLabel>
             <Popover>
                 <PopoverTrigger asChild>
                     <FormControl>
