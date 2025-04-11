@@ -1,8 +1,7 @@
 "use client";
 
 import {useForm} from "react-hook-form";
-import {zodResolver} from "@hookform/resolvers/zod";
-import {format, set} from "date-fns";
+import {format, getHours, getMinutes, set} from "date-fns";
 
 import {useDisclosure} from "@/modules/calendar/hooks";
 import {
@@ -29,21 +28,18 @@ import {
     DialogDescription,
     DialogHeader,
     DialogTitle,
-    DialogFooter,
+    DialogFooter
 } from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import {Textarea} from "@/components/ui/textarea";
-import {TimeInput} from "@/components/ui/time-input";
-import {cn} from "@/lib/utils";
-import {Calendar} from "@/components/ui/calendar";
-import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
-import {CalendarIcon} from "lucide-react";
 import {eventSchema, TEventFormData} from "@/modules/calendar/schemas";
 import {useCalendar} from "@/modules/calendar/contexts/calendar-context";
 import {ReactNode} from "react";
 import {IEvent} from "@/modules/calendar/interfaces";
 import {COLORS} from "@/modules/calendar/constants";
 import {toast} from "sonner";
+import {zodResolver} from "@hookform/resolvers/zod";
+import {DateTimePicker} from "@/components/ui/date-time-picker";
 
 
 interface IProps {
@@ -58,57 +54,57 @@ export function AddEditEventDialog({children, startDate, startTime, event}: IPro
     const {addEvent, updateEvent} = useCalendar();
     const isEditing = !!event;
 
+
     const form = useForm<TEventFormData>({
         resolver: zodResolver(eventSchema),
-        defaultValues: event ? {
-            title: event.title,
-            description: event.description,
-            startDate: new Date(event.startDate),
-            startTime: {
-                hour: new Date(event.startDate).getHours(),
-                minute: new Date(event.startDate).getMinutes(),
+        defaultValues: event
+            ? {
+                title: event.title,
+                description: event.description,
+                startDate: set(new Date(event.startDate), {
+                    hours: getHours(event.startDate),
+                    minutes: getMinutes(event.endDate),
+                }),
+                endDate: set(new Date(event.endDate), {
+                    hours: getHours(event.endDate),
+                    minutes: getMinutes(event.endDate),
+                }),
+                color: event.color,
+            }
+            : {
+                title: "",
+                description: "",
+                startDate: startDate
+                    ? set(new Date(startDate), {
+                        hours: startTime?.hour || new Date().getHours(),
+                        minutes: startTime?.minute || 0
+                    })
+                    : new Date(),
+
+                endDate: startDate
+                    ? set(new Date(startDate), {
+                        hours: (startTime?.hour || new Date().getHours()) + 1,
+                        minutes: startTime?.minute || 0
+                    })
+                    : set(new Date(), {hours: new Date().getHours() + 1}),
+                color: "blue" as const,
             },
-            endDate: new Date(event.endDate),
-            endTime: {
-                hour: new Date(event.endDate).getHours(),
-                minute: new Date(event.endDate).getMinutes(),
-            },
-            color: event.color,
-        } : {
-            title: "",
-            description: "",
-            startDate: startDate ?? new Date(), // Default to current date
-            startTime: startTime ?? { hour: 0, minute: 0 }, // Default to midnight
-            endDate: startDate ?? new Date(), // Default to current date
-            endTime: { hour: 1, minute: 0 }, // Default to 1 AM
-            color: "blue" as const, // Default color
-        },
     });
 
     const onSubmit = (values: TEventFormData) => {
         try {
-            // Combine startDate and startTime
-            const startDateTime = set(values.startDate, {
-                hours: values.startTime.hour,
-                minutes: values.startTime.minute,
-            });
-
-            // Combine endDate and endTime
-            const endDateTime = set(values.endDate, {
-                hours: values.endTime.hour,
-                minutes: values.endTime.minute,
-            });
-
             const formattedEvent: IEvent = {
                 ...values,
-                startDate: format(startDateTime, "yyyy-MM-dd'T'HH:mm:ss"),
-                endDate: format(endDateTime, "yyyy-MM-dd'T'HH:mm:ss"),
+                startDate: format(values.startDate, "yyyy-MM-dd'T'HH:mm:ss"),
+                endDate: format(values.endDate, "yyyy-MM-dd'T'HH:mm:ss"),
                 id: isEditing ? event.id : Math.floor(Math.random() * 1000000),
-                user: isEditing ? event.user : {
-                    id: Math.floor(Math.random() * 1000000).toString(),
-                    name: "John Doe",
-                    picturePath: null,
-                },
+                user: isEditing
+                    ? event.user
+                    : {
+                        id: Math.floor(Math.random() * 1000000).toString(),
+                        name: "John Doe",
+                        picturePath: null,
+                    },
                 color: values.color,
             };
 
@@ -123,17 +119,14 @@ export function AddEditEventDialog({children, startDate, startTime, event}: IPro
             onClose();
             form.reset();
         } catch (error) {
-            console.error(`Error ${isEditing ? 'editing' : 'adding'} event:`, error);
-            toast.error(`Failed to ${isEditing ? 'edit' : 'add'} event`);
+            console.error(`Error ${isEditing ? "editing" : "adding"} event:`, error);
+            toast.error(`Failed to ${isEditing ? "edit" : "add"} event`);
         }
     };
 
     return (
-        <Dialog open={isOpen} onOpenChange={onToggle}>
-            <DialogTrigger asChild>
-                {children}
-            </DialogTrigger>
-
+        <Dialog open={isOpen} onOpenChange={onToggle} modal={false}>
+            <DialogTrigger asChild>{children}</DialogTrigger>
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>{isEditing ? "Edit Event" : "Add New Event"}</DialogTitle>
@@ -143,11 +136,7 @@ export function AddEditEventDialog({children, startDate, startTime, event}: IPro
                 </DialogHeader>
 
                 <Form {...form}>
-                    <form
-                        id="event-form"
-                        onSubmit={form.handleSubmit(onSubmit)}
-                        className="grid gap-4 py-4"
-                    >
+                    <form id="event-form" onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 py-4">
                         <FormField
                             control={form.control}
                             name="title"
@@ -169,118 +158,21 @@ export function AddEditEventDialog({children, startDate, startTime, event}: IPro
                             )}
                         />
 
-                        <div className="flex items-start gap-2">
-                            <FormField
-                                control={form.control}
-                                name="startDate"
-                                render={({field}) => (
-                                    <FormItem className="flex-1">
-                                        <FormLabel className="required">Start Date</FormLabel>
-                                        <Popover>
-                                            <PopoverTrigger asChild>
-                                                <FormControl>
-                                                    <Button
-                                                        variant="outline"
-                                                        className={cn(
-                                                            "w-[240px] pl-3 text-left font-normal",
-                                                            !field.value && "text-muted-foreground"
-                                                        )}
-                                                    >
-                                                        {field.value ? format(field.value, "PPP") :
-                                                            <span>Pick a date</span>}
-                                                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50"/>
-                                                    </Button>
-                                                </FormControl>
-                                            </PopoverTrigger>
-                                            <PopoverContent className="w-auto p-0" align="start">
-                                                <Calendar
-                                                    mode="single"
-                                                    selected={field.value}
-                                                    onSelect={field.onChange}
-                                                    disabled={(date) => date < new Date("1900-01-01")}
-                                                    initialFocus
-                                                />
-                                            </PopoverContent>
-                                        </Popover>
-                                        <FormMessage/>
-                                    </FormItem>
-                                )}
-                            />
+                        <FormField
+                            control={form.control}
+                            name="startDate"
+                            render={({field}) => (
+                                <DateTimePicker form={form} field={field} />
+                            )}
+                        />
 
-                            <FormField
-                                control={form.control}
-                                name="startTime"
-                                render={({field, fieldState}) => (
-                                    <FormItem className="flex-1">
-                                        <FormLabel className="required">Start Time</FormLabel>
-                                        <FormControl>
-                                            <TimeInput
-                                                value={field.value}
-                                                onChange={field.onChange}
-                                                className={fieldState.invalid ? "border-red-500" : ""}
-                                            />
-                                        </FormControl>
-                                        <FormMessage/>
-                                    </FormItem>
-                                )}
-                            />
-                        </div>
-
-                        <div className="flex items-start gap-2">
-                            <FormField
-                                control={form.control}
-                                name="endDate"
-                                render={({field}) => (
-                                    <FormItem className="flex-1">
-                                        <FormLabel className="required">End Date</FormLabel>
-                                        <Popover>
-                                            <PopoverTrigger asChild>
-                                                <FormControl>
-                                                    <Button
-                                                        variant="outline"
-                                                        className={cn(
-                                                            "w-[240px] pl-3 text-left font-normal",
-                                                            !field.value && "text-muted-foreground"
-                                                        )}
-                                                    >
-                                                        {field.value ? format(field.value, "PPP") :
-                                                            <span>Pick a date</span>}
-                                                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50"/>
-                                                    </Button>
-                                                </FormControl>
-                                            </PopoverTrigger>
-                                            <PopoverContent className="w-auto p-0" align="start">
-                                                <Calendar
-                                                    mode="single"
-                                                    selected={field.value}
-                                                    onSelect={field.onChange}
-                                                    disabled={(date) => date < (form.getValues("startDate") || new Date())}
-                                                />
-                                            </PopoverContent>
-                                        </Popover>
-                                        <FormMessage/>
-                                    </FormItem>
-                                )}
-                            />
-
-                            <FormField
-                                control={form.control}
-                                name="endTime"
-                                render={({field, fieldState}) => (
-                                    <FormItem className="flex-1">
-                                        <FormLabel className="required">End Time</FormLabel>
-                                        <FormControl>
-                                            <TimeInput
-                                                value={field.value}
-                                                onChange={field.onChange}
-                                                className={fieldState.invalid ? "border-red-500" : ""}
-                                            />
-                                        </FormControl>
-                                        <FormMessage/>
-                                    </FormItem>
-                                )}
-                            />
-                        </div>
+                        <FormField
+                            control={form.control}
+                            name="endDate"
+                            render={({field}) => (
+                                <DateTimePicker form={form} field={field}/>
+                            )}
+                        />
 
                         <FormField
                             control={form.control}
@@ -296,11 +188,12 @@ export function AddEditEventDialog({children, startDate, startTime, event}: IPro
                                                 <SelectValue placeholder="Select a variant"/>
                                             </SelectTrigger>
                                             <SelectContent>
-                                                {COLORS.map(color => (
+                                                {COLORS.map((color) => (
                                                     <SelectItem value={color} key={color}>
                                                         <div className="flex items-center gap-2">
                                                             <div
-                                                                className={`size-3.5 rounded-full bg-${color}-600 dark:bg-${color}-700`}/>
+                                                                className={`size-3.5 rounded-full bg-${color}-600 dark:bg-${color}-700`}
+                                                            />
                                                             {color}
                                                         </div>
                                                     </SelectItem>
@@ -347,3 +240,5 @@ export function AddEditEventDialog({children, startDate, startTime, event}: IPro
         </Dialog>
     );
 }
+
+
