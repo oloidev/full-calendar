@@ -25,6 +25,7 @@ interface ICalendarContext {
     addEvent: (event: IEvent) => void;
     updateEvent: (event: IEvent) => void;
     removeEvent: (eventId : number) => void;
+    clearFilter: () => void;
 }
 
 const CalendarContext = createContext({} as ICalendarContext);
@@ -112,6 +113,11 @@ export function CalendarProvider({
         setData((prevEvents) => prevEvents.filter((event) => event.id !== eventId));
     };
 
+    const clearFilter = () => {
+        setData(events);
+        setSelectedColors([]);
+    };
+
     const value = {
         selectedDate,
         setSelectedDate: handleSelectDate,
@@ -132,6 +138,7 @@ export function CalendarProvider({
         addEvent,
         updateEvent,
         removeEvent,
+        clearFilter
     };
 
     return (
