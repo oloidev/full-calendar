@@ -6,7 +6,7 @@ import { buttonHover, transition } from "@/modules/calendar/animations";
 
 import { Button } from "@/components/ui/button";
 
-const MotionButton = motion(Button);
+const MotionButton = motion.create(Button);
 
 export function TodayButton() {
   const { setSelectedDate } = useCalendar();

@@ -31,7 +31,7 @@ export function EventListDialog({
         +{hiddenEventsCount}
       </span>
       <span className="hidden sm:inline py-0.5 px-2 my-1 rounded-xl border">
-        {hiddenEventsCount}
+         {hiddenEventsCount}
           <span className="mx-1">more...</span>
       </span>
     </span>

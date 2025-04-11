@@ -26,8 +26,8 @@ interface IProps {
   events: IEvent[];
 }
 
-const MotionButton = motion(Button);
-const MotionBadge = motion(Badge);
+const MotionButton = motion.create(Button);
+const MotionBadge = motion.create(Badge);
 
 export function DateNavigator({ view, events }: IProps) {
   const { selectedDate, setSelectedDate } = useCalendar();
