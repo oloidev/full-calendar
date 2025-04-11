@@ -1,12 +1,12 @@
-import { motion } from "framer-motion";
-import { getYear, isSameDay, isSameMonth } from "date-fns";
-import { useCalendar } from "@/modules/calendar/contexts/calendar-context";
-import { staggerContainer, transition } from "@/modules/calendar/animations";
-import { getCalendarCells } from "@/modules/calendar/helpers";
-import { cn } from "@/lib/utils";
-import { IEvent } from "@/modules/calendar/interfaces";
-import { EventBullet } from "@/modules/calendar/components/month-view/event-bullet";
-import { EventListDialog } from "@/modules/calendar/components/dialogs/events-list-dialog";
+import {motion} from "framer-motion";
+import {getYear, isSameDay, isSameMonth} from "date-fns";
+import {useCalendar} from "@/modules/calendar/contexts/calendar-context";
+import {staggerContainer, transition} from "@/modules/calendar/animations";
+import {getCalendarCells} from "@/modules/calendar/helpers";
+import {cn} from "@/lib/utils";
+import {IEvent} from "@/modules/calendar/interfaces";
+import {EventBullet} from "@/modules/calendar/components/month-view/event-bullet";
+import {EventListDialog} from "@/modules/calendar/components/dialogs/events-list-dialog";
 
 interface IProps {
     singleDayEvents: IEvent[];
@@ -21,8 +21,8 @@ const MONTHS = [
 
 const WEEKDAYS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 
-export function CalendarYearView({ singleDayEvents, multiDayEvents }: IProps) {
-    const { selectedDate, setSelectedDate } = useCalendar();
+export function CalendarYearView({singleDayEvents, multiDayEvents}: IProps) {
+    const {selectedDate, setSelectedDate} = useCalendar();
     const currentYear = getYear(selectedDate);
     const allEvents = [...multiDayEvents, ...singleDayEvents];
 
@@ -41,9 +41,9 @@ export function CalendarYearView({ singleDayEvents, multiDayEvents }: IProps) {
                     <motion.div
                         key={month}
                         className="flex flex-col border rounded-md overflow-hidden"
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: monthIndex * 0.05, ...transition }}
+                        initial={{opacity: 0, scale: 0.9}}
+                        animate={{opacity: 1, scale: 1}}
+                        transition={{delay: monthIndex * 0.05, ...transition}}
                     >
                         <div
                             className="bg-primary/5 p-2 text-center font-medium cursor-pointer hover:bg-primary/10 transition-colors"
@@ -78,7 +78,7 @@ export function CalendarYearView({ singleDayEvents, multiDayEvents }: IProps) {
                                             isToday && "font-bold",
                                             !hasEvents && "cursor-default" // Remove cursor-pointer when no events
                                         )}
-                                        whileHover={hasEvents ? { scale: 1.1 } : undefined} // Only animate hover if there are events
+                                        whileHover={hasEvents ? {scale: 1.1} : undefined} // Only animate hover if there are events
                                         transition={transition}
                                     >
                                         {hasEvents ? (
@@ -90,7 +90,7 @@ export function CalendarYearView({ singleDayEvents, multiDayEvents }: IProps) {
                           )}>
                             {cell.day}
                           </span>
-                                                    <div className="flex gap-0.5 mt-0.5">
+                                                    <div className="flex  justify-center items-center gap-0.5 mt-0.5">
                                                         {dayEvents.length <= 3 ? (
                                                             dayEvents.slice(0, 3).map(event => (
                                                                 <EventBullet
