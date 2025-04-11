@@ -64,10 +64,9 @@ export function DayCell({cell, events, eventPositions}: IProps) {
             transition={transition}
         >
             <DroppableArea date={date}>
-
                 <motion.span
                     className={cn(
-                        "h-6 px-1 text-xs font-semibold lg:px-2",
+                        "h-6 my-2 px-1 text-xs font-semibold lg:px-2",
                         !currentMonth && "text-muted-foreground",
                         isToday(date) &&
                         "flex w-6 translate-x-1 items-center justify-center rounded-full bg-primary text-primary-foreground"
@@ -80,7 +79,7 @@ export function DayCell({cell, events, eventPositions}: IProps) {
 
                 <motion.div
                     className={cn(
-                        "flex h-6 gap-1 px-2 lg:h-[94px] lg:flex-col lg:gap-2 lg:px-0",
+                        "flex h-6 gap-1 px-2 lg:min-h-[94px] lg:flex-col lg:gap-2 lg:px-0",
                         !currentMonth && "opacity-50"
                     )}
                     variants={staggerContainer}
@@ -117,7 +116,7 @@ export function DayCell({cell, events, eventPositions}: IProps) {
                 {cellEvents.length > MAX_VISIBLE_EVENTS && (
                     <motion.div
                         className={cn(
-                            "h-4.5 px-1.5 text-xs font-semibold text-muted-foreground",
+                            "h-4.5 px-1.5 my-2 text-end text-xs font-semibold text-muted-foreground",
                             !currentMonth && "opacity-50"
                         )}
                         initial={{opacity: 0, y: 5}}
@@ -132,50 +131,3 @@ export function DayCell({cell, events, eventPositions}: IProps) {
         </motion.div>
     );
 }
-
-
-/*
- <Dialog>
-                            <DialogTrigger asChild>
-              <span className="cursor-pointer">
-                <span className="sm:hidden">
-                  +{cellEvents.length - MAX_VISIBLE_EVENTS}
-                </span>
-                <span className="hidden sm:inline py-0.5 px-2 my-1 rounded-xl border">
-                  {cellEvents.length - MAX_VISIBLE_EVENTS}
-                    <span className="mx-1">more...</span>
-                </span>
-              </span>
-                            </DialogTrigger>
-                            <DialogContent className="sm:max-w-[425px]">
-                                <DialogHeader>
-                                    <DialogTitle>
-                                        Events for {format(date, "MMMM d, yyyy")}
-                                    </DialogTitle>
-                                </DialogHeader>
-                                <div className="max-h-[60vh] overflow-y-auto space-y-2">
-                                    {cellEvents.map((event) => (
-                                        <div
-                                            key={event.id}
-                                            className={
-                                                cn("flex items-center gap-2 p-2 border rounded-md hover:bg-muted", {
-                                                    [dayCellVariants({color: event.color})]: badgeVariant === "colored",
-                                                })
-                                            }
-                                        >
-                                            <EventBullet color={event.color} className={""}/>
-                                            <div className="flex-1">
-                                                <p className="text-sm font-medium">{event.title}</p>
-                                                <p className={cn("text-xs", {
-                                                    "text-muted": badgeVariant === "colored",
-                                                    "text-muted-foreground": badgeVariant === "dot",
-                                                })}>
-                                                    {format(event.startDate, "h:mm a")}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </DialogContent>
-                        </Dialog>
-* */
