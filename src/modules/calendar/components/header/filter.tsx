@@ -1,4 +1,4 @@
-import {CheckIcon, Filter} from "lucide-react";
+import {CheckIcon, Filter, RefreshCcw} from "lucide-react";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -10,7 +10,7 @@ import type {TEventColor} from "@/modules/calendar/types";
 import {Toggle} from "@/components/ui/toggle";
 
 export default function FilterEvents() {
-    const {selectedColors, filterEventsBySelectedColors} = useCalendar();
+    const {selectedColors, filterEventsBySelectedColors , clearFilter } = useCalendar();
 
     const colors: TEventColor[] = [
         "blue",
@@ -57,6 +57,19 @@ export default function FilterEvents() {
                         </span>
                     </DropdownMenuItem>
                 ))}
+                <DropdownMenuItem
+                    disabled={selectedColors.length === 0}
+                    className="flex gap-2 cursor-pointer"
+                    onClick={(e) => {
+                        e.preventDefault()
+                        clearFilter();
+                    }}
+                    >
+                    <RefreshCcw
+                        className='size-3.5'
+                    />
+                    Clear Filter
+                </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
     );
