@@ -1,3 +1,5 @@
+"use client";
+
 import {
     CalendarRange, Clock,
     Columns, Grid2X2,
@@ -22,20 +24,20 @@ import {DateNavigator} from "@/modules/calendar/components/header/date-navigator
 import {AddEditEventDialog} from "@/modules/calendar/components/dialogs/add-edit-event-dialog";
 import FilterEvents from "@/modules/calendar/components/header/filter";
 
-import type {IEvent} from "@/modules/calendar/interfaces";
+
 import {ButtonGroup} from "@/components/ui/button-group";
 import {useCalendar} from "@/modules/calendar/contexts/calendar-context";
 import {Toggle} from "@/components/ui/toggle";
 import {ModeToggle} from "@/components/mode-toggle";
-
-interface IProps {
-    events: IEvent[];
-}
+import {filteredEvents} from "@/modules/calendar/helpers";
 
 const MotionButton = motion.create(Button);
 
-export function CalendarHeader({events}: IProps) {
+export function CalendarHeader() {
     const {view, setView, isAgendaMode, toggleAgendaMode, use24HourFormat, toggleTimeFormat} = useCalendar();
+
+    const events = filteredEvents()
+
     return (
         <div className="flex flex-col gap-4 border-b p-4 lg:flex-row lg:items-center lg:justify-between">
             <motion.div
