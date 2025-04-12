@@ -8,7 +8,7 @@ import {DragDropProvider} from "@/modules/calendar/contexts/drag-drop-context";
 import {getEvents, getUsers} from "@/modules/calendar/requests";
 
 async function getCalendarData() {
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    await new Promise(resolve => setTimeout(resolve, 5000));
 
     return {
         events: await getEvents(),
