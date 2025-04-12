@@ -10,18 +10,18 @@ import {CalendarWeekView} from "@/modules/calendar/components/week-and-day-view/
 import {CalendarDayView} from "@/modules/calendar/components/week-and-day-view/calendar-day-view";
 import {CalendarYearView} from "@/modules/calendar/components/year-view/calendar-year-view";
 import {isSameDay, parseISO} from "date-fns";
-import {filteredEvents} from "@/modules/calendar/helpers";
+import {useFilteredEvents} from "@/modules/calendar/helpers";
 
 export function CalendarBody() {
     const {view, isAgendaMode} = useCalendar();
 
-    const singleDayEvents = filteredEvents().filter((event) => {
+    const singleDayEvents = useFilteredEvents().filter((event) => {
         const startDate = parseISO(event.startDate);
         const endDate = parseISO(event.endDate);
         return isSameDay(startDate, endDate);
     });
 
-    const multiDayEvents = filteredEvents().filter((event) => {
+    const multiDayEvents = useFilteredEvents().filter((event) => {
         const startDate = parseISO(event.startDate);
         const endDate = parseISO(event.endDate);
         return !isSameDay(startDate, endDate);

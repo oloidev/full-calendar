@@ -29,14 +29,14 @@ import {ButtonGroup} from "@/components/ui/button-group";
 import {useCalendar} from "@/modules/calendar/contexts/calendar-context";
 import {Toggle} from "@/components/ui/toggle";
 import {ModeToggle} from "@/components/mode-toggle";
-import {filteredEvents} from "@/modules/calendar/helpers";
+import {useFilteredEvents} from "@/modules/calendar/helpers";
 
 const MotionButton = motion.create(Button);
 
 export function CalendarHeader() {
     const {view, setView, isAgendaMode, toggleAgendaMode, use24HourFormat, toggleTimeFormat} = useCalendar();
 
-    const events = filteredEvents()
+    const events = useFilteredEvents()
 
     return (
         <div className="flex flex-col gap-4 border-b p-4 lg:flex-row lg:items-center lg:justify-between">

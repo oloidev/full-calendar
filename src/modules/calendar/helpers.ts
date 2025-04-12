@@ -68,7 +68,7 @@ export function navigateDate(date: Date, view: TCalendarView, direction: "previo
   return operations[view](date, 1);
 }
 
-export const filteredEvents = () => {
+export const useFilteredEvents = () => {
   const {  events , selectedDate , selectedUserId} = useCalendar();
 
   return events.filter((event) => {

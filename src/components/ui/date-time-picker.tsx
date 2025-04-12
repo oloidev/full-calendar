@@ -1,5 +1,3 @@
-"use client"
-
 import {format} from "date-fns"
 import type {ControllerRenderProps, UseFormReturn} from "react-hook-form"
 import {cn} from "@/lib/utils"
@@ -10,7 +8,6 @@ import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover"
 import {ScrollArea, ScrollBar} from "@/components/ui/scroll-area"
 import {CalendarIcon} from "lucide-react"
 import type {TEventFormData} from "@/modules/calendar/schemas"
-import {formatTime} from "@/modules/calendar/helpers";
 import {useCalendar} from "@/modules/calendar/contexts/calendar-context";
 
 interface DatePickerProps {
@@ -29,7 +26,7 @@ export function DateTimePicker({form, field}: DatePickerProps) {
 
     function handleTimeChange(type: "hour" | "minute" | "ampm", value: string) {
         const currentDate = form.getValues(field.name) || new Date();
-        let newDate = new Date(currentDate);
+        const newDate = new Date(currentDate);
 
         if (type === "hour") {
             const hour = parseInt(value, 10);

@@ -5,7 +5,6 @@ import {CalendarBody} from "@/modules/calendar/components/calendar-body";
 
 import {EventUpdateHandler} from "@/modules/calendar/components/event-update-handler";
 import {DragDropProvider} from "@/modules/calendar/contexts/drag-drop-context";
-import {ChangeBadgeVariantInput} from "@/modules/calendar/components/change-badge-variant-input";
 import {getEvents, getUsers} from "@/modules/calendar/requests";
 
 async function getCalendarData() {
