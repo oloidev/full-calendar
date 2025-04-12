@@ -27,7 +27,7 @@ export function EventBullet({
   className,
 }: {
   color: TEventColor;
-  className: string;
+  className?: string;
 }) {
   return (
     <motion.div
