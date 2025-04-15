@@ -42,8 +42,6 @@ export function CalendarHeader() {
         toggleAgendaMode,
         use24HourFormat,
         toggleTimeFormat,
-        setBadgeVariant,
-        badgeVariant
     } = useCalendar();
 
     const events = useFilteredEvents()
