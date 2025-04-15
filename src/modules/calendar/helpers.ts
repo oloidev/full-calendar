@@ -68,32 +68,6 @@ export function navigateDate(date: Date, view: TCalendarView, direction: "previo
   return operations[view](date, 1);
 }
 
-export const useFilteredEvents = () => {
-  const {  events , selectedDate , selectedUserId} = useCalendar();
-
-  return events.filter((event) => {
-    const itemStartDate = new Date(event.startDate);
-    const itemEndDate = new Date(event.endDate);
-
-    const monthStart = new Date(
-        selectedDate.getFullYear(),
-        selectedDate.getMonth(),
-        1
-    );
-    const monthEnd = new Date(
-        selectedDate.getFullYear(),
-        selectedDate.getMonth() + 1,
-        0
-    );
-
-    const isInSelectedMonth =
-        itemStartDate <= monthEnd && itemEndDate >= monthStart;
-    const isUserMatch =
-        selectedUserId === "all" || event.user.id === selectedUserId;
-    return isInSelectedMonth && isUserMatch;
-  });
-}
-
 export function getEventsCount(events: IEvent[], date: Date, view: TCalendarView): number {
   const compareFns: Record<TCalendarView, (d1: Date, d2: Date) => boolean> = {
     day: isSameDay,
