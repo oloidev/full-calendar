@@ -17,7 +17,7 @@ export default function CalendarPage() {
                             </div>
                             <div className="space-y-1">
                                 <p className="text-lg font-medium leading-6">Full calendar</p>
-                                <p className="text-sm text-t-secondary">
+                                <div className="text-sm text-t-secondary">
                                     Built with Next.js and Tailwind by{" "}
                                     <Link href="https://github.com/yassir-jeraidi" target="_blank" className="inline-flex items-center gap-0.5 text-sm underline">
                                         yassir-jeraidi
@@ -28,7 +28,7 @@ export default function CalendarPage() {
                                             Portfolio <LinkIcon size={12} className="mx-1 text-t-tertiary"/>
                                         </div>
                                     </Link>
-                                </p>
+                                </div>
                         </div>
                         </div>
                     </div>

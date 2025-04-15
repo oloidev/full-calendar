@@ -56,7 +56,7 @@ export function DayCell({cell, events, eventPositions}: IProps) {
     return (
         <motion.div
             className={cn(
-                "flex flex-col gap-1 border-l border-t py-1.5 lg:py-2",
+                "flex flex-col gap-1 border-l border-t py-1.5",
                 isSunday && "border-l-0"
             )}
             initial={{opacity: 0, y: 10}}
@@ -66,16 +66,16 @@ export function DayCell({cell, events, eventPositions}: IProps) {
             <DroppableArea date={date}>
                 <motion.span
                     className={cn(
-                        "h-6 px-1 text-xs font-semibold lg:px-2",
+                        "h-6 w-6 px-1 flex translate-x-1 items-center justify-center rounded-full text-xs font-semibold lg:px-2 mb-1", // mb-0.5 here, always applied
                         !currentMonth && "text-muted-foreground",
-                        isToday(date) &&
-                        "flex w-6 translate-x-1 items-center justify-center rounded-full bg-primary text-primary-foreground"
+                        isToday(date) && " bg-primary text-primary-foreground"
                     )}
-                    whileHover={{scale: 1.1}}
+                    whileHover={{ scale: 1.1 }}
                     transition={transition}
                 >
                     {day}
                 </motion.span>
+
 
                 <motion.div
                     className={cn(

@@ -7,6 +7,7 @@ import { IEvent } from "@/modules/calendar/interfaces";
 import { dayCellVariants } from "@/modules/calendar/components/month-view/day-cell";
 import { EventBullet } from "@/modules/calendar/components/month-view/event-bullet";
 import { useCalendar } from "@/modules/calendar/contexts/calendar-context";
+import {format} from "date-fns";
 
 interface EventListDialogProps {
     date: Date;
@@ -45,7 +46,14 @@ export function EventListDialog({
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
                     <DialogTitle>
-                        Events for {formatTime(date, use24HourFormat)}
+                        <div className="flex items-center gap-2">
+                            <EventBullet color={cellEvents[0]?.color} className="" />
+                            <p className="text-sm font-medium">
+                                Events on {
+                                format(date , "EEEE, MMMM d, yyyy")
+                            }
+                            </p>
+                        </div>
                     </DialogTitle>
                 </DialogHeader>
                 <div className="max-h-[60vh] overflow-y-auto space-y-2">
