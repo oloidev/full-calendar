@@ -29,12 +29,22 @@ import {ButtonGroup} from "@/components/ui/button-group";
 import {useCalendar} from "@/modules/calendar/contexts/calendar-context";
 import {Toggle} from "@/components/ui/toggle";
 import {ModeToggle} from "@/components/mode-toggle";
-import {useFilteredEvents} from "@/modules/calendar/helpers";
+import {useFilteredEvents} from "@/modules/calendar/hooks";
+import {ChangeBadgeVariantInput} from "@/modules/calendar/components/change-badge-variant-input";
 
-const MotionButton = motion.create(Button);
+export const MotionButton = motion.create(Button);
 
 export function CalendarHeader() {
-    const {view, setView, isAgendaMode, toggleAgendaMode, use24HourFormat, toggleTimeFormat} = useCalendar();
+    const {
+        view,
+        setView,
+        isAgendaMode,
+        toggleAgendaMode,
+        use24HourFormat,
+        toggleTimeFormat,
+        setBadgeVariant,
+        badgeVariant
+    } = useCalendar();
 
     const events = useFilteredEvents()
 
@@ -78,7 +88,13 @@ export function CalendarHeader() {
                         whileHover="hover"
                         whileTap="tap"
                     >
-                        <Toggle>{isAgendaMode ? <CalendarRange/> : <LayoutList/>}</Toggle>
+                        <Toggle className='relative'>
+                            {isAgendaMode ? (
+                                <>
+                                    <CalendarRange/>
+                                    <span className="absolute -top-1 -right-1 size-3 rounded-full bg-green-400"></span>
+                                </>
+                            ) : <LayoutList/>}</Toggle>
                     </MotionButton>
                     <ButtonGroup className="flex">
                         <MotionButton
@@ -126,6 +142,8 @@ export function CalendarHeader() {
                             <Grid2X2 className="h-4 w-4"/>
                         </MotionButton>
                     </ButtonGroup>
+
+                    <ChangeBadgeVariantInput/>
                     <ModeToggle/>
                 </div>
 
