@@ -23,7 +23,7 @@ export async function Calendar() {
     return (
         <DragDropProvider>
             <CalendarProvider events={events} users={users} view="month">
-                <div className=" w-full border rounded-xl ">
+                <div className="w-full border rounded-xl">
                     <EventUpdateHandler />
                     <CalendarHeader/>
                     <CalendarBody/>
