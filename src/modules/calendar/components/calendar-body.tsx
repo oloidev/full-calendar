@@ -10,7 +10,7 @@ import {CalendarWeekView} from "@/modules/calendar/components/week-and-day-view/
 import {CalendarDayView} from "@/modules/calendar/components/week-and-day-view/calendar-day-view";
 import {CalendarYearView} from "@/modules/calendar/components/year-view/calendar-year-view";
 import {isSameDay, parseISO} from "date-fns";
-import {useFilteredEvents} from "@/modules/calendar/helpers";
+import {useFilteredEvents} from "@/modules/calendar/hooks";
 
 export function CalendarBody() {
     const {view, isAgendaMode} = useCalendar();
