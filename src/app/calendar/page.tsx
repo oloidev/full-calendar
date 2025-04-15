@@ -16,7 +16,7 @@ export default function CalendarPage() {
                                 <CalendarIcon className="size-6 text-t-secondary" />
                             </div>
                             <div className="space-y-1">
-                                <p className="text-lg font-medium leading-6">Big calendar</p>
+                                <p className="text-lg font-medium leading-6">Full calendar</p>
                                 <p className="text-sm text-t-secondary">
                                     Built with Next.js and Tailwind by{" "}
                                     <Link href="https://github.com/yassir-jeraidi" target="_blank" className="inline-flex items-center gap-0.5 text-sm underline">
