@@ -3,7 +3,7 @@
 import {
     CalendarRange, Clock,
     Columns, Grid2X2,
-    Grid3X3,
+    Grid3X3, GroupIcon,
     LayoutList,
     List,
     Plus,
@@ -31,6 +31,14 @@ import {Toggle} from "@/components/ui/toggle";
 import {ModeToggle} from "@/components/mode-toggle";
 import {useFilteredEvents} from "@/modules/calendar/hooks";
 import {ChangeBadgeVariantInput} from "@/modules/calendar/components/change-badge-variant-input";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuLabel,
+    DropdownMenuRadioGroup, DropdownMenuRadioItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export const MotionButton = motion.create(Button);
 
@@ -40,6 +48,8 @@ export function CalendarHeader() {
         setView,
         isAgendaMode,
         toggleAgendaMode,
+        agendaModeGroupBy,
+        setAgendaModeGroupBy,
         use24HourFormat,
         toggleTimeFormat,
     } = useCalendar();
@@ -94,6 +104,29 @@ export function CalendarHeader() {
                                 </>
                             ) : <LayoutList/>}</Toggle>
                     </MotionButton>
+                    {
+                        isAgendaMode && (
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="outline">
+                                        <GroupIcon/>
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent className="w-56">
+                                    <DropdownMenuLabel>
+                                        Group by
+                                    </DropdownMenuLabel>
+                                    <DropdownMenuSeparator/>
+                                    <DropdownMenuRadioGroup value={agendaModeGroupBy} onValueChange={
+                                        (value) => setAgendaModeGroupBy(value as "date" | "color")
+                                    }>
+                                        <DropdownMenuRadioItem value="date">Date</DropdownMenuRadioItem>
+                                        <DropdownMenuRadioItem value="color">Color</DropdownMenuRadioItem>
+                                    </DropdownMenuRadioGroup>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        )
+                    }
                     <ButtonGroup className="flex">
                         <MotionButton
                             variant={view === "day" ? "default" : "outline"}
