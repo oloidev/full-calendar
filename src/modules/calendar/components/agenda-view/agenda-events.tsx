@@ -10,16 +10,23 @@ import {
 } from "@/components/ui/command";
 import {format, parseISO} from "date-fns";
 import {cn} from "@/lib/utils";
-import {formatTime, getBgColor, getColorClass, getFirstLetters, useGetEventsByMode} from "@/modules/calendar/helpers";
+import {
+    formatTime,
+    getBgColor,
+    getColorClass,
+    getFirstLetters,
+    toCapitalize,
+    useGetEventsByMode
+} from "@/modules/calendar/helpers";
 import {EventDetailsDialog} from "@/modules/calendar/components/dialogs/event-details-dialog";
 import {useCalendar} from "@/modules/calendar/contexts/calendar-context";
 import {EventBullet} from "@/modules/calendar/components/month-view/event-bullet";
 
 export const AgendaEvents: FC = () => {
-    const {events, use24HourFormat, badgeVariant} = useCalendar();
+    const {events, use24HourFormat, badgeVariant, agendaModeGroupBy} = useCalendar();
 
     const eventsByMode = Object.groupBy(useGetEventsByMode(events), (event) => {
-        return format(parseISO(event.startDate), 'yyyy-MM-dd');
+        return agendaModeGroupBy === 'date' ? format(parseISO(event.startDate), 'yyyy-MM-dd') : event.color
     });
 
     const groupedAndSortedEvents = Object.entries(eventsByMode).sort((a, b) =>
@@ -31,23 +38,27 @@ export const AgendaEvents: FC = () => {
             <div className="mb-4 mx-4">
                 <CommandInput placeholder="Type a command or search..."/>
             </div>
-            <CommandList className="max-h-max px-3">
+            <CommandList className="max-h-max px-3 border-t">
                 {groupedAndSortedEvents.map(([date, groupedEvents]) => (
-                    <CommandGroup key={date} heading={format(new Date(date), "EEEE, dd MMMM yyyy")}>
+                    <CommandGroup key={date} heading={
+                        agendaModeGroupBy === "date" ? format(parseISO(date), "EEEE, MMMM d, yyyy") : toCapitalize(groupedEvents![0].color)
+                    }>
                         {groupedEvents!.map((event) => (
                             <CommandItem
                                 key={event.id}
                                 className={cn(
-                                    "mb-2 p-4 border rounded-md data-[selected=true]:bg-bg hover:bg-zinc-200 dark:hover:bg-gray-900 transition-all data-[selected=true]:text-none hover:cursor-pointer",
+                                    "mb-2 p-4 border rounded-md data-[selected=true]:bg-bg transition-all data-[selected=true]:text-none hover:cursor-pointer",
                                     {
                                         [getColorClass(event.color)]: badgeVariant === "colored",
+                                        "hover:bg-zinc-200 dark:hover:bg-gray-900": badgeVariant === "dot",
+                                        "hover:opacity-60": badgeVariant === "colored"
                                     }
                                 )}>
                                 <EventDetailsDialog event={event}>
                                     <div className="w-full flex items-center justify-between gap-4">
                                         <div className="flex items-center gap-2">
                                             {badgeVariant === "dot" ? (
-                                                <EventBullet color={event.color}  />
+                                                <EventBullet color={event.color}/>
                                             ) : (
                                                 <Avatar>
                                                     <AvatarImage src="" alt="@shadcn"/>
@@ -56,35 +67,25 @@ export const AgendaEvents: FC = () => {
                                                     </AvatarFallback>
                                                 </Avatar>
                                             )}
-                                            <p className={cn({
-                                                "font-medium": badgeVariant === "dot",
-                                                "text-foreground": badgeVariant === "dot"
-                                            })}>{event.title}</p>
+                                            <div className="flex flex-col">
+                                                <p className={cn({
+                                                    "font-medium": badgeVariant === "dot",
+                                                    "text-foreground": badgeVariant === "dot"
+                                                })}>{event.title}</p>
+                                                <p className="text-muted-foreground text-sm line-clamp-1 text-ellipsis md:text-clip w-1/3">
+                                                    {event.description}
+                                                </p>
+                                            </div>
                                         </div>
                                         <div className="w-40 sm:w-auto flex items-center gap-1">
-                                            <p className="flex flex-wrap">
-                                                <span className={cn("block", {
-                                                    "text-muted-foreground": badgeVariant === "dot",
-                                                    "text-muted": badgeVariant === "colored"
-                                                })}>
-                                                    {formatTime(event.startDate, use24HourFormat)}
-                                                </span>
+                                            <p className="flex flex-wrap text-muted-foreground">
+                                                {formatTime(event.startDate, use24HourFormat)}
                                             </p>
-                                            <span
-                                                className={cn({
-                                                    "text-muted-foreground": badgeVariant === "dot",
-                                                    "text-muted": badgeVariant === "colored"
-                                                })}
-                                            >
+                                            <span className='text-muted-foreground'>
                                              -
                                             </span>
-                                            <p className="flex flex-wrap">
-                                                <span className={cn("block", {
-                                                    "text-muted-foreground": badgeVariant === "dot",
-                                                    "text-muted": badgeVariant === "colored"
-                                                })}>
-                                                    {formatTime(event.endDate, use24HourFormat)}
-                                                </span>
+                                            <p className="flex flex-wrap text-muted-foreground">
+                                                {formatTime(event.endDate, use24HourFormat)}
                                             </p>
                                         </div>
                                     </div>

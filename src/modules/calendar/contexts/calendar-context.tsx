@@ -10,6 +10,8 @@ interface ICalendarContext {
     view: TCalendarView;
     setView: (view: TCalendarView) => void;
     isAgendaMode: boolean;
+    agendaModeGroupBy: "date" | "color" ;
+    setAgendaModeGroupBy: (groupBy: "date" | "color") => void;
     toggleAgendaMode: (isAgenda?: boolean) => void;
     use24HourFormat: boolean;
     toggleTimeFormat: () => void;
@@ -20,6 +22,7 @@ interface ICalendarContext {
     setBadgeVariant: (variant: "dot" | "colored") => void;
     selectedColors: TEventColor[];
     filterEventsBySelectedColors: (colors: TEventColor) => void;
+    filterEventsBySelectedUser: (userId: IUser["id"] | "all") => void;
     users: IUser[];
     events: IEvent[];
     addEvent: (event: IEvent) => void;
@@ -48,6 +51,7 @@ export function CalendarProvider({
     const [selectedUserId, setSelectedUserId] = useState<IUser["id"] | "all">("all");
     const [currentView, setCurrentView] = useState(view);
     const [isAgendaMode, setAgendaMode] = useState(false);
+    const [agendaModeGroupBy, setAgendaModeGroupBy] = useState<"date" | "color">("date");
     const [use24HourFormat, setUse24HourFormat] = useState(true);
     const [selectedColors, setSelectedColors] = useState<TEventColor[]>([]);
     const [data, setData] = useState(events || []);
@@ -68,6 +72,16 @@ export function CalendarProvider({
 
         setSelectedColors(newColors);
     }
+
+    const filterEventsBySelectedUser = (userId: IUser["id"] | "all") => {
+        setSelectedUserId(userId);
+        if (userId === "all") {
+            setData(events);
+        } else {
+            const filteredEvents = events.filter((event) => event.user.id === userId);
+            setData(filteredEvents);
+        }
+    };
 
     const toggleAgendaMode = (isAgenda?: boolean) => {
         const newMode = isAgenda ?? !isAgendaMode;
@@ -128,6 +142,7 @@ export function CalendarProvider({
         users,
         selectedColors,
         filterEventsBySelectedColors,
+        filterEventsBySelectedUser,
         events: data,
         view: currentView,
         use24HourFormat,
@@ -135,6 +150,8 @@ export function CalendarProvider({
         setView,
         isAgendaMode,
         toggleAgendaMode,
+        agendaModeGroupBy,
+        setAgendaModeGroupBy,
         addEvent,
         updateEvent,
         removeEvent,
