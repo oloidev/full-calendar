@@ -18,7 +18,7 @@ export default function CalendarPage() {
                             <div className="space-y-1">
                                 <p className="text-lg font-medium leading-6">Full calendar</p>
                                 <div className="text-sm text-t-secondary">
-                                    Built with Next.js and Tailwind by{" "}
+                                    Built with Next.js and Shadcn UI/Tailwind css by{" "}
                                     <Link href="https://github.com/yassir-jeraidi" target="_blank" className="inline-flex items-center gap-0.5 text-sm underline">
                                         yassir-jeraidi
                                         <ArrowUpRight size={12} className="mx-1 text-t-tertiary" />
