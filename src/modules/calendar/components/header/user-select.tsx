@@ -11,10 +11,10 @@ import {
 import { AvatarGroup } from "@/components/ui/avatar-group";
 
 export function UserSelect() {
-  const { users, selectedUserId, setSelectedUserId } = useCalendar();
+  const { users, selectedUserId, filterEventsBySelectedUser } = useCalendar();
 
   return (
-    <Select value={selectedUserId!} onValueChange={setSelectedUserId}>
+    <Select value={selectedUserId!} onValueChange={filterEventsBySelectedUser}>
       <SelectTrigger className="w-full">
         <SelectValue placeholder="Select a user" />
       </SelectTrigger>
