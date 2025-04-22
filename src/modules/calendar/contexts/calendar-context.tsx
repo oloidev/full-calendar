@@ -1,18 +1,17 @@
 "use client";
 
-import {createContext, useContext, useState} from "react";
+import React, { createContext, useContext, useState } from "react";
 
-import type {IEvent, IUser} from "@/modules/calendar/interfaces";
-import {TCalendarView, TEventColor} from "@/modules/calendar/types";
+import type { IEvent, IUser } from "@/modules/calendar/interfaces";
+import { TCalendarView, TEventColor } from "@/modules/calendar/types";
+import {useLocalStorage} from "@/modules/calendar/hooks";
 
 interface ICalendarContext {
     selectedDate: Date;
     view: TCalendarView;
     setView: (view: TCalendarView) => void;
-    isAgendaMode: boolean;
-    agendaModeGroupBy: "date" | "color" ;
+    agendaModeGroupBy: "date" | "color";
     setAgendaModeGroupBy: (groupBy: "date" | "color") => void;
-    toggleAgendaMode: (isAgenda?: boolean) => void;
     use24HourFormat: boolean;
     toggleTimeFormat: () => void;
     setSelectedDate: (date: Date | undefined) => void;
@@ -27,9 +26,23 @@ interface ICalendarContext {
     events: IEvent[];
     addEvent: (event: IEvent) => void;
     updateEvent: (event: IEvent) => void;
-    removeEvent: (eventId : number) => void;
+    removeEvent: (eventId: number) => void;
     clearFilter: () => void;
 }
+
+interface CalendarSettings {
+    badgeVariant: "dot" | "colored";
+    view: TCalendarView;
+    use24HourFormat: boolean;
+    agendaModeGroupBy: "date" | "color";
+}
+
+const DEFAULT_SETTINGS: CalendarSettings = {
+    badgeVariant: "colored",
+    view: "day",
+    use24HourFormat: true,
+    agendaModeGroupBy: "date"
+};
 
 const CalendarContext = createContext({} as ICalendarContext);
 
@@ -46,18 +59,52 @@ export function CalendarProvider({
     view?: TCalendarView;
     badge?: "dot" | "colored";
 }) {
-    const [badgeVariant, setBadgeVariant] = useState<"dot" | "colored">(badge);
+    const [settings, setSettings] = useLocalStorage<CalendarSettings>("calendar-settings", {
+        ...DEFAULT_SETTINGS,
+        badgeVariant: badge,
+        view: view
+    });
+
+    const [badgeVariant, setBadgeVariantState] = useState<"dot" | "colored">(settings.badgeVariant);
+    const [currentView, setCurrentViewState] = useState<TCalendarView>(settings.view);
+    const [use24HourFormat, setUse24HourFormatState] = useState<boolean>(settings.use24HourFormat);
+    const [agendaModeGroupBy, setAgendaModeGroupByState] = useState<"date" | "color">(settings.agendaModeGroupBy);
+
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [selectedUserId, setSelectedUserId] = useState<IUser["id"] | "all">("all");
-    const [currentView, setCurrentView] = useState(view);
-    const [isAgendaMode, setAgendaMode] = useState(false);
-    const [agendaModeGroupBy, setAgendaModeGroupBy] = useState<"date" | "color">("date");
-    const [use24HourFormat, setUse24HourFormat] = useState(true);
     const [selectedColors, setSelectedColors] = useState<TEventColor[]>([]);
     const [data, setData] = useState(events || []);
 
+    const updateSettings = (newPartialSettings: Partial<CalendarSettings>) => {
+        setSettings({
+            ...settings,
+            ...newPartialSettings
+        });
+    };
+
+    const setBadgeVariant = (variant: "dot" | "colored") => {
+        setBadgeVariantState(variant);
+        updateSettings({ badgeVariant: variant });
+    };
+
+    const setView = (newView: TCalendarView) => {
+        setCurrentViewState(newView);
+        updateSettings({ view: newView });
+    };
+
+    const toggleTimeFormat = () => {
+        const newValue = !use24HourFormat;
+        setUse24HourFormatState(newValue);
+        updateSettings({ use24HourFormat: newValue });
+    };
+
+    const setAgendaModeGroupBy = (groupBy: "date" | "color") => {
+        setAgendaModeGroupByState(groupBy);
+        updateSettings({ agendaModeGroupBy: groupBy });
+    };
+
     const filterEventsBySelectedColors = (color: TEventColor) => {
-        const isColorSelected = selectedColors.includes(color)
+        const isColorSelected = selectedColors.includes(color);
         const newColors = isColorSelected
             ? selectedColors.filter((c) => c !== color)
             : [...selectedColors, color];
@@ -71,7 +118,7 @@ export function CalendarProvider({
         } else setData(events);
 
         setSelectedColors(newColors);
-    }
+    };
 
     const filterEventsBySelectedUser = (userId: IUser["id"] | "all") => {
         setSelectedUserId(userId);
@@ -83,25 +130,10 @@ export function CalendarProvider({
         }
     };
 
-    const toggleAgendaMode = (isAgenda?: boolean) => {
-        const newMode = isAgenda ?? !isAgendaMode;
-        if (!newMode) {
-            setCurrentView(view);
-        }
-        setAgendaMode(newMode);
-    };
 
-    const toggleTimeFormat = () => {
-        setUse24HourFormat(prev => !prev);
-      };
-      
     const handleSelectDate = (date: Date | undefined) => {
         if (!date) return;
         setSelectedDate(date);
-    };
-
-    const setView = (view: TCalendarView) => {
-        setCurrentView(view);
     };
 
     const addEvent = (event: IEvent) => {
@@ -109,9 +141,12 @@ export function CalendarProvider({
     };
 
     const updateEvent = (event: IEvent) => {
-        const newEvent: IEvent = event;
-        newEvent.startDate = new Date(event.startDate).toISOString();
-        newEvent.endDate = new Date(event.endDate).toISOString();
+        const newEvent: IEvent = {
+            ...event,
+            startDate: new Date(event.startDate).toISOString(),
+            endDate: new Date(event.endDate).toISOString()
+        };
+
         setData((prevEvents) => {
             const index = prevEvents.findIndex((e) => e.id === event.id);
             if (index !== -1) {
@@ -148,8 +183,6 @@ export function CalendarProvider({
         use24HourFormat,
         toggleTimeFormat,
         setView,
-        isAgendaMode,
-        toggleAgendaMode,
         agendaModeGroupBy,
         setAgendaModeGroupBy,
         addEvent,
