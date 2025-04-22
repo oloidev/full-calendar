@@ -13,7 +13,7 @@ import {isSameDay, parseISO} from "date-fns";
 import {useFilteredEvents} from "@/modules/calendar/hooks";
 
 export function CalendarBody() {
-    const {view, isAgendaMode} = useCalendar();
+    const {view} = useCalendar();
 
     const singleDayEvents = useFilteredEvents().filter((event) => {
         const startDate = parseISO(event.startDate);
@@ -28,18 +28,6 @@ export function CalendarBody() {
     });
 
     return (
-        isAgendaMode ? (
-            <motion.div
-                key="agenda"
-                initial="initial"
-                animate="animate"
-                exit="exit"
-                variants={fadeIn}
-                transition={transition}
-            >
-                <AgendaEvents/>
-            </motion.div>
-        ) : (
             <motion.div
                 key={view}
                 initial="initial"
@@ -72,7 +60,20 @@ export function CalendarBody() {
                         multiDayEvents={multiDayEvents}
                     />
                 )}
+                {
+                    view === "agenda" && (
+                        <motion.div
+                            key="agenda"
+                            initial="initial"
+                            animate="animate"
+                            exit="exit"
+                            variants={fadeIn}
+                            transition={transition}
+                        >
+                            <AgendaEvents/>
+                        </motion.div>
+                    )
+                }
             </motion.div>
-        )
     );
 }
