@@ -39,7 +39,7 @@ function DayPicker({ className, classNames, showOutsideDays = true, ...props }: 
           "[&:has([aria-selected].day-range-end)]:rounded-r-lg last:[&:has([aria-selected])]:rounded-r-lg first:[&:has([aria-selected])]:rounded-l-lg [&:has([aria-selected])]:bg-bg-secondary"
         ),
         day: cn(buttonVariants({ variant: "ghost" }), "size-8.5 p-0 font-normal aria-selected:opacity-100"),
-        day_selected: "bg-primary-600 text-white hover:bg-primary-700 focus:bg-primary-700",
+        day_selected: "bg-primary text-white dark:text-black dark:hover:!text-white",
         day_today: "text-red-600",
         day_outside: "opacity-50 aria-selected:opacity-40",
         day_range_middle: "aria-selected:bg-bg-secondary aria-selected:text-t-primary",
