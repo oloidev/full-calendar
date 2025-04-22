@@ -5,6 +5,10 @@ Give it a star if you like this project! ⭐
 A feature-rich calendar application built with React, TypeScript, and ShadCN UI components. This project provides a
 customizable and interactive calendar experience with multiple views, event management, and a modern UI.
 
+# Ckeck out this blog post on Medium:
+
+https://medium.com/@yaceeer/building-a-full-featured-calendar-application-with-react-e249b3084b23
+
 ## Demo
 
 ![Screenshot 2025-04-02 at 21.54.59.png](screenshots/Screenshot%202025-04-02%20at%2021.54.59.png)
