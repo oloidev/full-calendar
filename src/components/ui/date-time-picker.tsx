@@ -29,8 +29,7 @@ export function DateTimePicker({form, field}: DatePickerProps) {
         const newDate = new Date(currentDate);
 
         if (type === "hour") {
-            const hour = parseInt(value, 10);
-            newDate.setHours(newDate.getHours() >= 12 ? hour + 12 : hour);
+            newDate.setHours(parseInt(value, 10));
         } else if (type === "minute") {
             newDate.setMinutes(parseInt(value, 10));
         } else if (type === "ampm") {
@@ -44,16 +43,17 @@ export function DateTimePicker({form, field}: DatePickerProps) {
 
         form.setValue(field.name, newDate);
     }
+
     return (
         <FormItem className="flex flex-col">
             <FormLabel>
                 {
                     field.name === "startDate"
                         ? "Start Date"
-                            : "End Date"
+                        : "End Date"
                 }
             </FormLabel>
-            <Popover>
+            <Popover modal={true}>
                 <PopoverTrigger asChild>
                     <FormControl>
                         <Button
@@ -73,7 +73,7 @@ export function DateTimePicker({form, field}: DatePickerProps) {
                             ) : (
                                 <span>MM/DD/YYYY hh:mm aa</span>
                             )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50"/>
                         </Button>
                     </FormControl>
                 </PopoverTrigger>
@@ -88,15 +88,14 @@ export function DateTimePicker({form, field}: DatePickerProps) {
                         <div className="flex flex-col sm:flex-row sm:h-[300px] divide-y sm:divide-y-0 sm:divide-x">
                             <ScrollArea className="w-64 sm:w-auto">
                                 <div className="flex sm:flex-col p-2">
-                                    {Array.from({ length: 12 }, (_, i) => i + 1)
-                                        .reverse()
+                                    {Array.from({length: use24HourFormat ? 24 : 12}, (_, i) => i )
                                         .map((hour) => (
                                             <Button
                                                 key={hour}
                                                 size="icon"
                                                 variant={
                                                     field.value &&
-                                                    field.value.getHours() % 12 === hour % 12
+                                                    field.value.getHours() % (use24HourFormat ? 24 : 12) === hour % (use24HourFormat ? 24 : 12)
                                                         ? "default"
                                                         : "ghost"
                                                 }
@@ -105,7 +104,7 @@ export function DateTimePicker({form, field}: DatePickerProps) {
                                                     handleTimeChange("hour", hour.toString())
                                                 }
                                             >
-                                                {hour}
+                                                {hour.toString().padStart(2, "0")}
                                             </Button>
                                         ))}
                                 </div>
@@ -116,7 +115,7 @@ export function DateTimePicker({form, field}: DatePickerProps) {
                             </ScrollArea>
                             <ScrollArea className="w-64 sm:w-auto">
                                 <div className="flex sm:flex-col p-2">
-                                    {Array.from({ length: 12 }, (_, i) => i * 5).map(
+                                    {Array.from({length: 12}, (_, i) => i * 5).map(
                                         (minute) => (
                                             <Button
                                                 key={minute}
@@ -142,35 +141,11 @@ export function DateTimePicker({form, field}: DatePickerProps) {
                                     className="sm:hidden"
                                 />
                             </ScrollArea>
-                            <ScrollArea className="">
-                                <div className="flex sm:flex-col p-2">
-                                    {["AM", "PM"].map((ampm) => (
-                                        <Button
-                                            key={ampm}
-                                            size="icon"
-                                            variant={
-                                                field.value &&
-                                                ((ampm === "AM" &&
-                                                        field.value.getHours() < 12) ||
-                                                    (ampm === "PM" &&
-                                                        field.value.getHours() >= 12))
-                                                    ? "default"
-                                                    : "ghost"
-                                            }
-                                            className="sm:w-full shrink-0 aspect-square"
-                                            onClick={() => handleTimeChange("ampm", ampm)}
-                                        >
-                                            {ampm}
-                                        </Button>
-                                    ))}
-                                </div>
-                            </ScrollArea>
                         </div>
                     </div>
                 </PopoverContent>
             </Popover>
-            <FormMessage />
+            <FormMessage/>
         </FormItem>
     )
 }
-
