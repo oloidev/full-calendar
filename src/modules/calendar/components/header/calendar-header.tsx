@@ -1,9 +1,9 @@
 "use client";
 
 import {
-    CalendarRange, Clock,
+    CalendarRange,
     Columns, Grid2X2,
-    Grid3X3, GroupIcon,
+    Grid3X3,
     LayoutList,
     List,
     Plus,
@@ -28,17 +28,7 @@ import FilterEvents from "@/modules/calendar/components/header/filter";
 import {ButtonGroup} from "@/components/ui/button-group";
 import {useCalendar} from "@/modules/calendar/contexts/calendar-context";
 import {Toggle} from "@/components/ui/toggle";
-import {ModeToggle} from "@/components/mode-toggle";
 import {useFilteredEvents} from "@/modules/calendar/hooks";
-import {ChangeBadgeVariantInput} from "@/modules/calendar/components/change-badge-variant-input";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuLabel,
-    DropdownMenuRadioGroup, DropdownMenuRadioItem,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {Settings} from "@/modules/calendar/components/settings/settings";
 
 export const MotionButton = motion.create(Button);
@@ -47,10 +37,6 @@ export function CalendarHeader() {
     const {
         view,
         setView,
-        agendaModeGroupBy,
-        setAgendaModeGroupBy,
-        use24HourFormat,
-        toggleTimeFormat,
     } = useCalendar();
 
     const events = useFilteredEvents()

@@ -5,24 +5,18 @@ import {
     DropdownMenuGroup,
     DropdownMenuItem,
     DropdownMenuLabel,
-    DropdownMenuPortal,
     DropdownMenuRadioGroup, DropdownMenuRadioItem,
     DropdownMenuSeparator,
     DropdownMenuShortcut,
-    DropdownMenuSub,
-    DropdownMenuSubContent,
-    DropdownMenuSubTrigger,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import {DotIcon, GroupIcon, MoonIcon, PaletteIcon, SettingsIcon, SunMediumIcon} from "lucide-react";
+import {DotIcon, MoonIcon, PaletteIcon, SettingsIcon, SunMediumIcon} from "lucide-react";
 import {Switch} from "@/components/ui/switch";
-import {useDisclosure} from "@/modules/calendar/hooks";
 import {useCalendar} from "@/modules/calendar/contexts/calendar-context";
 import {useTheme} from "next-themes";
 import {TCalendarView} from "@/modules/calendar/types";
 
 export function Settings() {
-    const {isOpen , onClose , onToggle} = useDisclosure()
     const {badgeVariant , setBadgeVariant , use24HourFormat , toggleTimeFormat , view , setView , agendaModeGroupBy , setAgendaModeGroupBy} = useCalendar()
     const {theme , setTheme} = useTheme()
 
@@ -30,7 +24,7 @@ export function Settings() {
     const isDotVariant = badgeVariant === "dot"
 
     return (
-        <DropdownMenu open={isOpen} onOpenChange={onToggle}>
+        <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="icon">
                     <SettingsIcon />
