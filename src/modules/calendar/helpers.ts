@@ -50,6 +50,10 @@ export function rangeText(view: TCalendarView, date: Date): string {
             start = startOfYear(date);
             end = endOfYear(date);
             break;
+        case "agenda":
+            start = startOfMonth(date);
+            end = endOfMonth(date);
+            break;
         default:
             return "Error while formatting";
     }
@@ -63,6 +67,7 @@ export function navigateDate(date: Date, view: TCalendarView, direction: "previo
         week: direction === "next" ? addWeeks : subWeeks,
         day: direction === "next" ? addDays : subDays,
         year: direction === "next" ? addYears : subYears,
+        agenda: direction === "next" ? addMonths : subMonths,
     };
 
     return operations[view](date, 1);
@@ -74,6 +79,7 @@ export function getEventsCount(events: IEvent[], date: Date, view: TCalendarView
         week: isSameWeek,
         month: isSameMonth,
         year: isSameYear,
+        agenda: isSameMonth,
     };
 
     const compareFn = compareFns[view];
@@ -297,7 +303,7 @@ export const getEventsForWeek = (events: IEvent[], date: Date): IEvent[] => {
     return events.filter((event) => {
         const eventStart = parseISO(event.startDate);
         const eventEnd = parseISO(event.endDate);
-        return eventStart <= endOfWeekDate && eventEnd >= startOfWeekDate;
+        return isValid(eventStart) && isValid(eventEnd) && eventStart <= endOfWeekDate && eventEnd >= startOfWeekDate;
     });
 };
 
@@ -308,7 +314,7 @@ export const getEventsForMonth = (events: IEvent[], date: Date): IEvent[] => {
     return events.filter((event) => {
         const eventStart = parseISO(event.startDate);
         const eventEnd = parseISO(event.endDate);
-        return eventStart < endOfMonthDate && eventEnd > startOfMonthDate;
+        return isValid(eventStart) && isValid(eventEnd) && eventStart <= endOfMonthDate && eventEnd >= startOfMonthDate;
     });
 };
 
@@ -357,6 +363,7 @@ export const useGetEventsByMode = (events: IEvent[]) => {
             return getEventsForDay(events, selectedDate);
         case "week":
             return getEventsForWeek(events, selectedDate);
+        case "agenda":
         case "month":
             return getEventsForMonth(events, selectedDate);
         case "year":

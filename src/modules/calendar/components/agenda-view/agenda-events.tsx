@@ -77,16 +77,38 @@ export const AgendaEvents: FC = () => {
                                                 </p>
                                             </div>
                                         </div>
-                                        <div className="w-40 sm:w-auto flex items-center gap-1">
-                                            <p className="flex flex-wrap text-muted-foreground">
-                                                {formatTime(event.startDate, use24HourFormat)}
-                                            </p>
-                                            <span className='text-muted-foreground'>
+                                        <div className="w-40 flex justify-center items-center gap-1">
+                                            {
+                                                agendaModeGroupBy === "date" ? (
+                                                    <>
+                                                        <p className="text-sm">
+                                                            {formatTime(event.startDate, use24HourFormat)}
+                                                        </p>
+                                                        <span className='text-muted-foreground'>
                                              -
                                             </span>
-                                            <p className="flex flex-wrap text-muted-foreground">
-                                                {formatTime(event.endDate, use24HourFormat)}
-                                            </p>
+                                                        <p className="text-sm">
+                                                            {formatTime(event.endDate, use24HourFormat)}
+                                                        </p>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <p className="text-sm">
+                                                            {
+                                                                format(event.startDate, "MM/dd/yyyy")
+                                                            }
+                                                        </p>
+                                                        <span className='text-sm'>
+                                                             at
+                                                        </span>
+                                                        <p className="text-sm">
+                                                            {
+                                                                formatTime(event.startDate, use24HourFormat)
+                                                            }
+                                                        </p>
+                                                    </>
+                                                )
+                                            }
                                         </div>
                                     </div>
                                 </EventDetailsDialog>
