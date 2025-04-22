@@ -39,6 +39,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {Settings} from "@/modules/calendar/components/settings/settings";
 
 export const MotionButton = motion.create(Button);
 
@@ -46,8 +47,6 @@ export function CalendarHeader() {
     const {
         view,
         setView,
-        isAgendaMode,
-        toggleAgendaMode,
         agendaModeGroupBy,
         setAgendaModeGroupBy,
         use24HourFormat,
@@ -80,53 +79,21 @@ export function CalendarHeader() {
                     <FilterEvents/>
                     <MotionButton
                         variant="outline"
-                        onClick={toggleTimeFormat}
-                        asChild
-                        variants={buttonHover}
-                        whileHover="hover"
-                        whileTap="tap"
-                    >
-                        <Toggle>{use24HourFormat ? "24" : "12"} <Clock/></Toggle>
-                    </MotionButton>
-                    <MotionButton
-                        variant="outline"
-                        onClick={() => toggleAgendaMode(!isAgendaMode)}
+                        onClick={() => setView("agenda")}
                         asChild
                         variants={buttonHover}
                         whileHover="hover"
                         whileTap="tap"
                     >
                         <Toggle className='relative'>
-                            {isAgendaMode ? (
+                            {view === "agenda" ? (
                                 <>
                                     <CalendarRange/>
                                     <span className="absolute -top-1 -right-1 size-3 rounded-full bg-green-400"></span>
                                 </>
-                            ) : <LayoutList/>}</Toggle>
+                            ) : <LayoutList/>}
+                        </Toggle>
                     </MotionButton>
-                    {
-                        isAgendaMode && (
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <Button variant="outline">
-                                        <GroupIcon/>
-                                    </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent className="w-56">
-                                    <DropdownMenuLabel>
-                                        Group by
-                                    </DropdownMenuLabel>
-                                    <DropdownMenuSeparator/>
-                                    <DropdownMenuRadioGroup value={agendaModeGroupBy} onValueChange={
-                                        (value) => setAgendaModeGroupBy(value as "date" | "color")
-                                    }>
-                                        <DropdownMenuRadioItem value="date">Date</DropdownMenuRadioItem>
-                                        <DropdownMenuRadioItem value="color">Color</DropdownMenuRadioItem>
-                                    </DropdownMenuRadioGroup>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-                        )
-                    }
                     <ButtonGroup className="flex">
                         <MotionButton
                             variant={view === "day" ? "default" : "outline"}
@@ -173,9 +140,6 @@ export function CalendarHeader() {
                             <Grid2X2 className="h-4 w-4"/>
                         </MotionButton>
                     </ButtonGroup>
-
-                    <ChangeBadgeVariantInput/>
-                    <ModeToggle/>
                 </div>
 
                 <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:gap-1.5">
@@ -192,6 +156,7 @@ export function CalendarHeader() {
                         </MotionButton>
                     </AddEditEventDialog>
                 </div>
+                <Settings/>
             </motion.div>
         </div>
     );
