@@ -27,12 +27,21 @@ export function CalendarYearView({ singleDayEvents, multiDayEvents }: IProps) {
     const allEvents = [...multiDayEvents, ...singleDayEvents];
 
     return (
-        <div className="flex flex-col h-[80vh] overflow-hidden p-5">
+        <div className="flex flex-col h-full sm:min-h-[80vh] overflow-hidden sm:p-5">
+            <motion.div
+                className="flex flex-col items-center justify-center py-4 text-sm text-t-quaternary sm:hidden"
+                initial={{opacity: 0, y: -20}}
+                animate={{opacity: 1, y: 0}}
+                transition={transition}
+            >
+                <p>Yearly view is not available on smaller devices.</p>
+                <p>Please switch to daily or monthly view.</p>
+            </motion.div>
             <motion.div
                 initial="initial"
                 animate="animate"
                 variants={staggerContainer}
-                className="grid grid-cols-3 gap-4 flex-grow overflow-hidden auto-rows-fr lg:grid-cols-4 "
+                className="hidden sm:grid grid-cols-3 gap-4 flex-grow overflow-hidden auto-rows-fr lg:grid-cols-4 "
             >
                 {MONTHS.map((month, monthIndex) => {
                     const monthDate = new Date(currentYear, monthIndex, 1);
