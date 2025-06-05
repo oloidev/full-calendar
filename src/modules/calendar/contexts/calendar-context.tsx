@@ -1,10 +1,9 @@
 "use client";
 
 import React, { createContext, useContext, useState } from "react";
-
 import type { IEvent, IUser } from "@/modules/calendar/interfaces";
 import { TCalendarView, TEventColor } from "@/modules/calendar/types";
-import {useLocalStorage} from "@/modules/calendar/hooks";
+import { useLocalStorage } from "@/modules/calendar/hooks";
 
 interface ICalendarContext {
     selectedDate: Date;
@@ -73,7 +72,9 @@ export function CalendarProvider({
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [selectedUserId, setSelectedUserId] = useState<IUser["id"] | "all">("all");
     const [selectedColors, setSelectedColors] = useState<TEventColor[]>([]);
-    const [data, setData] = useState(events || []);
+
+    const [allEvents, setAllEvents] = useState<IEvent[]>(events || []);
+    const [filteredEvents, setFilteredEvents] = useState<IEvent[]>(events || []);
 
     const updateSettings = (newPartialSettings: Partial<CalendarSettings>) => {
         setSettings({
@@ -110,12 +111,14 @@ export function CalendarProvider({
             : [...selectedColors, color];
 
         if (newColors.length > 0) {
-            const filteredEvents = events.filter((event) => {
+            const filtered = allEvents.filter((event) => {
                 const eventColor = event.color || "blue";
                 return newColors.includes(eventColor);
             });
-            setData(filteredEvents);
-        } else setData(events);
+            setFilteredEvents(filtered);
+        } else {
+            setFilteredEvents(allEvents);
+        }
 
         setSelectedColors(newColors);
     };
@@ -123,13 +126,12 @@ export function CalendarProvider({
     const filterEventsBySelectedUser = (userId: IUser["id"] | "all") => {
         setSelectedUserId(userId);
         if (userId === "all") {
-            setData(events);
+            setFilteredEvents(allEvents);
         } else {
-            const filteredEvents = events.filter((event) => event.user.id === userId);
-            setData(filteredEvents);
+            const filtered = allEvents.filter((event) => event.user.id === userId);
+            setFilteredEvents(filtered);
         }
     };
-
 
     const handleSelectDate = (date: Date | undefined) => {
         if (!date) return;
@@ -137,34 +139,34 @@ export function CalendarProvider({
     };
 
     const addEvent = (event: IEvent) => {
-        setData((prevEvents) => [...prevEvents, event]);
+        setAllEvents((prev) => [...prev, event]);
+        setFilteredEvents((prev) => [...prev, event]);
     };
 
     const updateEvent = (event: IEvent) => {
-        const newEvent: IEvent = {
+        const updated = {
             ...event,
             startDate: new Date(event.startDate).toISOString(),
             endDate: new Date(event.endDate).toISOString()
         };
 
-        setData((prevEvents) => {
-            const index = prevEvents.findIndex((e) => e.id === event.id);
-            if (index !== -1) {
-                const updatedEvents = [...prevEvents];
-                updatedEvents[index] = newEvent;
-                return updatedEvents;
-            }
-            return prevEvents;
-        });
+        setAllEvents((prev) =>
+            prev.map((e) => (e.id === event.id ? updated : e))
+        );
+        setFilteredEvents((prev) =>
+            prev.map((e) => (e.id === event.id ? updated : e))
+        );
     };
 
     const removeEvent = (eventId: number) => {
-        setData((prevEvents) => prevEvents.filter((event) => event.id !== eventId));
+        setAllEvents((prev) => prev.filter((e) => e.id !== eventId));
+        setFilteredEvents((prev) => prev.filter((e) => e.id !== eventId));
     };
 
     const clearFilter = () => {
-        setData(events);
+        setFilteredEvents(allEvents);
         setSelectedColors([]);
+        setSelectedUserId("all");
     };
 
     const value = {
@@ -178,7 +180,7 @@ export function CalendarProvider({
         selectedColors,
         filterEventsBySelectedColors,
         filterEventsBySelectedUser,
-        events: data,
+        events: filteredEvents,
         view: currentView,
         use24HourFormat,
         toggleTimeFormat,
