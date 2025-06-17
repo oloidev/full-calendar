@@ -8,9 +8,9 @@ import {
     List,
     Plus,
 } from "lucide-react";
-import {motion} from "framer-motion";
+import { motion } from "framer-motion";
 
-import {Button} from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import {
     buttonHover,
     slideFromLeft,
@@ -18,18 +18,18 @@ import {
     transition,
 } from "@/modules/calendar/animations";
 
-import {UserSelect} from "@/modules/calendar/components/header/user-select";
-import {TodayButton} from "@/modules/calendar/components/header/today-button";
-import {DateNavigator} from "@/modules/calendar/components/header/date-navigator";
-import {AddEditEventDialog} from "@/modules/calendar/components/dialogs/add-edit-event-dialog";
+import { UserSelect } from "@/modules/calendar/components/header/user-select";
+import { TodayButton } from "@/modules/calendar/components/header/today-button";
+import { DateNavigator } from "@/modules/calendar/components/header/date-navigator";
+import { AddEditEventDialog } from "@/modules/calendar/components/dialogs/add-edit-event-dialog";
 import FilterEvents from "@/modules/calendar/components/header/filter";
 
 
-import {ButtonGroup} from "@/components/ui/button-group";
-import {useCalendar} from "@/modules/calendar/contexts/calendar-context";
-import {Toggle} from "@/components/ui/toggle";
-import {useFilteredEvents} from "@/modules/calendar/hooks";
-import {Settings} from "@/modules/calendar/components/settings/settings";
+import { ButtonGroup } from "@/components/ui/button-group";
+import { useCalendar } from "@/modules/calendar/contexts/calendar-context";
+import { Toggle } from "@/components/ui/toggle";
+import { useFilteredEvents } from "@/modules/calendar/hooks";
+import { Settings } from "@/modules/calendar/components/settings/settings";
 
 export const MotionButton = motion.create(Button);
 
@@ -50,8 +50,8 @@ export function CalendarHeader() {
                 animate="animate"
                 transition={transition}
             >
-                <TodayButton/>
-                <DateNavigator view={view} events={events}/>
+                <TodayButton />
+                <DateNavigator view={view} events={events} />
             </motion.div>
 
             <motion.div
@@ -62,7 +62,7 @@ export function CalendarHeader() {
                 transition={transition}
             >
                 <div className="options flex-wrap flex items-center gap-4 md:gap-2">
-                    <FilterEvents/>
+                    <FilterEvents />
                     <MotionButton
                         variant="outline"
                         onClick={() => setView("agenda")}
@@ -74,10 +74,10 @@ export function CalendarHeader() {
                         <Toggle className='relative'>
                             {view === "agenda" ? (
                                 <>
-                                    <CalendarRange/>
+                                    <CalendarRange />
                                     <span className="absolute -top-1 -right-1 size-3 rounded-full bg-green-400"></span>
                                 </>
-                            ) : <LayoutList/>}
+                            ) : <LayoutList />}
                         </Toggle>
                     </MotionButton>
                     <ButtonGroup className="flex">
@@ -91,7 +91,7 @@ export function CalendarHeader() {
                             whileHover="hover"
                             whileTap="tap"
                         >
-                            <List className="h-4 w-4"/>
+                            <List className="h-4 w-4" />
                         </MotionButton>
 
                         <MotionButton
@@ -102,7 +102,7 @@ export function CalendarHeader() {
                             whileHover="hover"
                             whileTap="tap"
                         >
-                            <Columns className="h-4 w-4"/>
+                            <Columns className="h-4 w-4" />
                         </MotionButton>
 
                         <MotionButton
@@ -113,7 +113,7 @@ export function CalendarHeader() {
                             whileHover="hover"
                             whileTap="tap"
                         >
-                            <Grid3X3 className="h-4 w-4"/>
+                            <Grid3X3 className="h-4 w-4" />
                         </MotionButton>
                         <MotionButton
                             variant={view === "year" ? "default" : "outline"}
@@ -123,13 +123,13 @@ export function CalendarHeader() {
                             whileHover="hover"
                             whileTap="tap"
                         >
-                            <Grid2X2 className="h-4 w-4"/>
+                            <Grid2X2 className="h-4 w-4" />
                         </MotionButton>
                     </ButtonGroup>
                 </div>
 
                 <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:gap-1.5">
-                    <UserSelect/>
+                    <UserSelect />
 
                     <AddEditEventDialog>
                         <MotionButton
@@ -137,12 +137,12 @@ export function CalendarHeader() {
                             whileHover="hover"
                             whileTap="tap"
                         >
-                            <Plus className="h-4 w-4"/>
+                            <Plus className="h-4 w-4" />
                             Add Event
                         </MotionButton>
                     </AddEditEventDialog>
                 </div>
-                <Settings/>
+                <Settings />
             </motion.div>
         </div>
     );
