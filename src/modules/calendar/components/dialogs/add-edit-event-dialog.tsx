@@ -121,7 +121,7 @@ export function AddEditEventDialog({ children, startDate, startTime, event }: IP
                         <FormField
                             control={form.control}
                             name="title"
-                            render={({field, fieldState}) => (
+                            render={({ field, fieldState }) => (
                                 <FormItem>
                                     <FormLabel htmlFor="title" className="required">Title</FormLabel>
                                     <FormControl>
@@ -132,34 +132,34 @@ export function AddEditEventDialog({ children, startDate, startTime, event }: IP
                                             className={fieldState.invalid ? "border-red-500" : ""}
                                         />
                                     </FormControl>
-                                    <FormMessage/>
+                                    <FormMessage />
                                 </FormItem>
                             )}
                         />
                         <FormField
                             control={form.control}
                             name="startDate"
-                            render={({field}) => (
+                            render={({ field }) => (
                                 <DateTimePicker form={form} field={field} />
                             )}
                         />
                         <FormField
                             control={form.control}
                             name="endDate"
-                            render={({field}) => (
-                                <DateTimePicker form={form} field={field}/>
+                            render={({ field }) => (
+                                <DateTimePicker form={form} field={field} />
                             )}
                         />
                         <FormField
                             control={form.control}
                             name="color"
-                            render={({field, fieldState}) => (
+                            render={({ field, fieldState }) => (
                                 <FormItem>
                                     <FormLabel className="required">Variant</FormLabel>
                                     <FormControl>
                                         <Select value={field.value} onValueChange={field.onChange}>
                                             <SelectTrigger className={`w-full ${fieldState.invalid ? "border-red-500" : ""}`}>
-                                                <SelectValue placeholder="Select a variant"/>
+                                                <SelectValue placeholder="Select a variant" />
                                             </SelectTrigger>
                                             <SelectContent>
                                                 {COLORS.map((color) => (
@@ -173,14 +173,14 @@ export function AddEditEventDialog({ children, startDate, startTime, event }: IP
                                             </SelectContent>
                                         </Select>
                                     </FormControl>
-                                    <FormMessage/>
+                                    <FormMessage />
                                 </FormItem>
                             )}
                         />
                         <FormField
                             control={form.control}
                             name="description"
-                            render={({field, fieldState}) => (
+                            render={({ field, fieldState }) => (
                                 <FormItem>
                                     <FormLabel className="required">Description</FormLabel>
                                     <FormControl>
@@ -190,7 +190,7 @@ export function AddEditEventDialog({ children, startDate, startTime, event }: IP
                                             className={fieldState.invalid ? "border-red-500" : ""}
                                         />
                                     </FormControl>
-                                    <FormMessage/>
+                                    <FormMessage />
                                 </FormItem>
                             )}
                         />

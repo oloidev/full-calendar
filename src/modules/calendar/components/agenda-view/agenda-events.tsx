@@ -1,5 +1,5 @@
-import {FC} from "react";
-import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
+import { FC } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
     Command,
     CommandEmpty,
@@ -8,8 +8,8 @@ import {
     CommandItem,
     CommandList,
 } from "@/components/ui/command";
-import {format, parseISO} from "date-fns";
-import {cn} from "@/lib/utils";
+import { format, parseISO } from "date-fns";
+import { cn } from "@/lib/utils";
 import {
     formatTime,
     getBgColor,
@@ -18,12 +18,12 @@ import {
     toCapitalize,
     useGetEventsByMode
 } from "@/modules/calendar/helpers";
-import {EventDetailsDialog} from "@/modules/calendar/components/dialogs/event-details-dialog";
-import {useCalendar} from "@/modules/calendar/contexts/calendar-context";
-import {EventBullet} from "@/modules/calendar/components/month-view/event-bullet";
+import { EventDetailsDialog } from "@/modules/calendar/components/dialogs/event-details-dialog";
+import { useCalendar } from "@/modules/calendar/contexts/calendar-context";
+import { EventBullet } from "@/modules/calendar/components/month-view/event-bullet";
 
 export const AgendaEvents: FC = () => {
-    const {events, use24HourFormat, badgeVariant, agendaModeGroupBy} = useCalendar();
+    const { events, use24HourFormat, badgeVariant, agendaModeGroupBy } = useCalendar();
 
     const eventsByMode = Object.groupBy(useGetEventsByMode(events), (event) => {
         return agendaModeGroupBy === 'date' ? format(parseISO(event.startDate), 'yyyy-MM-dd') : event.color
@@ -36,7 +36,7 @@ export const AgendaEvents: FC = () => {
     return (
         <Command className="py-4 h-[80vh] bg-transparent">
             <div className="mb-4 mx-4">
-                <CommandInput placeholder="Type a command or search..."/>
+                <CommandInput placeholder="Type a command or search..." />
             </div>
             <CommandList className="max-h-max px-3 border-t">
                 {groupedAndSortedEvents.map(([date, groupedEvents]) => (
@@ -58,10 +58,10 @@ export const AgendaEvents: FC = () => {
                                     <div className="w-full flex items-center justify-between gap-4">
                                         <div className="flex items-center gap-2">
                                             {badgeVariant === "dot" ? (
-                                                <EventBullet color={event.color}/>
+                                                <EventBullet color={event.color} />
                                             ) : (
                                                 <Avatar>
-                                                    <AvatarImage src="" alt="@shadcn"/>
+                                                    <AvatarImage src="" alt="@shadcn" />
                                                     <AvatarFallback className={getBgColor(event.color)}>
                                                         {getFirstLetters(event.title)}
                                                     </AvatarFallback>
@@ -85,8 +85,8 @@ export const AgendaEvents: FC = () => {
                                                             {formatTime(event.startDate, use24HourFormat)}
                                                         </p>
                                                         <span className='text-muted-foreground'>
-                                             -
-                                            </span>
+                                                            -
+                                                        </span>
                                                         <p className="text-sm">
                                                             {formatTime(event.endDate, use24HourFormat)}
                                                         </p>
@@ -99,7 +99,7 @@ export const AgendaEvents: FC = () => {
                                                             }
                                                         </p>
                                                         <span className='text-sm'>
-                                                             at
+                                                            at
                                                         </span>
                                                         <p className="text-sm">
                                                             {

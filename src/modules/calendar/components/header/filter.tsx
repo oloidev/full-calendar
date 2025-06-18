@@ -1,16 +1,16 @@
-import {CheckIcon, Filter, RefreshCcw} from "lucide-react";
+import { CheckIcon, Filter, RefreshCcw } from "lucide-react";
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {useCalendar} from "@/modules/calendar/contexts/calendar-context";
-import type {TEventColor} from "@/modules/calendar/types";
-import {Toggle} from "@/components/ui/toggle";
+import { useCalendar } from "@/modules/calendar/contexts/calendar-context";
+import type { TEventColor } from "@/modules/calendar/types";
+import { Toggle } from "@/components/ui/toggle";
 
 export default function FilterEvents() {
-    const {selectedColors, filterEventsBySelectedColors , clearFilter } = useCalendar();
+    const { selectedColors, filterEventsBySelectedColors, clearFilter } = useCalendar();
 
     const colors: TEventColor[] = [
         "blue",
@@ -28,7 +28,7 @@ export default function FilterEvents() {
                     variant="outline"
                     className="cursor-pointer w-fit"
                 >
-                    <Filter className="h-4 w-4"/>
+                    <Filter className="h-4 w-4" />
                 </Toggle>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-[150px]">
@@ -64,7 +64,7 @@ export default function FilterEvents() {
                         e.preventDefault()
                         clearFilter();
                     }}
-                    >
+                >
                     <RefreshCcw
                         className='size-3.5'
                     />

@@ -11,7 +11,7 @@ interface DroppableAreaProps {
 
 export function DroppableArea({ date, hour, minute, children, className }: DroppableAreaProps) {
   const { handleEventDrop, isDragging } = useDragDrop();
-  
+
   return (
     <div
       className={`${className || ''} ${isDragging ? 'drop-target' : ''}`}

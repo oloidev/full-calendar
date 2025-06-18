@@ -53,11 +53,11 @@ export function DragDropProvider({ children }: { children: ReactNode }) {
 
     // Check if the event is being dropped in the same position
     const isSamePosition =
-        originalStart.getFullYear() === newStart.getFullYear() &&
-        originalStart.getMonth() === newStart.getMonth() &&
-        originalStart.getDate() === newStart.getDate() &&
-        originalStart.getHours() === newStart.getHours() &&
-        originalStart.getMinutes() === newStart.getMinutes();
+      originalStart.getFullYear() === newStart.getFullYear() &&
+      originalStart.getMonth() === newStart.getMonth() &&
+      originalStart.getDate() === newStart.getDate() &&
+      originalStart.getHours() === newStart.getHours() &&
+      originalStart.getMinutes() === newStart.getMinutes();
 
     if (!isSamePosition) {
       onEventDropped(draggedEvent, newStart, newEnd);

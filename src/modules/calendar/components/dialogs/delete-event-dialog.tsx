@@ -1,7 +1,7 @@
-import {useCalendar} from "@/modules/calendar/contexts/calendar-context";
-import {toast} from "sonner";
-import {Button} from "@/components/ui/button";
-import {TrashIcon} from "lucide-react";
+import { useCalendar } from "@/modules/calendar/contexts/calendar-context";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { TrashIcon } from "lucide-react";
 import {
     AlertDialog,
     AlertDialogAction, AlertDialogCancel,
@@ -20,7 +20,7 @@ export default function DeleteEventDialog(
     }: DeleteEventDialogProps
 ) {
 
-    const {removeEvent} = useCalendar()
+    const { removeEvent } = useCalendar()
 
     const deleteEvent = () => {
         try {

@@ -1,7 +1,7 @@
 "use client";
 
-import {format, parseISO} from "date-fns";
-import {Calendar, Clock, Text, User} from "lucide-react";
+import { format, parseISO } from "date-fns";
+import { Calendar, Clock, Text, User } from "lucide-react";
 
 import {
     Dialog,
@@ -11,31 +11,31 @@ import {
     DialogTrigger,
     DialogClose,
 } from "@/components/ui/dialog";
-import {ScrollArea} from "@/components/ui/scroll-area";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
-import type {IEvent} from "@/modules/calendar/interfaces";
-import {ReactNode} from "react";
-import {useCalendar} from "../../contexts/calendar-context";
-import {formatTime} from "../../helpers";
-import {AddEditEventDialog} from "@/modules/calendar/components/dialogs/add-edit-event-dialog";
-import {Button} from "@/components/ui/button";
-import {toast} from "sonner";
+import type { IEvent } from "@/modules/calendar/interfaces";
+import { ReactNode } from "react";
+import { useCalendar } from "../../contexts/calendar-context";
+import { formatTime } from "../../helpers";
+import { AddEditEventDialog } from "@/modules/calendar/components/dialogs/add-edit-event-dialog";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 interface IProps {
     event: IEvent;
     children: ReactNode;
 }
 
-export function EventDetailsDialog({event, children}: IProps) {
+export function EventDetailsDialog({ event, children }: IProps) {
     const startDate = parseISO(event.startDate);
     const endDate = parseISO(event.endDate);
-    const {use24HourFormat, removeEvent} = useCalendar()
+    const { use24HourFormat, removeEvent } = useCalendar()
 
-    const deleteEvent = (eventId : number) => {
+    const deleteEvent = (eventId: number) => {
         try {
             removeEvent(eventId);
             toast.success("Event deleted successfully.");
-        }catch {
+        } catch {
             toast.error("Error deleting event.");
         }
     }
@@ -51,7 +51,7 @@ export function EventDetailsDialog({event, children}: IProps) {
                 <ScrollArea className="max-h-[80vh]">
                     <div className="space-y-4 p-4">
                         <div className="flex items-start gap-2">
-                            <User className="mt-1 size-4 shrink-0 text-muted-foreground"/>
+                            <User className="mt-1 size-4 shrink-0 text-muted-foreground" />
                             <div>
                                 <p className="text-sm font-medium">Responsible</p>
                                 <p className="text-sm text-muted-foreground">
@@ -61,7 +61,7 @@ export function EventDetailsDialog({event, children}: IProps) {
                         </div>
 
                         <div className="flex items-start gap-2">
-                            <Calendar className="mt-1 size-4 shrink-0 text-muted-foreground"/>
+                            <Calendar className="mt-1 size-4 shrink-0 text-muted-foreground" />
                             <div>
                                 <p className="text-sm font-medium">Start Date</p>
                                 <p className="text-sm text-muted-foreground">
@@ -75,7 +75,7 @@ export function EventDetailsDialog({event, children}: IProps) {
                         </div>
 
                         <div className="flex items-start gap-2">
-                            <Clock className="mt-1 size-4 shrink-0 text-muted-foreground"/>
+                            <Clock className="mt-1 size-4 shrink-0 text-muted-foreground" />
                             <div>
                                 <p className="text-sm font-medium">End Date</p>
                                 <p className="text-sm text-muted-foreground">
@@ -89,7 +89,7 @@ export function EventDetailsDialog({event, children}: IProps) {
                         </div>
 
                         <div className="flex items-start gap-2">
-                            <Text className="mt-1 size-4 shrink-0 text-muted-foreground"/>
+                            <Text className="mt-1 size-4 shrink-0 text-muted-foreground" />
                             <div>
                                 <p className="text-sm font-medium">Description</p>
                                 <p className="text-sm text-muted-foreground">
@@ -113,7 +113,7 @@ export function EventDetailsDialog({event, children}: IProps) {
                         Delete
                     </Button>
                 </div>
-                <DialogClose/>
+                <DialogClose />
             </DialogContent>
         </Dialog>
     );

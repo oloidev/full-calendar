@@ -1,5 +1,5 @@
 import type { IEvent, IUser } from "@/modules/calendar/interfaces";
-import {COLORS} from "@/modules/calendar/constants";
+import { COLORS } from "@/modules/calendar/constants";
 
 export const USERS_MOCK: IUser[] = [
   {

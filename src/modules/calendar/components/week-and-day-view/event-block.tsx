@@ -52,12 +52,12 @@ const calendarWeekEventCardVariants = cva(
 
 interface IProps
   extends HTMLAttributes<HTMLDivElement>,
-    Omit<VariantProps<typeof calendarWeekEventCardVariants>, "color"> {
+  Omit<VariantProps<typeof calendarWeekEventCardVariants>, "color"> {
   event: IEvent;
 }
 
 export function EventBlock({ event, className }: IProps) {
-  const { badgeVariant , use24HourFormat } = useCalendar();
+  const { badgeVariant, use24HourFormat } = useCalendar();
 
   const start = parseISO(event.startDate);
   const end = parseISO(event.endDate);

@@ -46,12 +46,12 @@ const DEFAULT_SETTINGS: CalendarSettings = {
 const CalendarContext = createContext({} as ICalendarContext);
 
 export function CalendarProvider({
-                                     children,
-                                     users,
-                                     events,
-                                     badge = "colored",
-                                     view = "day",
-                                 }: {
+    children,
+    users,
+    events,
+    badge = "colored",
+    view = "day",
+}: {
     children: React.ReactNode;
     users: IUser[];
     events: IEvent[];

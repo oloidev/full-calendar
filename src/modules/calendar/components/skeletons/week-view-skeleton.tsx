@@ -21,7 +21,7 @@ export function WeekViewSkeleton() {
             </div>
           ))}
         </div>
-        
+
         <div className="grid flex-1 grid-cols-7 divide-x">
           {Array.from({ length: 7 }).map((_, dayIndex) => (
             <div key={dayIndex} className="relative">

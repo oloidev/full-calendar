@@ -25,9 +25,9 @@ import {
     differenceInDays,
     isValid,
 } from "date-fns";
-import {TCalendarView, TEventColor} from "@/modules/calendar/types";
-import type {ICalendarCell, IEvent} from "@/modules/calendar/interfaces";
-import {useCalendar} from "@/modules/calendar/contexts/calendar-context";
+import { TCalendarView, TEventColor } from "@/modules/calendar/types";
+import type { ICalendarCell, IEvent } from "@/modules/calendar/interfaces";
+import { useCalendar } from "@/modules/calendar/contexts/calendar-context";
 
 const FORMAT_STRING = "MMM d, yyyy";
 
@@ -123,7 +123,7 @@ export function getEventBlockStyle(event: IEvent, day: Date, groupIndex: number,
     const width = 100 / groupSize;
     const left = groupIndex * width;
 
-    return {top: `${top}%`, width: `${width}%`, left: `${left}%`};
+    return { top: `${top}%`, width: `${width}%`, left: `${left}%` };
 }
 
 export function getCalendarCells(selectedDate: Date): ICalendarCell[] {
@@ -135,19 +135,19 @@ export function getCalendarCells(selectedDate: Date): ICalendarCell[] {
     const daysInPrevMonth = endOfMonth(new Date(year, month - 1)).getDate();
     const totalDays = firstDayOfMonth + daysInMonth;
 
-    const prevMonthCells = Array.from({length: firstDayOfMonth}, (_, i) => ({
+    const prevMonthCells = Array.from({ length: firstDayOfMonth }, (_, i) => ({
         day: daysInPrevMonth - firstDayOfMonth + i + 1,
         currentMonth: false,
         date: new Date(year, month - 1, daysInPrevMonth - firstDayOfMonth + i + 1),
     }));
 
-    const currentMonthCells = Array.from({length: daysInMonth}, (_, i) => ({
+    const currentMonthCells = Array.from({ length: daysInMonth }, (_, i) => ({
         day: i + 1,
         currentMonth: true,
         date: new Date(year, month, i + 1),
     }));
 
-    const nextMonthCells = Array.from({length: (7 - (totalDays % 7)) % 7}, (_, i) => ({
+    const nextMonthCells = Array.from({ length: (7 - (totalDays % 7)) % 7 }, (_, i) => ({
         day: i + 1,
         currentMonth: false,
         date: new Date(year, month + 1, i + 1),
@@ -167,7 +167,7 @@ export function calculateMonthEventPositions(
     const eventPositions: Record<string, number> = {};
     const occupiedPositions: Record<string, boolean[]> = {};
 
-    eachDayOfInterval({start: monthStart, end: monthEnd}).forEach((day) => {
+    eachDayOfInterval({ start: monthStart, end: monthEnd }).forEach((day) => {
         occupiedPositions[day.toISOString()] = [false, false, false];
     });
 
@@ -286,13 +286,13 @@ export const getEventsForDay = (events: IEvent[], date: Date, isWeek = false): I
                 point = "end";
             }
 
-            return {...event, point};
+            return { ...event, point };
         });
 };
 
 export const getWeekDates = (date: Date): Date[] => {
-    const startDate = startOfWeek(date, {weekStartsOn: 1});
-    return Array.from({length: 7}, (_, i) => addDays(startDate, i));
+    const startDate = startOfWeek(date, { weekStartsOn: 1 });
+    return Array.from({ length: 7 }, (_, i) => addDays(startDate, i));
 };
 
 export const getEventsForWeek = (events: IEvent[], date: Date): IEvent[] => {
@@ -356,7 +356,7 @@ export const getBgColor = (color: string): string => {
 };
 
 export const useGetEventsByMode = (events: IEvent[]) => {
-    const {view, selectedDate} = useCalendar();
+    const { view, selectedDate } = useCalendar();
 
     switch (view) {
         case "day":

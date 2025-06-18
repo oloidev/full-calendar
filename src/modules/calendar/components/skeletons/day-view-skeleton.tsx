@@ -19,7 +19,7 @@ export function DayViewSkeleton() {
             </div>
           ))}
         </div>
-        
+
         <div className="flex-1">
           <div className="relative">
             {Array.from({ length: 12 }).map((_, hourIndex) => (

@@ -1,15 +1,15 @@
-import {motion} from "framer-motion";
-import {useCalendar} from "@/modules/calendar/contexts/calendar-context";
-import {staggerContainer, transition} from "@/modules/calendar/animations";
+import { motion } from "framer-motion";
+import { useCalendar } from "@/modules/calendar/contexts/calendar-context";
+import { staggerContainer, transition } from "@/modules/calendar/animations";
 
-import {DayCell} from "@/modules/calendar/components/month-view/day-cell";
+import { DayCell } from "@/modules/calendar/components/month-view/day-cell";
 
 import {
     getCalendarCells,
     calculateMonthEventPositions,
 } from "@/modules/calendar/helpers";
 
-import type {IEvent} from "@/modules/calendar/interfaces";
+import type { IEvent } from "@/modules/calendar/interfaces";
 
 interface IProps {
     singleDayEvents: IEvent[];
@@ -18,8 +18,9 @@ interface IProps {
 
 const WEEK_DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-export function CalendarMonthView({singleDayEvents, multiDayEvents}: IProps) {
-    const {selectedDate} = useCalendar();
+
+export function CalendarMonthView({ singleDayEvents, multiDayEvents }: IProps) {
+    const { selectedDate } = useCalendar();
 
     const allEvents = [...multiDayEvents, ...singleDayEvents];
 
@@ -38,9 +39,9 @@ export function CalendarMonthView({singleDayEvents, multiDayEvents}: IProps) {
                     <motion.div
                         key={day}
                         className="flex items-center justify-center py-2"
-                        initial={{opacity: 0, y: -10}}
-                        animate={{opacity: 1, y: 0}}
-                        transition={{delay: index * 0.05, ...transition}}
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.05, ...transition }}
                     >
                         <span className="text-xs font-medium text-t-quaternary">{day}</span>
                     </motion.div>

@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import {formatTime} from "@/modules/calendar/helpers";
-import {useCalendar} from "@/modules/calendar/contexts/calendar-context";
+import { formatTime } from "@/modules/calendar/helpers";
+import { useCalendar } from "@/modules/calendar/contexts/calendar-context";
 
 export function CalendarTimeline() {
-  const {use24HourFormat} = useCalendar()
+  const { use24HourFormat } = useCalendar()
   const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {

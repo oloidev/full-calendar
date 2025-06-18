@@ -1,12 +1,12 @@
-import {cva} from "class-variance-authority";
-import {endOfDay, isSameDay, parseISO, startOfDay} from "date-fns";
+import { cva } from "class-variance-authority";
+import { endOfDay, isSameDay, parseISO, startOfDay } from "date-fns";
 
-import type {VariantProps} from "class-variance-authority";
-import {useCalendar} from "@/modules/calendar/contexts/calendar-context";
-import {IEvent} from "@/modules/calendar/interfaces";
-import {cn} from "@/lib/utils";
-import {EventDetailsDialog} from "@/modules/calendar/components/dialogs/event-details-dialog";
-import {DraggableEvent} from "@/modules/calendar/components/dnd/draggable-event";
+import type { VariantProps } from "class-variance-authority";
+import { useCalendar } from "@/modules/calendar/contexts/calendar-context";
+import { IEvent } from "@/modules/calendar/interfaces";
+import { cn } from "@/lib/utils";
+import { EventDetailsDialog } from "@/modules/calendar/components/dialogs/event-details-dialog";
+import { DraggableEvent } from "@/modules/calendar/components/dnd/draggable-event";
 import { formatTime } from "@/modules/calendar/helpers";
 
 const eventBadgeVariants = cva(
@@ -53,14 +53,14 @@ interface IProps extends Omit<VariantProps<typeof eventBadgeVariants>, "color" |
 }
 
 export function MonthEventBadge({
-                                    event,
-                                    cellDate,
-                                    eventCurrentDay,
-                                    eventTotalDays,
-                                    className,
-                                    position: propPosition
-                                }: IProps) {
-    const {badgeVariant , use24HourFormat} = useCalendar();
+    event,
+    cellDate,
+    eventCurrentDay,
+    eventTotalDays,
+    className,
+    position: propPosition
+}: IProps) {
+    const { badgeVariant, use24HourFormat } = useCalendar();
 
     const itemStart = startOfDay(parseISO(event.startDate));
     const itemEnd = endOfDay(parseISO(event.endDate));
@@ -87,7 +87,7 @@ export function MonthEventBadge({
 
     const color = (badgeVariant === "dot" ? `${event.color}-dot` : event.color) as VariantProps<typeof eventBadgeVariants>["color"];
 
-    const eventBadgeClasses = cn(eventBadgeVariants({color, multiDayPosition: position, className}));
+    const eventBadgeClasses = cn(eventBadgeVariants({ color, multiDayPosition: position, className }));
 
     return (
         <EventDetailsDialog event={event}>
@@ -96,7 +96,7 @@ export function MonthEventBadge({
                     <div className="flex items-center gap-1.5 truncate">
                         {!["middle", "last"].includes(position) && badgeVariant === "dot" && (
                             <svg width="8" height="8" viewBox="0 0 8 8" className="shrink-0">
-                                <circle cx="4" cy="4" r="4"/>
+                                <circle cx="4" cy="4" r="4" />
                             </svg>
                         )}
 
@@ -104,8 +104,8 @@ export function MonthEventBadge({
                             <p className="flex-1 truncate font-semibold">
                                 {eventCurrentDay && (
                                     <span className="text-xs">
-                  Day {eventCurrentDay} of {eventTotalDays} •{" "}
-                </span>
+                                        Day {eventCurrentDay} of {eventTotalDays} •{" "}
+                                    </span>
                                 )}
                                 {event.title}
                             </p>

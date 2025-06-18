@@ -1,18 +1,18 @@
-import {useState} from "react";
-import {useCalendar} from "@/modules/calendar/contexts/calendar-context";
+import { useState } from "react";
+import { useCalendar } from "@/modules/calendar/contexts/calendar-context";
 
-export function useDisclosure({defaultIsOpen = false}: { defaultIsOpen?: boolean } = {}) {
+export function useDisclosure({ defaultIsOpen = false }: { defaultIsOpen?: boolean } = {}) {
     const [isOpen, setIsOpen] = useState(defaultIsOpen);
 
     const onOpen = () => setIsOpen(true);
     const onClose = () => setIsOpen(false);
     const onToggle = () => setIsOpen(currentValue => !currentValue);
 
-    return {onOpen, onClose, isOpen, onToggle};
+    return { onOpen, onClose, isOpen, onToggle };
 }
 
 export const useFilteredEvents = () => {
-    const {events, selectedDate, selectedUserId} = useCalendar();
+    const { events, selectedDate, selectedUserId } = useCalendar();
 
     return events.filter((event) => {
         const itemStartDate = new Date(event.startDate);
@@ -37,7 +37,7 @@ export const useFilteredEvents = () => {
     });
 }
 
-export const useLocalStorage = <T, >(key: string, initialValue: T): [T, (value: T) => void] => {
+export const useLocalStorage = <T,>(key: string, initialValue: T): [T, (value: T) => void] => {
     const readValue = (): T => {
         if (typeof window === "undefined") {
             return initialValue;
