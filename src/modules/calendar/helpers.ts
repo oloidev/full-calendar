@@ -74,7 +74,7 @@ export function navigateDate(date: Date, view: TCalendarView, direction: "previo
 }
 
 export function getEventsCount(events: IEvent[], date: Date, view: TCalendarView): number {
-    const compareFns: Record<TCalendarView, (d1: Date, d2: Date) => boolean> = {
+    const compareFns: Partial<Record<TCalendarView, (d1: Date, d2: Date) => boolean>> = {
         day: isSameDay,
         week: isSameWeek,
         month: isSameMonth,
@@ -83,8 +83,11 @@ export function getEventsCount(events: IEvent[], date: Date, view: TCalendarView
     };
 
     const compareFn = compareFns[view];
+    if (!compareFn) return 0;
+
     return events.filter((event) => compareFn(parseISO(event.startDate), date)).length;
 }
+
 
 export function groupEvents(dayEvents: IEvent[]): IEvent[][] {
     const sortedEvents = dayEvents.sort((a, b) =>

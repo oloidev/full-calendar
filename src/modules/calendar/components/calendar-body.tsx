@@ -11,6 +11,8 @@ import { CalendarDayView } from "@/modules/calendar/components/week-and-day-view
 import { CalendarYearView } from "@/modules/calendar/components/year-view/calendar-year-view";
 import { isSameDay, parseISO } from "date-fns";
 import { useFilteredEvents } from "@/modules/calendar/hooks";
+import { KanbanLocationVsTime } from "@/modules/calendar/views/KanbanLocationVsTime";
+
 
 export function CalendarBody() {
     const { view } = useCalendar();
@@ -75,6 +77,12 @@ export function CalendarBody() {
                         </motion.div>
                     )
                 }
+                {view === "locationVtime" && (
+                    <KanbanLocationVsTime
+                        singleDayEvents={singleDayEvents}
+                        multiDayEvents={multiDayEvents}
+                    />
+                )}
             </motion.div>
         </div>
     );

@@ -38,7 +38,7 @@ interface CalendarSettings {
 
 const DEFAULT_SETTINGS: CalendarSettings = {
     badgeVariant: "colored",
-    view: "day",
+    view: "locationVtime",
     use24HourFormat: true,
     agendaModeGroupBy: "date"
 };

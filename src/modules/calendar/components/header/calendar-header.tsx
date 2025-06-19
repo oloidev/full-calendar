@@ -30,6 +30,8 @@ import { useCalendar } from "@/modules/calendar/contexts/calendar-context";
 import { Toggle } from "@/components/ui/toggle";
 import { useFilteredEvents } from "@/modules/calendar/hooks";
 import { Settings } from "@/modules/calendar/components/settings/settings";
+import { ViewSwitcher } from "@/modules/calendar/components/dev/view-switcher";
+
 
 export const MotionButton = motion.create(Button);
 
@@ -142,6 +144,8 @@ export function CalendarHeader() {
                         </MotionButton>
                     </AddEditEventDialog>
                 </div>
+                <ViewSwitcher />
+
                 <Settings />
             </motion.div>
         </div>
