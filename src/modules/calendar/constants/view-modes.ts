@@ -24,7 +24,7 @@ export const VIEW_MODES: ViewMode[] = [
         columns: "time",
     },
     {
-        key: "timeVroom",
+        key: "timeVlocation",
         label: "Time vs Room",
         type: "timeline",
         rows: "time",

@@ -6,7 +6,7 @@ export type TCalendarView =
     | "agenda"
     | "locationVtime"
     | "providerVtime"
-    | "timeVroom"
+    | "timeVlocation"
     | "timeVprovider";
 
 export type TEventColor = "blue" | "green" | "red" | "yellow" | "purple" | "orange";

@@ -13,7 +13,7 @@ export function ViewSwitcher() {
         "agenda",
         "locationVtime",
         "providerVtime",
-        "timeVroom",
+        "timeVlocation",
         "timeVprovider",
     ];
 
