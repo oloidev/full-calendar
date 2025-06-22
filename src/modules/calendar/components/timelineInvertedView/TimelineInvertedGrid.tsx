@@ -11,7 +11,7 @@ interface KanbanViewProps {
     getColumnId: (event: IEvent) => string;
 }
 
-export function KanbanView({
+export function TimelineInvertedGrid({
     rows,
     columns,
     events,

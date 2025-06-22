@@ -1,6 +1,6 @@
 "use client";
 
-import { KanbanView } from "@/modules/calendar/components/kanban-view/KanbanView";
+import { TimelineInvertedGrid } from "@/modules/calendar/components/timelineInvertedView/TimelineInvertedGrid";
 import { useCalendar } from "@/modules/calendar/contexts/calendar-context";
 import { useMemo } from "react";
 
@@ -13,22 +13,22 @@ const generateTimeSlots = (): string[] => {
     return slots;
 };
 
-export function KanbanLocationVsTime() {
+export function TimelineInvertedView() {
     const { events } = useCalendar();
 
     const locations = useMemo(() => {
-        const uniqueLocations = new Set(events.map((e) => e.user.name)); // <- aquí deberías usar e.location si existe
+        const uniqueLocations = new Set(events.map((e) => e.user.name));
         return Array.from(uniqueLocations);
     }, [events]);
 
     const timeSlots = useMemo(() => generateTimeSlots(), []);
 
     return (
-        <KanbanView
+        <TimelineInvertedGrid
             rows={locations}
             columns={timeSlots}
             events={events}
-            getRowId={(event) => event.user.name} // <- luego cambiar a event.location.name si existe
+            getRowId={(event) => event.user.name}
             getColumnId={(event) => {
                 const date = new Date(event.startDate);
                 return `${date.getHours().toString().padStart(2, "0")}:00`;
