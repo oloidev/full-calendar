@@ -134,14 +134,16 @@ export function CalendarHeader() {
                     <UserSelect />
 
                     <AddEditEventDialog>
-                        <MotionButton
-                            variants={buttonHover}
-                            whileHover="hover"
-                            whileTap="tap"
-                        >
-                            <Plus className="h-4 w-4" />
-                            Add Event
-                        </MotionButton>
+                        <div>
+                            <MotionButton
+                                variants={buttonHover}
+                                whileHover="hover"
+                                whileTap="tap"
+                            >
+                                <Plus className="h-4 w-4" />
+                                Add Event
+                            </MotionButton>
+                        </div>
                     </AddEditEventDialog>
                 </div>
                 <ViewSwitcher />

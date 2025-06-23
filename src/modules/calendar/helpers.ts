@@ -26,7 +26,8 @@ import {
     isValid,
 } from "date-fns";
 import { TCalendarView, TEventColor } from "@/modules/calendar/types";
-import type { ICalendarCell, IEvent } from "@/modules/calendar/interfaces";
+import type { ICalendarCell } from "@/modules/calendar/interfaces";
+import type { ICustomEvent } from "@/types/custom-event";
 import { useCalendar } from "@/modules/calendar/contexts/calendar-context";
 
 const FORMAT_STRING = "MMM d, yyyy";
@@ -73,7 +74,7 @@ export function navigateDate(date: Date, view: TCalendarView, direction: "previo
     return operations[view](date, 1);
 }
 
-export function getEventsCount(events: IEvent[], date: Date, view: TCalendarView): number {
+export function getEventsCount(events: ICustomEvent[], date: Date, view: TCalendarView): number {
     const compareFns: Partial<Record<TCalendarView, (d1: Date, d2: Date) => boolean>> = {
         day: isSameDay,
         week: isSameWeek,
@@ -89,11 +90,11 @@ export function getEventsCount(events: IEvent[], date: Date, view: TCalendarView
 }
 
 
-export function groupEvents(dayEvents: IEvent[]): IEvent[][] {
+export function groupEvents(dayEvents: ICustomEvent[]): ICustomEvent[][] {
     const sortedEvents = dayEvents.sort((a, b) =>
         parseISO(a.startDate).getTime() - parseISO(b.startDate).getTime()
     );
-    const groups: IEvent[][] = [];
+    const groups: ICustomEvent[][] = [];
 
     for (const event of sortedEvents) {
         const eventStart = parseISO(event.startDate);
@@ -116,7 +117,7 @@ export function groupEvents(dayEvents: IEvent[]): IEvent[][] {
     return groups;
 }
 
-export function getEventBlockStyle(event: IEvent, day: Date, groupIndex: number, groupSize: number) {
+export function getEventBlockStyle(event: ICustomEvent, day: Date, groupIndex: number, groupSize: number) {
     const startDate = parseISO(event.startDate);
     const dayStart = startOfDay(day); // Use startOfDay instead of manual reset
     const eventStart = startDate < dayStart ? dayStart : startDate;
@@ -160,8 +161,8 @@ export function getCalendarCells(selectedDate: Date): ICalendarCell[] {
 }
 
 export function calculateMonthEventPositions(
-    multiDayEvents: IEvent[],
-    singleDayEvents: IEvent[],
+    multiDayEvents: ICustomEvent[],
+    singleDayEvents: ICustomEvent[],
     selectedDate: Date
 ): Record<string, number> {
     const monthStart = startOfMonth(selectedDate);
@@ -219,7 +220,7 @@ export function calculateMonthEventPositions(
 
 export function getMonthCellEvents(
     date: Date,
-    events: IEvent[],
+    events: ICustomEvent[],
     eventPositions: Record<string, number>
 ) {
     const dayStart = startOfDay(date);
@@ -259,7 +260,7 @@ export const getFirstLetters = (str: string): string => {
     return `${words[0].charAt(0).toUpperCase()}${words[1].charAt(0).toUpperCase()}`;
 };
 
-export const getEventsForDay = (events: IEvent[], date: Date, isWeek = false): IEvent[] => {
+export const getEventsForDay = (events: ICustomEvent[], date: Date, isWeek = false): ICustomEvent[] => {
     const targetDate = startOfDay(date);
     return events
         .filter((event) => {
@@ -298,7 +299,7 @@ export const getWeekDates = (date: Date): Date[] => {
     return Array.from({ length: 7 }, (_, i) => addDays(startDate, i));
 };
 
-export const getEventsForWeek = (events: IEvent[], date: Date): IEvent[] => {
+export const getEventsForWeek = (events: ICustomEvent[], date: Date): ICustomEvent[] => {
     const weekDates = getWeekDates(date);
     const startOfWeekDate = weekDates[0];
     const endOfWeekDate = weekDates[6];
@@ -310,7 +311,7 @@ export const getEventsForWeek = (events: IEvent[], date: Date): IEvent[] => {
     });
 };
 
-export const getEventsForMonth = (events: IEvent[], date: Date): IEvent[] => {
+export const getEventsForMonth = (events: ICustomEvent[], date: Date): ICustomEvent[] => {
     const startOfMonthDate = startOfMonth(date);
     const endOfMonthDate = endOfMonth(date);
 
@@ -321,7 +322,7 @@ export const getEventsForMonth = (events: IEvent[], date: Date): IEvent[] => {
     });
 };
 
-export const getEventsForYear = (events: IEvent[], date: Date): IEvent[] => {
+export const getEventsForYear = (events: ICustomEvent[], date: Date): ICustomEvent[] => {
     if (!events || !Array.isArray(events) || !isValid(date)) return [];
 
     const startOfYearDate = startOfYear(date);
@@ -358,7 +359,7 @@ export const getBgColor = (color: string): string => {
     return colorClasses[color as TEventColor] || "";
 };
 
-export const useGetEventsByMode = (events: IEvent[]) => {
+export const useGetEventsByMode = (events: ICustomEvent[]) => {
     const { view, selectedDate } = useCalendar();
 
     switch (view) {

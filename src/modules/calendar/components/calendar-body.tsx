@@ -11,7 +11,7 @@ import { CalendarDayView } from "@/modules/calendar/components/week-and-day-view
 import { CalendarYearView } from "@/modules/calendar/components/year-view/calendar-year-view";
 import { isSameDay, parseISO } from "date-fns";
 import { useFilteredEvents } from "@/modules/calendar/hooks";
-import { TimelineInvertedView } from "@/modules/calendar/views/TimelineInvertedView";
+import { TimelineLocationView } from "../views/TimelineLocationView";
 
 
 export function CalendarBody() {
@@ -28,6 +28,10 @@ export function CalendarBody() {
         const endDate = parseISO(event.endDate);
         return !isSameDay(startDate, endDate);
     });
+
+    console.log("SINGLE DAY EVENTS", singleDayEvents);
+    console.log("MULTI DAY EVENTS", multiDayEvents);
+
 
     return (
         <div className='w-full h-full overflow-scroll relative'>
@@ -77,8 +81,8 @@ export function CalendarBody() {
                         </motion.div>
                     )
                 }
-                {view === "locationVtime" && (
-                    <TimelineInvertedView
+                {view === "timelineLocation" && (
+                    <TimelineLocationView
                         singleDayEvents={singleDayEvents}
                         multiDayEvents={multiDayEvents}
                     />

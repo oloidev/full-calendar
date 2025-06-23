@@ -1,11 +1,11 @@
 import React, { ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import { useDragDrop } from '@/modules/calendar/contexts/drag-drop-context';
-import { IEvent } from '@/modules/calendar/interfaces';
+import { ICustomEvent } from '@/types/custom-event';
 import { EventDetailsDialog } from "@/modules/calendar/components/dialogs/event-details-dialog";
 
 interface DraggableEventProps {
-  event: IEvent;
+  event: ICustomEvent;
   children: ReactNode;
   className?: string;
 }

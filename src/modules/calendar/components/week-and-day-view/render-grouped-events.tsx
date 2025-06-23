@@ -1,10 +1,10 @@
-import { IEvent } from "@/modules/calendar/interfaces";
+import { ICustomEvent } from "@/types/custom-event";
 import { getEventBlockStyle } from "@/modules/calendar/helpers";
 import { areIntervalsOverlapping, parseISO } from "date-fns";
 import { EventBlock } from "@/modules/calendar/components/week-and-day-view/event-block";
 
 interface RenderGroupedEventsProps {
-    groupedEvents: IEvent[][];
+    groupedEvents: ICustomEvent[][];
     day: Date
 }
 

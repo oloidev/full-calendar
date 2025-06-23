@@ -11,7 +11,7 @@ export function ViewSwitcher() {
         "month",
         "year",
         "agenda",
-        "locationVtime",
+        "timelineLocation",
         "providerVtime",
         "timeVlocation",
         "timeVprovider",

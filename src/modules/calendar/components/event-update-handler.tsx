@@ -1,6 +1,6 @@
 "use client";
 
-import { IEvent } from "@/modules/calendar/interfaces";
+import { ICustomEvent } from "@/types/custom-event";
 import { useDragDrop } from "@/modules/calendar/contexts/drag-drop-context";
 import { useEffect, useCallback } from "react";
 import { toast } from "sonner";
@@ -10,7 +10,7 @@ export function EventUpdateHandler() {
     const { setOnEventDropped } = useDragDrop();
     const { updateEvent } = useCalendar();
 
-    const handleEventUpdate = useCallback((event: IEvent, newStartDate: Date, newEndDate: Date) => {
+    const handleEventUpdate = useCallback((event: ICustomEvent, newStartDate: Date, newEndDate: Date) => {
         try {
             const updatedEvent = {
                 ...event,

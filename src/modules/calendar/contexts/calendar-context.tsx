@@ -1,7 +1,8 @@
 "use client";
 
 import React, { createContext, useContext, useState } from "react";
-import type { IEvent, IUser } from "@/modules/calendar/interfaces";
+import type { ICustomEvent } from "@/types/custom-event";
+import { TProvider } from "../mocks/types";
 import { TCalendarView, TEventColor } from "@/modules/calendar/types";
 import { useLocalStorage } from "@/modules/calendar/hooks";
 
@@ -14,17 +15,17 @@ interface ICalendarContext {
     use24HourFormat: boolean;
     toggleTimeFormat: () => void;
     setSelectedDate: (date: Date | undefined) => void;
-    selectedUserId: IUser["id"] | "all";
-    setSelectedUserId: (userId: IUser["id"] | "all") => void;
+    selectedUserId: TProvider["id"] | "all";
+    setSelectedUserId: (userId: TProvider["id"] | "all") => void;
     badgeVariant: "dot" | "colored";
     setBadgeVariant: (variant: "dot" | "colored") => void;
     selectedColors: TEventColor[];
     filterEventsBySelectedColors: (colors: TEventColor) => void;
-    filterEventsBySelectedUser: (userId: IUser["id"] | "all") => void;
-    users: IUser[];
-    events: IEvent[];
-    addEvent: (event: IEvent) => void;
-    updateEvent: (event: IEvent) => void;
+    filterEventsBySelectedUser: (userId: TProvider["id"] | "all") => void;
+    users: TProvider[];
+    events: ICustomEvent[];
+    addEvent: (event: ICustomEvent) => void;
+    updateEvent: (event: ICustomEvent) => void;
     removeEvent: (eventId: number) => void;
     clearFilter: () => void;
 }
@@ -38,7 +39,7 @@ interface CalendarSettings {
 
 const DEFAULT_SETTINGS: CalendarSettings = {
     badgeVariant: "colored",
-    view: "locationVtime",
+    view: "timelineLocation",
     use24HourFormat: true,
     agendaModeGroupBy: "date"
 };
@@ -53,8 +54,8 @@ export function CalendarProvider({
     view = "day",
 }: {
     children: React.ReactNode;
-    users: IUser[];
-    events: IEvent[];
+    users: TProvider[];
+    events: ICustomEvent[];
     view?: TCalendarView;
     badge?: "dot" | "colored";
 }) {
@@ -70,11 +71,11 @@ export function CalendarProvider({
     const [agendaModeGroupBy, setAgendaModeGroupByState] = useState<"date" | "color">(settings.agendaModeGroupBy);
 
     const [selectedDate, setSelectedDate] = useState(new Date());
-    const [selectedUserId, setSelectedUserId] = useState<IUser["id"] | "all">("all");
+    const [selectedUserId, setSelectedUserId] = useState<TProvider["id"] | "all">("all");
     const [selectedColors, setSelectedColors] = useState<TEventColor[]>([]);
 
-    const [allEvents, setAllEvents] = useState<IEvent[]>(events || []);
-    const [filteredEvents, setFilteredEvents] = useState<IEvent[]>(events || []);
+    const [allEvents, setAllEvents] = useState<ICustomEvent[]>(events || []);
+    const [filteredEvents, setFilteredEvents] = useState<ICustomEvent[]>(events || []);
 
     const updateSettings = (newPartialSettings: Partial<CalendarSettings>) => {
         setSettings({
@@ -123,7 +124,7 @@ export function CalendarProvider({
         setSelectedColors(newColors);
     };
 
-    const filterEventsBySelectedUser = (userId: IUser["id"] | "all") => {
+    const filterEventsBySelectedUser = (userId: TProvider["id"] | "all") => {
         setSelectedUserId(userId);
         if (userId === "all") {
             setFilteredEvents(allEvents);
@@ -138,12 +139,12 @@ export function CalendarProvider({
         setSelectedDate(date);
     };
 
-    const addEvent = (event: IEvent) => {
+    const addEvent = (event: ICustomEvent) => {
         setAllEvents((prev) => [...prev, event]);
         setFilteredEvents((prev) => [...prev, event]);
     };
 
-    const updateEvent = (event: IEvent) => {
+    const updateEvent = (event: ICustomEvent) => {
         const updated = {
             ...event,
             startDate: new Date(event.startDate).toISOString(),

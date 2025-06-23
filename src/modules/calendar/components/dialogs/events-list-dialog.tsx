@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle } from 
 import { cn } from "@/lib/utils";
 
 import { ReactNode } from "react";
-import { IEvent } from "@/modules/calendar/interfaces";
+import { ICustomEvent } from "@/types/custom-event";
 import { dayCellVariants } from "@/modules/calendar/components/month-view/day-cell";
 import { EventBullet } from "@/modules/calendar/components/month-view/event-bullet";
 import { useCalendar } from "@/modules/calendar/contexts/calendar-context";
@@ -11,7 +11,7 @@ import { format } from "date-fns";
 
 interface EventListDialogProps {
     date: Date;
-    events: IEvent[];
+    events: ICustomEvent[];
     maxVisibleEvents?: number;
     children?: ReactNode;
 }

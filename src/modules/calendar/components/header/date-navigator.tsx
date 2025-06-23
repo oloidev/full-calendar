@@ -18,12 +18,12 @@ import {
   rangeText,
 } from "@/modules/calendar/helpers";
 
-import type { IEvent } from "@/modules/calendar/interfaces";
+import type { ICustomEvent } from "@/types/custom-event";
 import type { TCalendarView } from "@/modules/calendar/types";
 
 interface IProps {
   view: TCalendarView;
-  events: IEvent[];
+  events: ICustomEvent[];
 }
 
 const MotionButton = motion.create(Button);

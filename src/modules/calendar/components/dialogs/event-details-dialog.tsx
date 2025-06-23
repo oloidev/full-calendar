@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-import type { IEvent } from "@/modules/calendar/interfaces";
+import type { ICustomEvent } from "@/types/custom-event";
 import { ReactNode } from "react";
 import { useCalendar } from "../../contexts/calendar-context";
 import { formatTime } from "../../helpers";
@@ -22,7 +22,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
 interface IProps {
-    event: IEvent;
+    event: ICustomEvent;
     children: ReactNode;
 }
 
@@ -55,7 +55,7 @@ export function EventDetailsDialog({ event, children }: IProps) {
                             <div>
                                 <p className="text-sm font-medium">Responsible</p>
                                 <p className="text-sm text-muted-foreground">
-                                    {event.user.name}
+                                    {event.provider?.name ?? "No asignado"}
                                 </p>
                             </div>
                         </div>
@@ -93,7 +93,7 @@ export function EventDetailsDialog({ event, children }: IProps) {
                             <div>
                                 <p className="text-sm font-medium">Description</p>
                                 <p className="text-sm text-muted-foreground">
-                                    {event.description}
+                                    {event.title}
                                 </p>
                             </div>
                         </div>
@@ -101,18 +101,19 @@ export function EventDetailsDialog({ event, children }: IProps) {
                 </ScrollArea>
                 <div className="flex justify-end gap-2">
                     <AddEditEventDialog event={event}>
-                        <Button variant="outline">
-                            Edit
-                        </Button>
+                        <Button variant="outline">Edit</Button>
                     </AddEditEventDialog>
-                    <Button variant="destructive" onClick={
-                        () => {
+
+                    <Button
+                        variant="destructive"
+                        onClick={() => {
                             deleteEvent(event.id);
-                        }
-                    }>
+                        }}
+                    >
                         Delete
                     </Button>
                 </div>
+
                 <DialogClose />
             </DialogContent>
         </Dialog>
