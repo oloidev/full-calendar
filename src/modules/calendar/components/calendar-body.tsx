@@ -10,28 +10,28 @@ import { CalendarWeekView } from "@/modules/calendar/components/week-and-day-vie
 import { CalendarDayView } from "@/modules/calendar/components/week-and-day-view/calendar-day-view";
 import { CalendarYearView } from "@/modules/calendar/components/year-view/calendar-year-view";
 import { isSameDay, parseISO } from "date-fns";
-import { useFilteredEvents } from "@/modules/calendar/hooks";
-import { TimelineLocationView } from "../views/TimelineLocationView";
+import { TimelineLocationView } from "@/modules/calendar/components/timeline-view/TimelineLocationView";
+import { mockLocations } from "../mocks/mock-data";
 
 
 export function CalendarBody() {
     const { view } = useCalendar();
 
-    const singleDayEvents = useFilteredEvents().filter((event) => {
+    const { events } = useCalendar();
+
+    const singleDayEvents = events.filter((event) => {
         const startDate = parseISO(event.startDate);
         const endDate = parseISO(event.endDate);
         return isSameDay(startDate, endDate);
     });
 
-    const multiDayEvents = useFilteredEvents().filter((event) => {
+    const multiDayEvents = events.filter((event) => {
         const startDate = parseISO(event.startDate);
         const endDate = parseISO(event.endDate);
         return !isSameDay(startDate, endDate);
     });
 
-    console.log("SINGLE DAY EVENTS", singleDayEvents);
-    console.log("MULTI DAY EVENTS", multiDayEvents);
-
+    console.log("📦 Eventos renderizados", singleDayEvents);
 
     return (
         <div className='w-full h-full overflow-scroll relative'>
@@ -83,8 +83,8 @@ export function CalendarBody() {
                 }
                 {view === "timelineLocation" && (
                     <TimelineLocationView
-                        singleDayEvents={singleDayEvents}
-                        multiDayEvents={multiDayEvents}
+                        events={singleDayEvents}
+                        locations={mockLocations}
                     />
                 )}
             </motion.div>

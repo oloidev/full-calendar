@@ -9,8 +9,10 @@ import { toast } from "sonner";
 import { useDisclosure } from "@/modules/calendar/hooks";
 import { useCalendar } from "@/modules/calendar/contexts/calendar-context";
 import { eventSchema, TEventFormData } from "@/modules/calendar/schemas";
-import { COLORS } from "@/modules/calendar/constants";
 import { ICustomEvent } from "@/types/custom-event";
+import { TLocation } from "@/modules/calendar/mocks/types";
+// import { TProvider, TPatient } from "@/modules/calendar/mocks/types";
+import { mockLocations, mockProviders, mockPatients } from "@/modules/calendar/mocks/mock-data";
 
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -34,9 +36,10 @@ interface IProps {
     startDate?: Date;
     startTime?: { hour: number; minute: number };
     event?: ICustomEvent;
+    location?: TLocation;
 }
 
-export function AddEditEventDialog({ children, startDate, startTime, event }: IProps) {
+export function AddEditEventDialog({ children, startDate, startTime, event, location }: IProps) {
     const { isOpen, onClose, onToggle } = useDisclosure();
     const { addEvent, updateEvent } = useCalendar();
     const isEditing = !!event;
@@ -56,15 +59,12 @@ export function AddEditEventDialog({ children, startDate, startTime, event }: IP
 
     const initialDates = getInitialDates();
 
-    const parseEventDates = () => {
-        if (!event) return null;
-        return {
+    const eventDates = event
+        ? {
             startDate: new Date(event.startDate),
             endDate: new Date(event.endDate),
-        };
-    };
-
-    const eventDates = parseEventDates();
+        }
+        : null;
 
     const form = useForm<TEventFormData>({
         resolver: zodResolver(eventSchema),
@@ -72,27 +72,32 @@ export function AddEditEventDialog({ children, startDate, startTime, event }: IP
             ? {
                 title: event.title,
                 description: event.description ?? "",
-                startDate: eventDates?.startDate,
-                endDate: eventDates?.endDate,
-                color: (event.color ?? "blue") as TEventFormData["color"],
+                startDate: eventDates?.startDate ?? new Date(),
+                endDate: eventDates?.endDate ?? addMinutes(new Date(), 30),
+                providerId: event.provider?.id ?? "",
+                patientId: event.patient?.id ?? "",
+                locationId: event.location?.id ?? "",
             }
             : {
                 title: "",
                 description: "",
                 startDate: initialDates.startDate,
                 endDate: initialDates.endDate,
-                color: "blue",
+                providerId: "",
+                patientId: "",
+                locationId: location?.id ?? "",
             },
     });
+
 
     const onSubmit = (values: TEventFormData) => {
         try {
             const formattedEvent: ICustomEvent = {
                 ...values,
                 id: isEditing ? event!.id : Math.floor(Math.random() * 1000000),
-                provider: isEditing ? event!.provider : undefined,
-                location: isEditing ? event!.location : undefined,
-                patient: isEditing ? event!.patient : undefined,
+                location: location ?? mockLocations.find((loc) => loc.id === values.locationId)!,
+                provider: mockProviders.find((p) => p.id === values.providerId)!,
+                patient: mockPatients.find((p) => p.id === values.patientId)!,
                 startDate: format(values.startDate, "yyyy-MM-dd'T'HH:mm:ss"),
                 endDate: format(values.endDate, "yyyy-MM-dd'T'HH:mm:ss"),
             };
@@ -105,11 +110,13 @@ export function AddEditEventDialog({ children, startDate, startTime, event }: IP
                 toast.success("Event created successfully");
             }
 
+            toast.success(isEditing ? "Event updated successfully" : "Event created successfully");
+
             onClose();
             form.reset();
         } catch (error) {
-            console.error(`Error ${isEditing ? "editing" : "adding"} event:`, error);
-            toast.error(`Failed to ${isEditing ? "edit" : "add"} event`);
+            console.error("Error saving event:", error);
+            toast.error("Failed to save event");
         }
     };
 
@@ -120,7 +127,7 @@ export function AddEditEventDialog({ children, startDate, startTime, event }: IP
                 <DialogHeader>
                     <DialogTitle>{isEditing ? "Edit Event" : "Add New Event"}</DialogTitle>
                     <DialogDescription>
-                        {isEditing ? "Modify your existing event." : "Create a new event for your calendar."}
+                        {isEditing ? "Modify your existing event." : "Create a new event."}
                     </DialogDescription>
                 </DialogHeader>
 
@@ -143,6 +150,8 @@ export function AddEditEventDialog({ children, startDate, startTime, event }: IP
                                 </FormItem>
                             )}
                         />
+
+                        {/* Fecha/hora */}
                         <FormField
                             control={form.control}
                             name="startDate"
@@ -153,24 +162,23 @@ export function AddEditEventDialog({ children, startDate, startTime, event }: IP
                             name="endDate"
                             render={({ field }) => <DateTimePicker form={form} field={field} />}
                         />
+
+                        {/* Select de provider */}
                         <FormField
                             control={form.control}
-                            name="color"
-                            render={({ field, fieldState }) => (
+                            name="providerId"
+                            render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel className="required">Variant</FormLabel>
+                                    <FormLabel>Doctor</FormLabel>
                                     <FormControl>
                                         <Select value={field.value} onValueChange={field.onChange}>
-                                            <SelectTrigger className={`w-full ${fieldState.invalid ? "border-red-500" : ""}`}>
-                                                <SelectValue placeholder="Select a variant" />
+                                            <SelectTrigger className="w-full">
+                                                <SelectValue placeholder="Select a doctor" />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                {COLORS.map((color) => (
-                                                    <SelectItem value={color} key={color}>
-                                                        <div className="flex items-center gap-2">
-                                                            <div className={`size-3.5 rounded-full bg-${color}-600 dark:bg-${color}-700`} />
-                                                            {color}
-                                                        </div>
+                                                {mockProviders.map((provider) => (
+                                                    <SelectItem key={provider.id} value={provider.id}>
+                                                        {provider.name}
                                                     </SelectItem>
                                                 ))}
                                             </SelectContent>
@@ -180,12 +188,67 @@ export function AddEditEventDialog({ children, startDate, startTime, event }: IP
                                 </FormItem>
                             )}
                         />
+
+                        {/* Select de patient */}
+                        <FormField
+                            control={form.control}
+                            name="patientId"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Patient</FormLabel>
+                                    <FormControl>
+                                        <Select value={field.value} onValueChange={field.onChange}>
+                                            <SelectTrigger className="w-full">
+                                                <SelectValue placeholder="Select a patient" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {mockPatients.map((patient) => (
+                                                    <SelectItem key={patient.id} value={patient.id}>
+                                                        {patient.name}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        {/* Select de location (si no viene como prop) */}
+                        {!location && (
+                            <FormField
+                                control={form.control}
+                                name="locationId"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Room</FormLabel>
+                                        <FormControl>
+                                            <Select value={field.value} onValueChange={field.onChange}>
+                                                <SelectTrigger className="w-full">
+                                                    <SelectValue placeholder="Select a room" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {mockLocations.map((loc) => (
+                                                        <SelectItem key={loc.id} value={loc.id}>
+                                                            {loc.name}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        )}
+
                         <FormField
                             control={form.control}
                             name="description"
                             render={({ field, fieldState }) => (
                                 <FormItem>
-                                    <FormLabel className="required">Description</FormLabel>
+                                    <FormLabel>Description</FormLabel>
                                     <FormControl>
                                         <Textarea
                                             {...field}
@@ -202,9 +265,7 @@ export function AddEditEventDialog({ children, startDate, startTime, event }: IP
 
                 <DialogFooter>
                     <DialogClose asChild>
-                        <Button type="button" variant="outline">
-                            Cancel
-                        </Button>
+                        <Button type="button" variant="outline">Cancel</Button>
                     </DialogClose>
                     <Button form="event-form" type="submit">
                         {isEditing ? "Save Changes" : "Create Event"}

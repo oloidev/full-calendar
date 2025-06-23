@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useState } from "react";
 import type { ICustomEvent } from "@/types/custom-event";
 import { TProvider } from "../mocks/types";
-import { TCalendarView, TEventColor } from "@/modules/calendar/types";
+import { TCalendarView } from "@/modules/calendar/types";
 import { useLocalStorage } from "@/modules/calendar/hooks";
 
 interface ICalendarContext {
@@ -19,8 +19,6 @@ interface ICalendarContext {
     setSelectedUserId: (userId: TProvider["id"] | "all") => void;
     badgeVariant: "dot" | "colored";
     setBadgeVariant: (variant: "dot" | "colored") => void;
-    selectedColors: TEventColor[];
-    filterEventsBySelectedColors: (colors: TEventColor) => void;
     filterEventsBySelectedUser: (userId: TProvider["id"] | "all") => void;
     users: TProvider[];
     events: ICustomEvent[];
@@ -41,7 +39,7 @@ const DEFAULT_SETTINGS: CalendarSettings = {
     badgeVariant: "colored",
     view: "timelineLocation",
     use24HourFormat: true,
-    agendaModeGroupBy: "date"
+    agendaModeGroupBy: "date",
 };
 
 const CalendarContext = createContext({} as ICalendarContext);
@@ -62,7 +60,7 @@ export function CalendarProvider({
     const [settings, setSettings] = useLocalStorage<CalendarSettings>("calendar-settings", {
         ...DEFAULT_SETTINGS,
         badgeVariant: badge,
-        view: view
+        view: view,
     });
 
     const [badgeVariant, setBadgeVariantState] = useState<"dot" | "colored">(settings.badgeVariant);
@@ -72,7 +70,6 @@ export function CalendarProvider({
 
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [selectedUserId, setSelectedUserId] = useState<TProvider["id"] | "all">("all");
-    const [selectedColors, setSelectedColors] = useState<TEventColor[]>([]);
 
     const [allEvents, setAllEvents] = useState<ICustomEvent[]>(events || []);
     const [filteredEvents, setFilteredEvents] = useState<ICustomEvent[]>(events || []);
@@ -80,7 +77,7 @@ export function CalendarProvider({
     const updateSettings = (newPartialSettings: Partial<CalendarSettings>) => {
         setSettings({
             ...settings,
-            ...newPartialSettings
+            ...newPartialSettings,
         });
     };
 
@@ -105,31 +102,12 @@ export function CalendarProvider({
         updateSettings({ agendaModeGroupBy: groupBy });
     };
 
-    const filterEventsBySelectedColors = (color: TEventColor) => {
-        const isColorSelected = selectedColors.includes(color);
-        const newColors = isColorSelected
-            ? selectedColors.filter((c) => c !== color)
-            : [...selectedColors, color];
-
-        if (newColors.length > 0) {
-            const filtered = allEvents.filter((event) => {
-                const eventColor = event.color || "blue";
-                return newColors.includes(eventColor);
-            });
-            setFilteredEvents(filtered);
-        } else {
-            setFilteredEvents(allEvents);
-        }
-
-        setSelectedColors(newColors);
-    };
-
     const filterEventsBySelectedUser = (userId: TProvider["id"] | "all") => {
         setSelectedUserId(userId);
         if (userId === "all") {
             setFilteredEvents(allEvents);
         } else {
-            const filtered = allEvents.filter((event) => event.user.id === userId);
+            const filtered = allEvents.filter((event) => event.provider?.id === userId);
             setFilteredEvents(filtered);
         }
     };
@@ -144,18 +122,12 @@ export function CalendarProvider({
         setFilteredEvents((prev) => [...prev, event]);
     };
 
-    const updateEvent = (event: ICustomEvent) => {
-        const updated = {
-            ...event,
-            startDate: new Date(event.startDate).toISOString(),
-            endDate: new Date(event.endDate).toISOString()
-        };
-
+    const updateEvent = (updatedEvent: ICustomEvent) => {
         setAllEvents((prev) =>
-            prev.map((e) => (e.id === event.id ? updated : e))
+            prev.map((e) => (e.id === updatedEvent.id ? updatedEvent : e))
         );
         setFilteredEvents((prev) =>
-            prev.map((e) => (e.id === event.id ? updated : e))
+            prev.map((e) => (e.id === updatedEvent.id ? updatedEvent : e))
         );
     };
 
@@ -166,7 +138,6 @@ export function CalendarProvider({
 
     const clearFilter = () => {
         setFilteredEvents(allEvents);
-        setSelectedColors([]);
         setSelectedUserId("all");
     };
 
@@ -178,8 +149,6 @@ export function CalendarProvider({
         badgeVariant,
         setBadgeVariant,
         users,
-        selectedColors,
-        filterEventsBySelectedColors,
         filterEventsBySelectedUser,
         events: filteredEvents,
         view: currentView,
@@ -191,7 +160,7 @@ export function CalendarProvider({
         addEvent,
         updateEvent,
         removeEvent,
-        clearFilter
+        clearFilter,
     };
 
     return (
@@ -203,7 +172,8 @@ export function CalendarProvider({
 
 export function useCalendar(): ICalendarContext {
     const context = useContext(CalendarContext);
-    if (!context)
+    if (!context) {
         throw new Error("useCalendar must be used within a CalendarProvider.");
+    }
     return context;
 }

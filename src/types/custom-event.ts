@@ -3,6 +3,7 @@ import type { TProvider, TLocation, TPatient } from "@/modules/calendar/mocks/ty
 export interface ICustomEvent {
     id: number;
     title: string;
+    description?: string;
     startDate: string;
     endDate: string;
     color?: string;

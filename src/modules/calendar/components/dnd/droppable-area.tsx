@@ -7,16 +7,16 @@ interface DroppableAreaProps {
   minute?: number;
   children: ReactNode;
   className?: string;
+  entityId?: string; // ✅ NUEVA PROP
 }
 
-export function DroppableArea({ date, hour, minute, children, className }: DroppableAreaProps) {
+export function DroppableArea({ date, hour, minute, children, className, entityId }: DroppableAreaProps) {
   const { handleEventDrop, isDragging } = useDragDrop();
 
   return (
     <div
       className={`${className || ''} ${isDragging ? 'drop-target' : ''}`}
       onDragOver={(e) => {
-        // Prevent default to allow drop
         e.preventDefault();
         e.currentTarget.classList.add('bg-primary/10');
       }}
@@ -26,8 +26,11 @@ export function DroppableArea({ date, hour, minute, children, className }: Dropp
       onDrop={(e) => {
         e.preventDefault();
         e.currentTarget.classList.remove('bg-primary/10');
-        handleEventDrop(date, hour, minute);
+
+
+        handleEventDrop(date, hour, minute, entityId);
       }}
+      data-entity-id={entityId}
     >
       {children}
     </div>

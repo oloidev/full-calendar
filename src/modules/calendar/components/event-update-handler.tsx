@@ -10,12 +10,10 @@ export function EventUpdateHandler() {
     const { setOnEventDropped } = useDragDrop();
     const { updateEvent } = useCalendar();
 
-    const handleEventUpdate = useCallback((event: ICustomEvent, newStartDate: Date, newEndDate: Date) => {
+    const handleEventUpdate = useCallback((event: ICustomEvent) => {
         try {
             const updatedEvent = {
                 ...event,
-                startDate: newStartDate.toISOString(),
-                endDate: newEndDate.toISOString(),
             };
 
             updateEvent(updatedEvent);

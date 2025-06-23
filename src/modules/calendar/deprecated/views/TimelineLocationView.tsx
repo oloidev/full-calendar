@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { TimelineBaseView } from "@/modules/calendar/components/timeline-view/TimelineBaseView";
+import { TimelineBaseView } from "@/modules/calendar/deprecated/TimelineBaseView";
 import { mockLocations } from "@/modules/calendar/mocks/mock-data";
 import { mockEvents } from "@/modules/calendar/mocks/mock-events";
 import { ICustomEvent } from "@/types/custom-event";

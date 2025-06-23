@@ -10,7 +10,8 @@ import { MonthEventBadge } from "@/modules/calendar/components/month-view/month-
 import { getMonthCellEvents } from "@/modules/calendar/helpers";
 import { staggerContainer, transition } from "@/modules/calendar/animations";
 
-import type { ICalendarCell, IEvent } from "@/modules/calendar/interfaces";
+import type { ICalendarCell } from "@/modules/calendar/interfaces";
+import type { ICustomEvent } from "@/types/custom-event";
 import { cn } from "@/lib/utils";
 import { cva } from "class-variance-authority";
 import { DroppableArea } from "@/modules/calendar/components/dnd/droppable-area";
@@ -18,7 +19,7 @@ import { EventListDialog } from "@/modules/calendar/components/dialogs/events-li
 
 interface IProps {
     cell: ICalendarCell;
-    events: IEvent[];
+    events: ICustomEvent[];
     eventPositions: Record<string, number>;
 }
 
