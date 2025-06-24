@@ -15,21 +15,27 @@ import { groupEvents } from "@/modules/calendar/helpers";
 import type { ICustomEvent } from "@/types/custom-event";
 import { RenderGroupedEvents } from "@/modules/calendar/components/week-and-day-view/render-grouped-events";
 import { DroppableArea } from "@/modules/calendar/components/dnd/droppable-area";
-import { TLocation } from "../../mocks/types";
 import { generateTimeSlots } from "@/modules/calendar/utils/timeSlots";
+import { TLocation } from "../../mocks/types"; // puedes quitar esto si ya no lo necesitas
 
-interface IProps {
+interface TimelineViewProps<T> {
     events: ICustomEvent[];
-    locations: TLocation[];
+    entityList: T[];
+    getEntityId: (entity: T) => string;
+    getEntityName: (entity: T) => string;
 }
 
-export function TimelineLocationView({ events, locations }: IProps) {
+export function TimelineView<T>({
+    events,
+    entityList,
+    getEntityId,
+    getEntityName,
+}: TimelineViewProps<T>) {
     const { selectedDate, use24HourFormat, timeSlotMinutes } = useCalendar();
-    const locationList = locations;
-    const timeSlots = generateTimeSlots(timeSlotMinutes, 0, 24);
-    const hourLabels = generateTimeSlots(60, 0, 24); // Para las etiquetas horarias
 
-    const cellHeight = 96 / (60 / timeSlotMinutes); // Alto por slot
+    const timeSlots = generateTimeSlots(timeSlotMinutes, 0, 24);
+    const hourLabels = generateTimeSlots(60, 0, 24);
+    const cellHeight = 96 / (60 / timeSlotMinutes);
 
     return (
         <motion.div
@@ -39,6 +45,7 @@ export function TimelineLocationView({ events, locations }: IProps) {
             variants={fadeIn}
             transition={transition}
         >
+            {/* Mensaje para pantallas pequeñas */}
             <motion.div
                 className="flex flex-col items-center justify-center border-b py-4 text-sm text-t-quaternary sm:hidden"
                 initial={{ opacity: 0, y: -20 }}
@@ -61,23 +68,24 @@ export function TimelineLocationView({ events, locations }: IProps) {
                     <div
                         className="grid flex-1 border-l"
                         style={{
-                            gridTemplateColumns: `repeat(${locationList.length}, minmax(0, 1fr))`,
+                            gridTemplateColumns: `repeat(${entityList.length}, minmax(0, 1fr))`,
                         }}
                     >
-                        {locationList.map((location, index) => (
+                        {entityList.map((entity: T, index: number) => (
                             <motion.span
-                                key={location.id}
+                                key={getEntityId(entity)}
                                 className="py-2 text-center text-xs font-medium text-t-quaternary"
                                 initial={{ opacity: 0, y: -10 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: index * 0.05, ...transition }}
                             >
-                                {location.name}
+                                {getEntityName(entity)}
                             </motion.span>
                         ))}
                     </div>
                 </motion.div>
 
+                {/* Grilla */}
                 <ScrollArea className="h-[736px]" type="always">
                     <div className="flex">
                         {/* Columna de horas */}
@@ -98,21 +106,24 @@ export function TimelineLocationView({ events, locations }: IProps) {
                             ))}
                         </div>
 
-                        {/* Grilla */}
+                        {/* Celdas por entidad */}
                         <div
                             className="relative flex-1 grid divide-x border-l"
                             style={{
-                                gridTemplateColumns: `repeat(${locationList.length}, minmax(0, 1fr))`,
+                                gridTemplateColumns: `repeat(${entityList.length}, minmax(0, 1fr))`,
                             }}
                         >
-                            {locationList.map((location) => {
-                                const locationEvents = events.filter(
-                                    (e) => e.location?.id === location.id
+                            {entityList.map((entity: T) => {
+                                const entityId = getEntityId(entity);
+                                const entityEvents = events.filter(
+                                    (e) =>
+                                        e.location?.id === entityId ||
+                                        e.provider?.id === entityId
                                 );
-                                const groupedEvents = groupEvents(locationEvents);
+                                const groupedEvents = groupEvents(entityEvents);
 
                                 return (
-                                    <div key={location.id} className="relative">
+                                    <div key={entityId} className="relative">
                                         {timeSlots.map(({ hour, minute }) => (
                                             <div
                                                 key={`${hour}-${minute}`}
@@ -123,13 +134,13 @@ export function TimelineLocationView({ events, locations }: IProps) {
                                                     date={selectedDate}
                                                     hour={hour}
                                                     minute={minute}
-                                                    entityId={location.id}
+                                                    entityId={entityId}
                                                     className="w-full h-full"
                                                 >
                                                     <AddEditEventDialog
                                                         startDate={selectedDate}
                                                         startTime={{ hour, minute }}
-                                                        location={location}
+                                                        location={entity as TLocation}
                                                     >
                                                         <div className="absolute inset-0 cursor-pointer transition-colors hover:bg-secondary" />
                                                     </AddEditEventDialog>

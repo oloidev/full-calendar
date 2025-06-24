@@ -12,7 +12,7 @@ export function ViewSwitcher() {
         "year",
         "agenda",
         "timelineLocation",
-        "providerVtime",
+        "timelineProvider",
         "timeVlocation",
         "timeVprovider",
     ];
