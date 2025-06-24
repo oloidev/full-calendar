@@ -26,6 +26,9 @@ interface ICalendarContext {
     updateEvent: (event: ICustomEvent) => void;
     removeEvent: (eventId: number) => void;
     clearFilter: () => void;
+    timeSlotMinutes: number;
+    setTimeSlotMinutes: (value: number) => void;
+
 }
 
 interface CalendarSettings {
@@ -41,6 +44,8 @@ const DEFAULT_SETTINGS: CalendarSettings = {
     use24HourFormat: true,
     agendaModeGroupBy: "date",
 };
+
+
 
 const CalendarContext = createContext({} as ICalendarContext);
 
@@ -63,6 +68,7 @@ export function CalendarProvider({
         view: view,
     });
 
+    const [timeSlotMinutes, setTimeSlotMinutes] = useState(30);
     const [badgeVariant, setBadgeVariantState] = useState<"dot" | "colored">(settings.badgeVariant);
     const [currentView, setCurrentViewState] = useState<TCalendarView>(settings.view);
     const [use24HourFormat, setUse24HourFormatState] = useState<boolean>(settings.use24HourFormat);
@@ -161,6 +167,8 @@ export function CalendarProvider({
         updateEvent,
         removeEvent,
         clearFilter,
+        timeSlotMinutes,
+        setTimeSlotMinutes,
     };
 
     return (

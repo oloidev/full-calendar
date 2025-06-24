@@ -16,6 +16,7 @@ import type { ICustomEvent } from "@/types/custom-event";
 import { RenderGroupedEvents } from "@/modules/calendar/components/week-and-day-view/render-grouped-events";
 import { DroppableArea } from "@/modules/calendar/components/dnd/droppable-area";
 import { TLocation } from "../../mocks/types";
+import { generateTimeSlots } from "@/modules/calendar/utils/timeSlots";
 
 interface IProps {
     events: ICustomEvent[];
@@ -23,10 +24,12 @@ interface IProps {
 }
 
 export function TimelineLocationView({ events, locations }: IProps) {
-    const { selectedDate, use24HourFormat } = useCalendar();
-
+    const { selectedDate, use24HourFormat, timeSlotMinutes } = useCalendar();
     const locationList = locations;
-    const hours = Array.from({ length: 24 }, (_, i) => i);
+    const timeSlots = generateTimeSlots(timeSlotMinutes, 0, 24);
+    const hourLabels = generateTimeSlots(60, 0, 24); // Para las etiquetas horarias
+
+    const cellHeight = 96 / (60 / timeSlotMinutes); // Alto por slot
 
     return (
         <motion.div
@@ -46,148 +49,104 @@ export function TimelineLocationView({ events, locations }: IProps) {
                 <p>Please switch to daily or monthly view.</p>
             </motion.div>
 
-            <motion.div
-                className="hidden flex-col sm:flex"
-                variants={staggerContainer}
-            >
-                <div>
-                    {/* Week header */}
-                    <motion.div
-                        className="relative z-20 flex border-b"
-                        initial={{ opacity: 0, y: -20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={transition}
+            <motion.div className="hidden flex-col sm:flex" variants={staggerContainer}>
+                {/* Header */}
+                <motion.div
+                    className="relative z-20 flex border-b"
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={transition}
+                >
+                    <div className="w-18" />
+                    <div
+                        className="grid flex-1 border-l"
+                        style={{
+                            gridTemplateColumns: `repeat(${locationList.length}, minmax(0, 1fr))`,
+                        }}
                     >
-                        <div className="w-18"></div>
-                        <div
-                            className={`grid flex-1 border-l`}
-                            style={{ gridTemplateColumns: `repeat(${locationList.length}, minmax(0, 1fr))` }}
-                        >
-                            {locationList.map((location: TLocation, index: number) => (
-                                <motion.span
-                                    key={location.id}
-                                    className="py-2 text-center text-xs font-medium text-t-quaternary"
-                                    initial={{ opacity: 0, y: -10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: index * 0.05, ...transition }}
-                                >
-                                    {location.name}
-                                </motion.span>
-                            ))}
-                        </div>
-
-                    </motion.div>
-                </div>
+                        {locationList.map((location, index) => (
+                            <motion.span
+                                key={location.id}
+                                className="py-2 text-center text-xs font-medium text-t-quaternary"
+                                initial={{ opacity: 0, y: -10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: index * 0.05, ...transition }}
+                            >
+                                {location.name}
+                            </motion.span>
+                        ))}
+                    </div>
+                </motion.div>
 
                 <ScrollArea className="h-[736px]" type="always">
                     <div className="flex">
-                        {/* Hours column */}
-                        <motion.div className="relative w-18" variants={staggerContainer}>
-                            {hours.map((hour, index) => (
-                                <motion.div
-                                    key={hour}
+                        {/* Columna de horas */}
+                        <div className="relative w-18">
+                            {hourLabels.map(({ hour }, i) => (
+                                <div
+                                    key={`label-${hour}`}
                                     className="relative"
                                     style={{ height: "96px" }}
-                                    initial={{ opacity: 0, x: -20 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: index * 0.02, ...transition }}
                                 >
-                                    <div className="absolute -top-3 right-2 flex h-6 items-center">
-                                        {index !== 0 && (
-                                            <span className="text-xs text-t-quaternary">
-                                                {format(
-                                                    new Date().setHours(hour, 0, 0, 0),
-                                                    use24HourFormat ? "HH:00" : "h a"
-                                                )}
-                                            </span>
+                                    <span className="absolute -top-3 right-2 text-xs text-t-quaternary">
+                                        {format(
+                                            new Date().setHours(hour, 0, 0, 0),
+                                            use24HourFormat ? "HH:mm" : "h a"
                                         )}
-                                    </div>
-                                </motion.div>
+                                    </span>
+                                </div>
                             ))}
-                        </motion.div>
+                        </div>
 
-                        {/* Week grid */}
-                        <motion.div
-                            className="relative flex-1 border-l"
-                            variants={staggerContainer}
+                        {/* Grilla */}
+                        <div
+                            className="relative flex-1 grid divide-x border-l"
+                            style={{
+                                gridTemplateColumns: `repeat(${locationList.length}, minmax(0, 1fr))`,
+                            }}
                         >
-                            <div className={`grid divide-x`}
-                                style={{ gridTemplateColumns: `repeat(${locationList.length}, minmax(0, 1fr))` }}>
-                                {locationList.map((location: TLocation, locationIndex: number) => {
-                                    const locationEvents = events.filter(
-                                        (event) => event.location?.id === location.id
-                                    );
-                                    const groupedEvents = groupEvents(locationEvents);
+                            {locationList.map((location, colIndex) => {
+                                const locationEvents = events.filter(
+                                    (e) => e.location?.id === location.id
+                                );
+                                const groupedEvents = groupEvents(locationEvents);
 
-                                    return (
-                                        <motion.div
-                                            key={location.id}
-                                            className="relative"
-                                            initial={{ opacity: 0 }}
-                                            animate={{ opacity: 1 }}
-                                            transition={{ delay: locationIndex * 0.1, ...transition }}
-                                        >
-                                            {hours.map((hour, index) => (
-                                                <motion.div
-                                                    key={hour}
-                                                    className="relative"
-                                                    style={{ height: "96px" }}
-                                                    initial={{ opacity: 0 }}
-                                                    animate={{ opacity: 1 }}
-                                                    transition={{ delay: index * 0.01, ...transition }}
+                                return (
+                                    <div key={location.id} className="relative">
+                                        {timeSlots.map(({ hour, minute }, idx) => (
+                                            <div
+                                                key={`${hour}-${minute}`}
+                                                className="relative border-b border-border"
+                                                style={{ height: `${cellHeight}px` }}
+                                            >
+                                                <DroppableArea
+                                                    date={selectedDate}
+                                                    hour={hour}
+                                                    minute={minute}
+                                                    entityId={location.id}
+                                                    className="w-full h-full"
                                                 >
-                                                    {index !== 0 && (
-                                                        <div className="pointer-events-none absolute inset-x-0 top-0 border-b" />
-                                                    )}
-
-                                                    <DroppableArea
-                                                        date={selectedDate}
-                                                        hour={hour}
-                                                        minute={0}
-                                                        entityId={location.id}
-                                                        className="absolute inset-x-0 top-0 h-[48px]"
+                                                    <AddEditEventDialog
+                                                        startDate={selectedDate}
+                                                        startTime={{ hour, minute }}
+                                                        location={location}
                                                     >
-                                                        <AddEditEventDialog
-                                                            startDate={selectedDate}
-                                                            startTime={{ hour, minute: 0 }}
-                                                            location={location}
-                                                        >
-                                                            <div className="absolute inset-0 cursor-pointer transition-colors hover:bg-secondary" />
-                                                        </AddEditEventDialog>
-                                                    </DroppableArea>
+                                                        <div className="absolute inset-0 cursor-pointer transition-colors hover:bg-secondary" />
+                                                    </AddEditEventDialog>
+                                                </DroppableArea>
+                                            </div>
+                                        ))}
 
-                                                    <div className="pointer-events-none absolute inset-x-0 top-1/2 border-b border-dashed border-b-tertiary" />
+                                        <RenderGroupedEvents
+                                            groupedEvents={groupedEvents}
+                                            day={selectedDate}
+                                        />
+                                    </div>
+                                );
+                            })}
+                        </div>
 
-                                                    <DroppableArea
-                                                        date={selectedDate}
-                                                        hour={hour}
-                                                        minute={30}
-                                                        entityId={location.id}
-                                                        className="absolute inset-x-0 bottom-0 h-[48px]"
-                                                    >
-                                                        <AddEditEventDialog
-                                                            startDate={selectedDate}
-                                                            startTime={{ hour, minute: 30 }}
-                                                            location={location}
-                                                        >
-                                                            <div className="absolute inset-0 cursor-pointer transition-colors hover:bg-secondary" />
-                                                        </AddEditEventDialog>
-                                                    </DroppableArea>
-                                                </motion.div>
-                                            ))}
-
-                                            <RenderGroupedEvents
-                                                groupedEvents={groupedEvents}
-                                                day={selectedDate}
-                                            />
-                                        </motion.div>
-                                    );
-                                })}
-                            </div>
-
-
-                            <CalendarTimeline />
-                        </motion.div>
+                        <CalendarTimeline />
                     </div>
                 </ScrollArea>
             </motion.div>

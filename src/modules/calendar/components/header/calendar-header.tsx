@@ -22,9 +22,11 @@ import { useFilteredEvents } from "@/modules/calendar/hooks";
 
 export const MotionButton = motion.create(Button);
 
+
 export function CalendarHeader() {
     const { view } = useCalendar();
     const events = useFilteredEvents();
+    const { timeSlotMinutes, setTimeSlotMinutes } = useCalendar();
 
     return (
         <div className="flex flex-col gap-4 border-b p-4 lg:flex-row lg:items-center lg:justify-between">
@@ -59,6 +61,15 @@ export function CalendarHeader() {
                     </div>
                 </AddEditEventDialog>
 
+                <select
+                    value={timeSlotMinutes}
+                    onChange={(e) => setTimeSlotMinutes(Number(e.target.value))}
+                    className="border rounded p-1 text-sm"
+                >
+                    <option value={15}>15 min</option>
+                    <option value={30}>30 min</option>
+                    <option value={60}>60 min</option>
+                </select>
                 <ViewSwitcher />
             </motion.div>
         </div>
