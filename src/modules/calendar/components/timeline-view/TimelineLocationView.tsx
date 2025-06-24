@@ -79,76 +79,79 @@ export function TimelineLocationView({ events, locations }: IProps) {
                 </motion.div>
 
                 <ScrollArea className="h-[736px]" type="always">
-                    <div className="flex">
-                        {/* Columna de horas */}
-                        <div className="relative w-18">
-                            {hourLabels.map(({ hour }, i) => (
-                                <div
-                                    key={`label-${hour}`}
-                                    className="relative"
-                                    style={{ height: "96px" }}
-                                >
-                                    <span className="absolute -top-3 right-2 text-xs text-t-quaternary">
-                                        {format(
-                                            new Date().setHours(hour, 0, 0, 0),
-                                            use24HourFormat ? "HH:mm" : "h a"
-                                        )}
-                                    </span>
-                                </div>
-                            ))}
-                        </div>
-
-                        {/* Grilla */}
-                        <div
-                            className="relative flex-1 grid divide-x border-l"
-                            style={{
-                                gridTemplateColumns: `repeat(${locationList.length}, minmax(0, 1fr))`,
-                            }}
-                        >
-                            {locationList.map((location, colIndex) => {
-                                const locationEvents = events.filter(
-                                    (e) => e.location?.id === location.id
-                                );
-                                const groupedEvents = groupEvents(locationEvents);
-
-                                return (
-                                    <div key={location.id} className="relative">
-                                        {timeSlots.map(({ hour, minute }, idx) => (
-                                            <div
-                                                key={`${hour}-${minute}`}
-                                                className="relative border-b border-border"
-                                                style={{ height: `${cellHeight}px` }}
-                                            >
-                                                <DroppableArea
-                                                    date={selectedDate}
-                                                    hour={hour}
-                                                    minute={minute}
-                                                    entityId={location.id}
-                                                    className="w-full h-full"
-                                                >
-                                                    <AddEditEventDialog
-                                                        startDate={selectedDate}
-                                                        startTime={{ hour, minute }}
-                                                        location={location}
-                                                    >
-                                                        <div className="absolute inset-0 cursor-pointer transition-colors hover:bg-secondary" />
-                                                    </AddEditEventDialog>
-                                                </DroppableArea>
-                                            </div>
-                                        ))}
-
-                                        <RenderGroupedEvents
-                                            groupedEvents={groupedEvents}
-                                            day={selectedDate}
-                                        />
+                    <div className="relative"> {/* 👈 Contenedor necesario para posicionar correctamente el timeline */}
+                        <div className="flex">
+                            {/* Columna de horas */}
+                            <div className="relative w-18">
+                                {hourLabels.map(({ hour }, i) => (
+                                    <div
+                                        key={`label-${hour}`}
+                                        className="relative"
+                                        style={{ height: "96px" }}
+                                    >
+                                        <span className="absolute -top-3 right-2 text-xs text-t-quaternary">
+                                            {format(
+                                                new Date().setHours(hour, 0, 0, 0),
+                                                use24HourFormat ? "HH:mm" : "h a"
+                                            )}
+                                        </span>
                                     </div>
-                                );
-                            })}
-                        </div>
+                                ))}
+                            </div>
 
-                        <CalendarTimeline />
+                            {/* Grilla */}
+                            <div
+                                className="relative flex-1 grid divide-x border-l"
+                                style={{
+                                    gridTemplateColumns: `repeat(${locationList.length}, minmax(0, 1fr))`,
+                                }}
+                            >
+                                {locationList.map((location, colIndex) => {
+                                    const locationEvents = events.filter(
+                                        (e) => e.location?.id === location.id
+                                    );
+                                    const groupedEvents = groupEvents(locationEvents);
+
+                                    return (
+                                        <div key={location.id} className="relative">
+                                            {timeSlots.map(({ hour, minute }, idx) => (
+                                                <div
+                                                    key={`${hour}-${minute}`}
+                                                    className="relative border-b border-border"
+                                                    style={{ height: `${cellHeight}px` }}
+                                                >
+                                                    <DroppableArea
+                                                        date={selectedDate}
+                                                        hour={hour}
+                                                        minute={minute}
+                                                        entityId={location.id}
+                                                        className="w-full h-full"
+                                                    >
+                                                        <AddEditEventDialog
+                                                            startDate={selectedDate}
+                                                            startTime={{ hour, minute }}
+                                                            location={location}
+                                                        >
+                                                            <div className="absolute inset-0 cursor-pointer transition-colors hover:bg-secondary" />
+                                                        </AddEditEventDialog>
+                                                    </DroppableArea>
+                                                </div>
+                                            ))}
+
+                                            <RenderGroupedEvents
+                                                groupedEvents={groupedEvents}
+                                                day={selectedDate}
+                                            />
+                                        </div>
+                                    );
+                                })}
+                            </div>
+
+                            <CalendarTimeline />
+                        </div>
                     </div>
                 </ScrollArea>
+
             </motion.div>
         </motion.div>
     );
