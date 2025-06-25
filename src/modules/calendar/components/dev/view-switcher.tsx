@@ -1,6 +1,7 @@
 "use client";
 
 import { useCalendar } from "@/modules/calendar/contexts/calendar-context";
+import { TCalendarView } from "../../types";
 
 export function ViewSwitcher() {
     const { view, setView } = useCalendar();
@@ -25,7 +26,7 @@ export function ViewSwitcher() {
             <select
                 id="view-selector"
                 value={view}
-                onChange={(e) => setView(e.target.value as any)}
+                onChange={(e) => setView(e.target.value as TCalendarView)}
                 className="p-1 border rounded text-sm"
             >
                 {views.map((v) => (
