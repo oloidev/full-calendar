@@ -10,18 +10,24 @@ import { CalendarWeekView } from "@/modules/calendar/components/week-and-day-vie
 import { CalendarDayView } from "@/modules/calendar/components/week-and-day-view/calendar-day-view";
 import { CalendarYearView } from "@/modules/calendar/components/year-view/calendar-year-view";
 import { isSameDay, parseISO } from "date-fns";
-import { useFilteredEvents } from "@/modules/calendar/hooks";
+import { TimelineLocationView } from "@/modules/calendar/components/timeline-view/views/TimelineLocationView";
+import { mockLocations, mockProviders } from "../mocks/mock-data";
+import { TimelineProviderView } from "./timeline-view/views/TimelineProviderView";
+import { InvertedLocationView } from "./timeline-Inverted-view/views/InvertedLocationView";
+
 
 export function CalendarBody() {
     const { view } = useCalendar();
 
-    const singleDayEvents = useFilteredEvents().filter((event) => {
+    const { events } = useCalendar();
+
+    const singleDayEvents = events.filter((event) => {
         const startDate = parseISO(event.startDate);
         const endDate = parseISO(event.endDate);
         return isSameDay(startDate, endDate);
     });
 
-    const multiDayEvents = useFilteredEvents().filter((event) => {
+    const multiDayEvents = events.filter((event) => {
         const startDate = parseISO(event.startDate);
         const endDate = parseISO(event.endDate);
         return !isSameDay(startDate, endDate);
@@ -75,6 +81,31 @@ export function CalendarBody() {
                         </motion.div>
                     )
                 }
+                {view === "timelineLocation" && (
+                    <TimelineLocationView
+                        events={singleDayEvents}
+                        locations={mockLocations}
+                    />
+                )}
+                {view === "timelineProvider" && (
+                    <TimelineProviderView
+                        events={singleDayEvents}
+                        providers={mockProviders}
+                    />
+                )
+                }
+                {view === "invertedLocation" && (
+                    <InvertedLocationView
+                        events={singleDayEvents}
+                        locations={mockLocations}
+                    />
+                )}
+                {/* {view === "invertedProvider" && (
+                    <InvertedProviderView
+                        events={singleDayEvents}
+                        providers={mockProviders}
+                    />
+                )} */}
             </motion.div>
         </div>
     );

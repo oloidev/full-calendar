@@ -7,7 +7,7 @@ import { EventDetailsDialog } from "@/modules/calendar/components/dialogs/event-
 import { cn } from "@/lib/utils";
 
 import type { HTMLAttributes } from "react";
-import type { IEvent } from "@/modules/calendar/interfaces";
+import type { ICustomEvent } from "@/types/custom-event";
 import type { VariantProps } from "class-variance-authority";
 import { DraggableEvent } from "@/modules/calendar/components/dnd/draggable-event";
 import { formatTime } from "@/modules/calendar/helpers";
@@ -52,12 +52,12 @@ const calendarWeekEventCardVariants = cva(
 
 interface IProps
   extends HTMLAttributes<HTMLDivElement>,
-    Omit<VariantProps<typeof calendarWeekEventCardVariants>, "color"> {
-  event: IEvent;
+  Omit<VariantProps<typeof calendarWeekEventCardVariants>, "color"> {
+  event: ICustomEvent;
 }
 
 export function EventBlock({ event, className }: IProps) {
-  const { badgeVariant , use24HourFormat } = useCalendar();
+  const { badgeVariant, use24HourFormat } = useCalendar();
 
   const start = parseISO(event.startDate);
   const end = parseISO(event.endDate);

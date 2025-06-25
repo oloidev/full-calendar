@@ -11,11 +11,11 @@ interface AvatarGroupProps extends React.ComponentProps<"div"> {
 }
 
 const AvatarGroup = ({
-                         children,
-                         max,
-                         className,
-                         ...props
-                     }: AvatarGroupProps) => {
+    children,
+    max,
+    className,
+    ...props
+}: AvatarGroupProps) => {
     const totalAvatars = React.Children.count(children);
     const displayedAvatars = React.Children.toArray(children)
         .slice(0, max)
@@ -50,4 +50,4 @@ const AvatarGroup = ({
     );
 };
 
-export {AvatarGroup}
+export { AvatarGroup }

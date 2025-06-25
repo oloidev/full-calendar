@@ -7,7 +7,7 @@ export function CalendarHeaderSkeleton() {
         <Skeleton className="h-8 w-8" />
         <Skeleton className="h-8 w-32" />
       </div>
-      
+
       <div className="flex items-center gap-2">
         <Skeleton className="h-8 w-24" />
         <div className="flex gap-1">

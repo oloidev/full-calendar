@@ -30,8 +30,8 @@ export function CalendarYearView({ singleDayEvents, multiDayEvents }: IProps) {
         <div className="flex flex-col h-full sm:min-h-[80vh] overflow-hidden sm:p-5">
             <motion.div
                 className="flex flex-col items-center justify-center py-4 text-sm text-t-quaternary sm:hidden"
-                initial={{opacity: 0, y: -20}}
-                animate={{opacity: 1, y: 0}}
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={transition}
             >
                 <p>Yearly view is not available on smaller devices.</p>
@@ -92,12 +92,12 @@ export function CalendarYearView({ singleDayEvents, multiDayEvents }: IProps) {
                                             {hasEvents ? (
                                                 <EventListDialog date={cell.date} events={dayEvents}>
                                                     <div className="cursor-pointer w-full h-full flex flex-col items-center justify-center">
-                            <span className={cn(
-                                "size-4 sm:size-5 flex items-center justify-center",
-                                isToday && "rounded-full bg-primary text-primary-foreground"
-                            )}>
-                              {cell.day}
-                            </span>
+                                                        <span className={cn(
+                                                            "size-4 sm:size-5 flex items-center justify-center",
+                                                            isToday && "rounded-full bg-primary text-primary-foreground"
+                                                        )}>
+                                                            {cell.day}
+                                                        </span>
                                                         <div className="flex justify-center items-center gap-0.5">
                                                             {dayEvents.length <= 2 ? (
                                                                 dayEvents.slice(0, 2).map(event => (
@@ -114,8 +114,8 @@ export function CalendarYearView({ singleDayEvents, multiDayEvents }: IProps) {
                                                                         className="size-1"
                                                                     />
                                                                     <span className="text-[.7rem] text-muted-foreground">
-                                    +{dayEvents.length - 1 }
-                                  </span>
+                                                                        +{dayEvents.length - 1}
+                                                                    </span>
                                                                 </>
                                                             )}
                                                         </div>
@@ -123,12 +123,12 @@ export function CalendarYearView({ singleDayEvents, multiDayEvents }: IProps) {
                                                 </EventListDialog>
                                             ) : (
                                                 <div className="w-full h-full flex flex-col items-center justify-center">
-                          <span className={cn(
-                              "size-4 sm:size-5 flex items-center justify-center",
-                              isToday && "rounded-full bg-primary text-primary-foreground"
-                          )}>
-                            {cell.day}
-                          </span>
+                                                    <span className={cn(
+                                                        "size-4 sm:size-5 flex items-center justify-center",
+                                                        isToday && "rounded-full bg-primary text-primary-foreground"
+                                                    )}>
+                                                        {cell.day}
+                                                    </span>
                                                 </div>
                                             )}
                                         </div>

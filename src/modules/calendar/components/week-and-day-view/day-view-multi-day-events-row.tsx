@@ -1,8 +1,8 @@
-import {differenceInDays, endOfDay, isWithinInterval, parseISO, startOfDay} from "date-fns";
+import { differenceInDays, endOfDay, isWithinInterval, parseISO, startOfDay } from "date-fns";
 
-import {MonthEventBadge} from "@/modules/calendar/components/month-view/month-event-badge";
+import { MonthEventBadge } from "@/modules/calendar/components/month-view/month-event-badge";
 
-import type {IEvent} from "@/modules/calendar/interfaces";
+import type { IEvent } from "@/modules/calendar/interfaces";
 
 interface IProps {
   selectedDate: Date;
@@ -18,9 +18,9 @@ export function DayViewMultiDayEventsRow({ selectedDate, multiDayEvents }: IProp
       const eventStart = parseISO(event.startDate);
       const eventEnd = parseISO(event.endDate);
 
-      return isWithinInterval(dayStart, {start: eventStart, end: eventEnd}) ||
-          isWithinInterval(dayEnd, {start: eventStart, end: eventEnd}) ||
-          (eventStart <= dayStart && eventEnd >= dayEnd);
+      return isWithinInterval(dayStart, { start: eventStart, end: eventEnd }) ||
+        isWithinInterval(dayEnd, { start: eventStart, end: eventEnd }) ||
+        (eventStart <= dayStart && eventEnd >= dayEnd);
     })
     .sort((a, b) => {
       const durationA = differenceInDays(parseISO(a.endDate), parseISO(a.startDate));

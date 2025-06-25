@@ -3,39 +3,39 @@ import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle } from 
 import { cn } from "@/lib/utils";
 
 import { ReactNode } from "react";
-import { IEvent } from "@/modules/calendar/interfaces";
+import { ICustomEvent } from "@/types/custom-event";
 import { dayCellVariants } from "@/modules/calendar/components/month-view/day-cell";
 import { EventBullet } from "@/modules/calendar/components/month-view/event-bullet";
 import { useCalendar } from "@/modules/calendar/contexts/calendar-context";
-import {format} from "date-fns";
+import { format } from "date-fns";
 
 interface EventListDialogProps {
     date: Date;
-    events: IEvent[];
+    events: ICustomEvent[];
     maxVisibleEvents?: number;
     children?: ReactNode;
 }
 
 export function EventListDialog({
-                                    date,
-                                    events,
-                                    maxVisibleEvents = 3,
-                                    children
-                                }: EventListDialogProps) {
+    date,
+    events,
+    maxVisibleEvents = 3,
+    children
+}: EventListDialogProps) {
     const cellEvents = events;
     const hiddenEventsCount = Math.max(cellEvents.length - maxVisibleEvents, 0);
     const { badgeVariant, use24HourFormat } = useCalendar();
 
     const defaultTrigger = (
         <span className="cursor-pointer">
-      <span className="sm:hidden">
-        +{hiddenEventsCount}
-      </span>
-      <span className="hidden sm:inline py-0.5 px-2 my-1 rounded-xl border">
-         {hiddenEventsCount}
-          <span className="mx-1">more...</span>
-      </span>
-    </span>
+            <span className="sm:hidden">
+                +{hiddenEventsCount}
+            </span>
+            <span className="hidden sm:inline py-0.5 px-2 my-1 rounded-xl border">
+                {hiddenEventsCount}
+                <span className="mx-1">more...</span>
+            </span>
+        </span>
     );
 
     return (
@@ -50,8 +50,8 @@ export function EventListDialog({
                             <EventBullet color={cellEvents[0]?.color} className="" />
                             <p className="text-sm font-medium">
                                 Events on {
-                                format(date , "EEEE, MMMM d, yyyy")
-                            }
+                                    format(date, "EEEE, MMMM d, yyyy")
+                                }
                             </p>
                         </div>
                     </DialogTitle>
