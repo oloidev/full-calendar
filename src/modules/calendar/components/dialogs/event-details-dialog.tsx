@@ -91,9 +91,15 @@ export function EventDetailsDialog({ event, children }: IProps) {
                         <div className="flex items-start gap-2">
                             <Text className="mt-1 size-4 shrink-0 text-muted-foreground" />
                             <div>
-                                <p className="text-sm font-medium">Description</p>
+                                <p className="text-sm font-medium">Room</p>
                                 <p className="text-sm text-muted-foreground">
-                                    {event.title}
+                                    {event.location?.name ?? "No asignado"}
+                                </p>
+                            </div>
+                            <div>
+                                <p className="text-sm font-medium">Paciente</p>
+                                <p className="text-sm text-muted-foreground">
+                                    {event.patient?.name ?? "No asignado"}
                                 </p>
                             </div>
                         </div>

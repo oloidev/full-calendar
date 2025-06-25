@@ -1,9 +1,10 @@
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { ICustomEvent } from '@/types/custom-event';
-import { format } from 'date-fns';
-import { mockLocations } from '../mocks/mock-data';
+import React, { createContext, useContext, useState, ReactNode } from "react";
+import { ICustomEvent } from "@/types/custom-event";
+import { format } from "date-fns";
+import { mockLocations, mockProviders } from "../mocks/mock-data";
+import { useCalendar } from "./calendar-context"; // ✅ Importa el contexto
 
 interface DragDropContextType {
   draggedEvent: ICustomEvent | null;
@@ -18,11 +19,21 @@ interface DragDropContextType {
 const DragDropContext = createContext<DragDropContextType | undefined>(undefined);
 
 export function DragDropProvider({ children }: { children: ReactNode }) {
+  const { view } = useCalendar(); // ✅ usamos el contexto para decidir qué entidad se arrastra
+
+  const getEntityType = () => {
+    if (view === "timelineLocation") return "location";
+    if (view === "timelineProvider") return "provider";
+    return undefined;
+  };
+
+  const entityType = getEntityType();
+
   const [draggedEvent, setDraggedEvent] = useState<ICustomEvent | null>(null);
   const [isDragging, setIsDragging] = useState(false);
-  const [onEventDropped, setOnEventDroppedCallback] = useState<
-    ((event: ICustomEvent) => void) | undefined
-  >(undefined);
+  const [onEventDropped, setOnEventDroppedCallback] = useState<((event: ICustomEvent) => void) | undefined>(
+    undefined
+  );
 
   const startDrag = (event: ICustomEvent) => {
     setDraggedEvent(event);
@@ -34,13 +45,8 @@ export function DragDropProvider({ children }: { children: ReactNode }) {
     setIsDragging(false);
   };
 
-  const handleEventDrop = (
-    targetDate: Date,
-    hour?: number,
-    minute?: number,
-    entityId?: string // 👈 NUEVO
-  ) => {
-    if (!draggedEvent || !onEventDropped) return;
+  const handleEventDrop = (targetDate: Date, hour?: number, minute?: number, entityId?: string) => {
+    if (!draggedEvent || !onEventDropped || !entityType) return;
 
     const originalStart = new Date(draggedEvent.startDate);
     const originalEnd = new Date(draggedEvent.endDate);
@@ -55,33 +61,23 @@ export function DragDropProvider({ children }: { children: ReactNode }) {
       newStart.setMinutes(originalStart.getMinutes());
     }
 
-    // Create new end date based on the same duration
     const newEnd = new Date(newStart.getTime() + duration);
 
-    const updatedEvent = {
+    const updatedEvent: ICustomEvent = {
       ...draggedEvent,
       startDate: format(newStart, "yyyy-MM-dd'T'HH:mm:ss"),
       endDate: format(newEnd, "yyyy-MM-dd'T'HH:mm:ss"),
-      location: entityId
-        ? mockLocations.find((loc) => loc.id === entityId)
-        : draggedEvent.location, // 👈 Cambiar solo si se soltó en otra columna
+      ...(entityType === "location" && {
+        location: entityId
+          ? mockLocations.find((loc) => loc.id === entityId)
+          : draggedEvent.location,
+      }),
+      ...(entityType === "provider" && {
+        provider: entityId
+          ? mockProviders.find((p) => p.id === entityId)
+          : draggedEvent.provider,
+      }),
     };
-
-    console.log("🧠 Dragged event", draggedEvent);
-    console.log("🕒 New start:", newStart.toISOString());
-    console.log("🕒 New end:", newEnd.toISOString());
-    console.log("🏥 New entityId:", entityId);
-    console.log("📦 Updated event:", updatedEvent);
-    console.log("🧩 ID del evento actualizado:", updatedEvent.id);
-
-    // Check if the event is being dropped in the same position
-    const isSamePosition =
-      originalStart.getFullYear() === newStart.getFullYear() &&
-      originalStart.getMonth() === newStart.getMonth() &&
-      originalStart.getDate() === newStart.getDate() &&
-      originalStart.getHours() === newStart.getHours() &&
-      originalStart.getMinutes() === newStart.getMinutes();
-
 
     onEventDropped(updatedEvent);
     endDrag();
@@ -111,7 +107,7 @@ export function DragDropProvider({ children }: { children: ReactNode }) {
 export function useDragDrop() {
   const context = useContext(DragDropContext);
   if (context === undefined) {
-    throw new Error('useDragDrop must be used within a DragDropProvider');
+    throw new Error("useDragDrop must be used within a DragDropProvider");
   }
   return context;
 }

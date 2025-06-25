@@ -15,17 +15,17 @@ import { groupEvents } from "@/modules/calendar/helpers";
 import type { ICustomEvent } from "@/types/custom-event";
 import { RenderGroupedEvents } from "@/modules/calendar/components/week-and-day-view/render-grouped-events";
 import { DroppableArea } from "@/modules/calendar/components/dnd/droppable-area";
-import { TLocation } from "../../mocks/types";
+import { TProvider } from "../../../mocks/types";
 import { generateTimeSlots } from "@/modules/calendar/utils/timeSlots";
 
 interface IProps {
     events: ICustomEvent[];
-    locations: TLocation[];
+    providers: TProvider[];
 }
 
-export function TimelineLocationView({ events, locations }: IProps) {
+export function TimelineProviderView({ events, providers }: IProps) {
     const { selectedDate, use24HourFormat, timeSlotMinutes } = useCalendar();
-    const locationList = locations;
+    const providersList = providers;
     const timeSlots = generateTimeSlots(timeSlotMinutes, 0, 24);
     const hourLabels = generateTimeSlots(60, 0, 24); // Para las etiquetas horarias
 
@@ -61,18 +61,18 @@ export function TimelineLocationView({ events, locations }: IProps) {
                     <div
                         className="grid flex-1 border-l"
                         style={{
-                            gridTemplateColumns: `repeat(${locationList.length}, minmax(0, 1fr))`,
+                            gridTemplateColumns: `repeat(${providersList.length}, minmax(0, 1fr))`,
                         }}
                     >
-                        {locationList.map((location, index) => (
+                        {providersList.map((provider, index) => (
                             <motion.span
-                                key={location.id}
+                                key={provider.id}
                                 className="py-2 text-center text-xs font-medium text-t-quaternary"
                                 initial={{ opacity: 0, y: -10 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: index * 0.05, ...transition }}
                             >
-                                {location.name}
+                                {provider.name}
                             </motion.span>
                         ))}
                     </div>
@@ -83,7 +83,7 @@ export function TimelineLocationView({ events, locations }: IProps) {
                         <div className="flex">
                             {/* Columna de horas */}
                             <div className="relative w-18">
-                                {hourLabels.map(({ hour }, i) => (
+                                {hourLabels.map(({ hour }) => (
                                     <div
                                         key={`label-${hour}`}
                                         className="relative"
@@ -103,18 +103,18 @@ export function TimelineLocationView({ events, locations }: IProps) {
                             <div
                                 className="relative flex-1 grid divide-x border-l"
                                 style={{
-                                    gridTemplateColumns: `repeat(${locationList.length}, minmax(0, 1fr))`,
+                                    gridTemplateColumns: `repeat(${providersList.length}, minmax(0, 1fr))`,
                                 }}
                             >
-                                {locationList.map((location, colIndex) => {
-                                    const locationEvents = events.filter(
-                                        (e) => e.location?.id === location.id
+                                {providersList.map((provider) => {
+                                    const providerEvents = events.filter(
+                                        (e) => e.provider?.id === provider.id
                                     );
-                                    const groupedEvents = groupEvents(locationEvents);
+                                    const groupedEvents = groupEvents(providerEvents);
 
                                     return (
-                                        <div key={location.id} className="relative">
-                                            {timeSlots.map(({ hour, minute }, idx) => (
+                                        <div key={provider.id} className="relative">
+                                            {timeSlots.map(({ hour, minute }) => (
                                                 <div
                                                     key={`${hour}-${minute}`}
                                                     className="relative border-b border-border"
@@ -124,13 +124,14 @@ export function TimelineLocationView({ events, locations }: IProps) {
                                                         date={selectedDate}
                                                         hour={hour}
                                                         minute={minute}
-                                                        entityId={location.id}
+                                                        entityId={provider.id}
                                                         className="w-full h-full"
                                                     >
                                                         <AddEditEventDialog
                                                             startDate={selectedDate}
                                                             startTime={{ hour, minute }}
-                                                            location={location}
+                                                            entity={provider}
+                                                            entityType="provider"
                                                         >
                                                             <div className="absolute inset-0 cursor-pointer transition-colors hover:bg-secondary" />
                                                         </AddEditEventDialog>

@@ -11,7 +11,7 @@ import { useCalendar } from "@/modules/calendar/contexts/calendar-context";
 import { eventSchema, TEventFormData } from "@/modules/calendar/schemas";
 import { ICustomEvent } from "@/types/custom-event";
 import { TLocation } from "@/modules/calendar/mocks/types";
-// import { TProvider, TPatient } from "@/modules/calendar/mocks/types";
+import { TProvider } from "@/modules/calendar/mocks/types";
 import { mockLocations, mockProviders, mockPatients } from "@/modules/calendar/mocks/mock-data";
 
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -36,10 +36,11 @@ interface IProps {
     startDate?: Date;
     startTime?: { hour: number; minute: number };
     event?: ICustomEvent;
-    location?: TLocation;
+    entity?: TLocation | TProvider;
+    entityType?: 'location' | 'provider';
 }
 
-export function AddEditEventDialog({ children, startDate, startTime, event, location }: IProps) {
+export function AddEditEventDialog({ children, startDate, startTime, event, entity }: IProps) {
     const { isOpen, onClose, onToggle } = useDisclosure();
     const { addEvent, updateEvent } = useCalendar();
     const isEditing = !!event;
@@ -85,19 +86,23 @@ export function AddEditEventDialog({ children, startDate, startTime, event, loca
                 endDate: initialDates.endDate,
                 providerId: "",
                 patientId: "",
-                locationId: location?.id ?? "",
+                locationId: entity?.id ?? "",
             },
     });
 
 
     const onSubmit = (values: TEventFormData) => {
         try {
+            const location = mockLocations.find((loc) => loc.id === values.locationId);
+            const provider = mockProviders.find((p) => p.id === values.providerId);
+            const patient = mockPatients.find((p) => p.id === values.patientId);
+
             const formattedEvent: ICustomEvent = {
                 ...values,
                 id: isEditing ? event!.id : Math.floor(Math.random() * 1000000),
-                location: location ?? mockLocations.find((loc) => loc.id === values.locationId)!,
-                provider: mockProviders.find((p) => p.id === values.providerId)!,
-                patient: mockPatients.find((p) => p.id === values.patientId)!,
+                location,
+                provider,
+                patient,
                 startDate: format(values.startDate, "yyyy-MM-dd'T'HH:mm:ss"),
                 endDate: format(values.endDate, "yyyy-MM-dd'T'HH:mm:ss"),
             };
@@ -110,8 +115,6 @@ export function AddEditEventDialog({ children, startDate, startTime, event, loca
                 toast.success("Event created successfully");
             }
 
-            toast.success(isEditing ? "Event updated successfully" : "Event created successfully");
-
             onClose();
             form.reset();
         } catch (error) {
@@ -119,6 +122,7 @@ export function AddEditEventDialog({ children, startDate, startTime, event, loca
             toast.error("Failed to save event");
         }
     };
+
 
     return (
         <Dialog open={isOpen} onOpenChange={onToggle} modal={false}>
@@ -216,32 +220,30 @@ export function AddEditEventDialog({ children, startDate, startTime, event, loca
                         />
 
                         {/* Select de location (si no viene como prop) */}
-                        {!location && (
-                            <FormField
-                                control={form.control}
-                                name="locationId"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Room</FormLabel>
-                                        <FormControl>
-                                            <Select value={field.value} onValueChange={field.onChange}>
-                                                <SelectTrigger className="w-full">
-                                                    <SelectValue placeholder="Select a room" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    {mockLocations.map((loc) => (
-                                                        <SelectItem key={loc.id} value={loc.id}>
-                                                            {loc.name}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                        )}
+                        <FormField
+                            control={form.control}
+                            name="locationId"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Room</FormLabel>
+                                    <FormControl>
+                                        <Select value={field.value} onValueChange={field.onChange}>
+                                            <SelectTrigger className="w-full">
+                                                <SelectValue placeholder="Select a room" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {mockLocations.map((loc) => (
+                                                    <SelectItem key={loc.id} value={loc.id}>
+                                                        {loc.name}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
 
                         <FormField
                             control={form.control}

@@ -10,8 +10,9 @@ import { CalendarWeekView } from "@/modules/calendar/components/week-and-day-vie
 import { CalendarDayView } from "@/modules/calendar/components/week-and-day-view/calendar-day-view";
 import { CalendarYearView } from "@/modules/calendar/components/year-view/calendar-year-view";
 import { isSameDay, parseISO } from "date-fns";
-import { TimelineLocationView } from "@/modules/calendar/components/timeline-view/TimelineLocationView";
-import { mockLocations } from "../mocks/mock-data";
+import { TimelineLocationView } from "@/modules/calendar/components/timeline-view/views/TimelineLocationView";
+import { mockLocations, mockProviders } from "../mocks/mock-data";
+import { TimelineProviderView } from "./timeline-view/views/TimelineProviderView";
 
 
 export function CalendarBody() {
@@ -87,6 +88,13 @@ export function CalendarBody() {
                         locations={mockLocations}
                     />
                 )}
+                {view === "timelineProvider" && (
+                    <TimelineProviderView
+                        events={singleDayEvents}
+                        providers={mockProviders}
+                    />
+                )
+                }
             </motion.div>
         </div>
     );

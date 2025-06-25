@@ -11,14 +11,14 @@ import { mockEvents } from "@/modules/calendar/mocks/mock-events";
 
 export function Calendar() {
     return (
-        <DragDropProvider>
-            <CalendarProvider events={mockEvents} users={mockProviders} view="timelineLocation">
+        <CalendarProvider events={mockEvents} users={mockProviders} view="timelineLocation">
+            <DragDropProvider>
                 <div className="w-full border rounded-xl">
                     <EventUpdateHandler />
                     <CalendarHeader />
                     <CalendarBody />
                 </div>
-            </CalendarProvider>
-        </DragDropProvider>
+            </DragDropProvider>
+        </CalendarProvider>
     );
 }
