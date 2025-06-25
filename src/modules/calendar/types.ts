@@ -6,7 +6,7 @@ export type TCalendarView =
     | "agenda"
     | "timelineLocation"
     | "timelineProvider"
-    | "timeVlocation"
+    | "invertedLocation"
     | "timeVprovider";
 
 export type TEventColor = "blue" | "green" | "red" | "yellow" | "purple" | "orange";

@@ -13,6 +13,7 @@ import { isSameDay, parseISO } from "date-fns";
 import { TimelineLocationView } from "@/modules/calendar/components/timeline-view/views/TimelineLocationView";
 import { mockLocations, mockProviders } from "../mocks/mock-data";
 import { TimelineProviderView } from "./timeline-view/views/TimelineProviderView";
+import { InvertedLocationView } from "./timeline-Inverted-view/views/InvertedLocationView";
 
 
 export function CalendarBody() {
@@ -31,8 +32,6 @@ export function CalendarBody() {
         const endDate = parseISO(event.endDate);
         return !isSameDay(startDate, endDate);
     });
-
-    console.log("📦 Eventos renderizados", singleDayEvents);
 
     return (
         <div className='w-full h-full overflow-scroll relative'>
@@ -95,6 +94,18 @@ export function CalendarBody() {
                     />
                 )
                 }
+                {view === "invertedLocation" && (
+                    <InvertedLocationView
+                        events={singleDayEvents}
+                        locations={mockLocations}
+                    />
+                )}
+                {/* {view === "invertedProvider" && (
+                    <InvertedProviderView
+                        events={singleDayEvents}
+                        providers={mockProviders}
+                    />
+                )} */}
             </motion.div>
         </div>
     );

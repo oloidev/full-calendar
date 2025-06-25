@@ -14,7 +14,7 @@ export function ViewSwitcher() {
         "agenda",
         "timelineLocation",
         "timelineProvider",
-        "timeVlocation",
+        "invertedLocation",
         "timeVprovider",
     ];
 
