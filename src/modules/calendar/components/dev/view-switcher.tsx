@@ -7,11 +7,6 @@ export function ViewSwitcher() {
     const { view, setView } = useCalendar();
 
     const views = [
-        "day",
-        "week",
-        "month",
-        "year",
-        "agenda",
         "timelineLocation",
         "timelineProvider",
         "invertedLocation",
