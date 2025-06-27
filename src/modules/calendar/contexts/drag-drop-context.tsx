@@ -22,8 +22,8 @@ export function DragDropProvider({ children }: { children: ReactNode }) {
   const { view } = useCalendar(); // ✅ usamos el contexto para decidir qué entidad se arrastra
 
   const getEntityType = () => {
-    if (view === "timelineLocation") return "location";
-    if (view === "timelineProvider") return "provider";
+    if (view === "timelineLocation" || view === "invertedLocation") return "location";
+    if (view === "timelineProvider" || view === "invertedProvider") return "provider";
     return undefined;
   };
 

@@ -8,17 +8,15 @@ import { CustomEventBlock } from "@/modules/calendar/components/timeline-view/Cu
 export interface RenderGroupedEventsProps {
     events: ICustomEvent[];
     entityId: string;
-    timeSlotMinutes: number;
 }
 
 export const RenderGroupedEvents = ({
     events = [],
-    timeSlotMinutes,
 }: RenderGroupedEventsProps) => {
     return (
         <>
             {events.map((event) => {
-                const style = getEventBlockStyleForTimeline(event, timeSlotMinutes);
+                const style = getEventBlockStyleForTimeline(event);
                 return (
                     <div key={event.id} className="absolute w-full px-1" style={style}>
                         <CustomEventBlock event={event} />

@@ -54,7 +54,7 @@ export function CalendarProvider({
     users,
     events,
     badge = "colored",
-    view = "day",
+    view = "timelineLocation",
 }: {
     children: React.ReactNode;
     users: TProvider[];

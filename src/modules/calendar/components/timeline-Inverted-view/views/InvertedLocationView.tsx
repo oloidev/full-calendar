@@ -116,7 +116,7 @@ export function InvertedLocationView({ events, locations }: IProps) {
                                                         hour={hour}
                                                         minute={minute}
                                                         entityId={location.id}
-                                                        className="absolute inset-0"
+                                                        className="w-full h-full"
                                                     >
                                                         <AddEditEventDialog
                                                             startDate={selectedDate}
