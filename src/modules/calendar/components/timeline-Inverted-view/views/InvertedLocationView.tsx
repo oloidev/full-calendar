@@ -34,12 +34,9 @@ export function InvertedLocationView({ events, locations }: IProps) {
     const locationList = locations;
 
     const timeSlots = generateTimeSlots(timeSlotMinutes, 0, 24);
-    const hourLabels = generateTimeSlots(60, 0, 24); // una por hora
 
     const columnWidth = 120;
     const rowHeight = 112;
-
-    const slotsPerHour = 60 / timeSlotMinutes;
 
     return (
         <motion.div
@@ -62,21 +59,24 @@ export function InvertedLocationView({ events, locations }: IProps) {
                                     minWidth: `${timeSlots.length * columnWidth}px`,
                                 }}
                             >
-                                {hourLabels.map(({ hour }, i) => (
-                                    <div
-                                        key={`hour-${hour}`}
-                                        className="flex items-center justify-center text-xs font-medium text-t-quaternary py-2 h-[48px] border-r"
-                                        style={{
-                                            gridColumnStart: i * slotsPerHour + 1,
-                                            gridColumnEnd: `span ${1}`,
-                                        }}
-                                    >
-                                        {format(
-                                            new Date().setHours(hour, 0, 0, 0),
-                                            use24HourFormat ? "HH:mm" : "h a"
-                                        )}
-                                    </div>
-                                ))}
+                                {timeSlots.map(({ hour, minute }, i) => {
+                                    const shouldShowLabel = timeSlotMinutes < 60 || minute === 0;
+
+                                    return (
+                                        <div
+                                            key={`slot-header-${i}`}
+                                            className="flex items-center justify-center text-xs font-medium text-t-quaternary py-2 h-[48px] border-r"
+                                        >
+                                            {shouldShowLabel
+                                                ? format(
+                                                    new Date().setHours(hour, minute, 0, 0),
+                                                    use24HourFormat ? "HH:mm" : "h:mm a"
+                                                )
+                                                : null}
+                                        </div>
+                                    );
+                                })}
+
                             </div>
                         </div>
 
