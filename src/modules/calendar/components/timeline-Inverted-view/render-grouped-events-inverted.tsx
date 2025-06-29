@@ -35,8 +35,14 @@ export function RenderGroupedEventsInverted({
             if (!hasOverlap) style = { ...style, top: "0px", height: "100%" };
 
             return (
-                <div key={event.id} className="absolute p-1" style={style}>
-                    <EventBlock event={event} />
+                <div
+                    key={event.id}
+                    className="absolute p-1 pointer-events-none"
+                    style={style}
+                >
+                    <div className="pointer-events-auto">
+                        <EventBlock event={event} />
+                    </div>
                 </div>
             );
         })

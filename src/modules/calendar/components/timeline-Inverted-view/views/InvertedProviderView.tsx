@@ -10,7 +10,6 @@ import {
     transition,
 } from "@/modules/calendar/animations";
 
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { AddEditEventDialog } from "@/modules/calendar/components/dialogs/add-edit-event-dialog";
 import { groupEvents } from "@/modules/calendar/helpers";
 import type { ICustomEvent } from "@/types/custom-event";
@@ -32,7 +31,6 @@ export function InvertedProviderView({ events, providers }: IProps) {
     } = useCalendar();
 
     const providerList = providers;
-
     const timeSlots = generateTimeSlots(timeSlotMinutes, 0, 24);
 
     const columnWidth = 120;
@@ -47,16 +45,33 @@ export function InvertedProviderView({ events, providers }: IProps) {
             transition={transition}
         >
             <motion.div className="hidden flex-col sm:flex" variants={staggerContainer}>
-                <ScrollArea className="h-[736px]" type="always">
-                    <div className="w-full min-w-fit">
-                        {/* Header de horas */}
-                        <div className="relative flex border-b bg-muted z-20">
-                            <div className="w-36" />
+                <div className="flex w-full h-[736px]">
+
+                    {/* Columna izquierda fija con nombres de entidades */}
+                    <div className="shrink-0 w-36 border-r">
+                        <div className="h-[48px] border-b bg-muted" />
+                        {providerList.map((provider) => (
                             <div
-                                className="grid flex-1 border-l"
+                                key={`label-${provider.id}`}
+                                className="h-[112px] flex items-center justify-end pr-2 text-xs text-t-quaternary border-b"
+                                style={{ height: `${rowHeight}px` }}
+                            >
+                                {provider.name}
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Scroll horizontal que contiene header + grilla */}
+                    <div className="w-full overflow-x-auto">
+                        <div className="min-w-fit">
+
+                            {/* Header de horas */}
+                            <div
+                                className="grid border-b bg-muted"
                                 style={{
                                     gridTemplateColumns: `repeat(${timeSlots.length}, ${columnWidth}px)`,
                                     minWidth: `${timeSlots.length * columnWidth}px`,
+                                    height: "48px",
                                 }}
                             >
                                 {timeSlots.map(({ hour, minute }, i) => {
@@ -65,7 +80,7 @@ export function InvertedProviderView({ events, providers }: IProps) {
                                     return (
                                         <div
                                             key={`slot-header-${i}`}
-                                            className="flex items-center justify-center text-xs font-medium text-t-quaternary py-2 h-[48px] border-r"
+                                            className="flex items-center justify-center text-xs font-medium text-t-quaternary border-r"
                                         >
                                             {shouldShowLabel
                                                 ? format(
@@ -76,40 +91,31 @@ export function InvertedProviderView({ events, providers }: IProps) {
                                         </div>
                                     );
                                 })}
-
                             </div>
-                        </div>
 
-                        {/* Cuerpo de grilla */}
-                        <div className="flex flex-col">
-                            {providerList.map((provider) => {
-                                const providerEvents = events.filter(
-                                    (e) => e.provider?.id === provider.id
-                                );
-                                const groupedEvents = groupEvents(providerEvents);
+                            {/* Grilla de eventos */}
+                            <div className="flex flex-col">
+                                {providerList.map((provider) => {
+                                    const providerEvents = events.filter(
+                                        (e) => e.provider?.id === provider.id
+                                    );
+                                    const groupedEvents = groupEvents(providerEvents);
 
-                                return (
-                                    <div
-                                        key={provider.id}
-                                        className="relative flex border-b border-border"
-                                        style={{
-                                            height: `${rowHeight}px`,
-                                            minWidth: `${timeSlots.length * columnWidth}px`,
-                                        }}
-                                    >
-                                        <div className="w-36 flex items-center justify-end pr-2 text-xs text-t-quaternary">
-                                            {provider.name}
-                                        </div>
+                                    return (
                                         <div
-                                            className="relative grid flex-1 divide-x border-l"
+                                            key={provider.id}
+                                            className="grid border-b border-border relative"
                                             style={{
                                                 gridTemplateColumns: `repeat(${timeSlots.length}, ${columnWidth}px)`,
+                                                minWidth: `${timeSlots.length * columnWidth}px`,
+                                                height: `${rowHeight}px`,
                                             }}
                                         >
+                                            {/* Celdas droppables */}
                                             {timeSlots.map(({ hour, minute }) => (
                                                 <div
                                                     key={`${provider.id}-${hour}-${minute}`}
-                                                    className="relative"
+                                                    className="relative border-r"
                                                 >
                                                     <DroppableArea
                                                         date={selectedDate}
@@ -129,17 +135,20 @@ export function InvertedProviderView({ events, providers }: IProps) {
                                                     </DroppableArea>
                                                 </div>
                                             ))}
+
+                                            {/* Eventos alineados por columna */}
                                             <RenderGroupedEventsInverted
                                                 groupedEvents={groupedEvents}
                                                 day={selectedDate}
                                             />
                                         </div>
-                                    </div>
-                                );
-                            })}
+                                    );
+                                })}
+                            </div>
+
                         </div>
                     </div>
-                </ScrollArea>
+                </div>
             </motion.div>
         </motion.div>
     );
