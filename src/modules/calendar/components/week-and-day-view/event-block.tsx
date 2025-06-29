@@ -57,12 +57,15 @@ interface IProps
 }
 
 export function EventBlock({ event, className }: IProps) {
-  const { badgeVariant, use24HourFormat } = useCalendar();
+  const { badgeVariant, use24HourFormat, timeSlotMinutes: rawSlot } = useCalendar();
+  const timeSlotMinutes = Number(rawSlot);
+  const cellHeight = 96;
 
   const start = parseISO(event.startDate);
   const end = parseISO(event.endDate);
   const durationInMinutes = differenceInMinutes(end, start);
-  const heightInPixels = (durationInMinutes / 60) * 96 - 8;
+  const pixelsPerMinute = cellHeight / timeSlotMinutes;
+  const heightInPixels = durationInMinutes * pixelsPerMinute;
 
   const color = (
     badgeVariant === "dot" ? `${event.color}-dot` : event.color
@@ -88,7 +91,6 @@ export function EventBlock({ event, className }: IProps) {
                 <circle cx="4" cy="4" r="4" />
               </svg>
             )}
-
             <p className="truncate font-semibold">{event.title}</p>
           </div>
 
