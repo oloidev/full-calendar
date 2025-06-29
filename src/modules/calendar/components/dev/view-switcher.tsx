@@ -10,7 +10,7 @@ export function ViewSwitcher() {
         "timelineLocation",
         "timelineProvider",
         "invertedLocation",
-        "timeVprovider",
+        "invertedProvider",
     ];
 
     return (

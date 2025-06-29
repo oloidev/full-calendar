@@ -5,10 +5,11 @@ import { useCalendar } from "@/modules/calendar/contexts/calendar-context";
 import { motion } from "framer-motion";
 import { fadeIn, transition } from "@/modules/calendar/animations";
 import { isSameDay, parseISO } from "date-fns";
-import { TimelineLocationView } from "@/modules/calendar/components/timeline-view/views/TimelineLocationView";
 import { mockLocations, mockProviders } from "../mocks/mock-data";
+import { TimelineLocationView } from "@/modules/calendar/components/timeline-view/views/TimelineLocationView";
 import { TimelineProviderView } from "./timeline-view/views/TimelineProviderView";
 import { InvertedLocationView } from "./timeline-Inverted-view/views/InvertedLocationView";
+import { InvertedProviderView } from "./timeline-Inverted-view/views/InvertedProviderView";
 
 
 export function CalendarBody() {
@@ -52,12 +53,12 @@ export function CalendarBody() {
                         locations={mockLocations}
                     />
                 )}
-                {/* {view === "invertedProvider" && (
+                {view === "invertedProvider" && (
                     <InvertedProviderView
                         events={singleDayEvents}
                         providers={mockProviders}
                     />
-                )} */}
+                )}
             </motion.div>
         </div>
     );
