@@ -2,7 +2,7 @@
 
 import { HTMLAttributes } from "react";
 import { ICustomEvent } from "@/types/custom-event";
-import { parseISO, format } from "date-fns";
+import { parseISO, format, differenceInMinutes } from "date-fns";
 import { cn } from "@/lib/utils";
 import { useCalendar } from "@/modules/calendar/contexts/calendar-context";
 import { EventDetailsDialog } from "@/modules/calendar/components/dialogs/event-details-dialog";
@@ -14,14 +14,20 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
 }
 
 export function TimelineEventBlock({ event, className }: Props) {
-  const { use24HourFormat } = useCalendar();
+  const { use24HourFormat, timeSlotMinutes } = useCalendar();
 
   const start = parseISO(event.startDate);
   const end = parseISO(event.endDate);
+
   const formattedTime = `${format(start, use24HourFormat ? "HH:mm" : "h:mm a")} - ${format(
     end,
     use24HourFormat ? "HH:mm" : "h:mm a"
   )}`;
+
+  const durationInMinutes = differenceInMinutes(end, start);
+  const cellHeight = 96;
+  const pixelsPerMinute = cellHeight / Number(timeSlotMinutes);
+  const heightInPixels = durationInMinutes * pixelsPerMinute;
 
   const anesthesiologist = event.anesthesiologist;
   const patient = event.patient;
@@ -34,9 +40,10 @@ export function TimelineEventBlock({ event, className }: Props) {
           role="button"
           tabIndex={0}
           className={cn(
-            "w-full h-full rounded-md border border-border bg-muted px-2 py-1.5 text-xs flex flex-col gap-1 overflow-hidden shadow-sm",
+            "w-full rounded-md border border-border bg-muted px-2 py-1.5 text-xs flex flex-col gap-1 overflow-hidden shadow-sm",
             className
           )}
+          style={{ height: `${heightInPixels}px` }}
         >
           <div className="flex items-center gap-2">
             <Avatar className="w-5 h-5">
