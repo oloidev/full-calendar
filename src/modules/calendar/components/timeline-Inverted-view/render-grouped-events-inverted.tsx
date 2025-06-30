@@ -1,16 +1,14 @@
 import { ICustomEvent } from "@/types/custom-event";
 import { getEventBlockStyleForInvertedTimeline } from "@/modules/calendar/helpers/getEventBlockStyleForInvertedTimeline";
 import { areIntervalsOverlapping, parseISO } from "date-fns";
-import { EventBlock } from "@/modules/calendar/components/week-and-day-view/event-block";
+import { InvertedEventBlock } from "./InvertedEventBlock";
 
 interface RenderGroupedEventsProps {
     groupedEvents: ICustomEvent[][];
     day: Date;
 }
 
-export function RenderGroupedEventsInverted({
-    groupedEvents,
-}: RenderGroupedEventsProps) {
+export function RenderGroupedEventsInverted({ groupedEvents }: RenderGroupedEventsProps) {
     return groupedEvents.map((group, groupIndex) =>
         group.map((event) => {
             let style = getEventBlockStyleForInvertedTimeline(event);
@@ -35,8 +33,14 @@ export function RenderGroupedEventsInverted({
             if (!hasOverlap) style = { ...style, top: "0px", height: "100%" };
 
             return (
-                <div key={event.id} className="absolute p-1" style={style}>
-                    <EventBlock event={event} />
+                <div
+                    key={event.id}
+                    className="absolute p-1 pointer-events-none"
+                    style={style}
+                >
+                    <div className="pointer-events-auto h-full">
+                        <InvertedEventBlock event={event} />
+                    </div>
                 </div>
             );
         })

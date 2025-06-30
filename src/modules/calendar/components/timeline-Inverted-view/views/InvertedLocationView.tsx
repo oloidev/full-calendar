@@ -1,3 +1,5 @@
+"use client";
+
 import { format } from "date-fns";
 import { motion } from "framer-motion";
 
@@ -8,9 +10,7 @@ import {
     transition,
 } from "@/modules/calendar/animations";
 
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { AddEditEventDialog } from "@/modules/calendar/components/dialogs/add-edit-event-dialog";
-// import { CalendarTimeline } from "@/modules/calendar/components/week-and-day-view/calendar-time-line";
 import { groupEvents } from "@/modules/calendar/helpers";
 import type { ICustomEvent } from "@/types/custom-event";
 import { RenderGroupedEventsInverted } from "@/modules/calendar/components/timeline-Inverted-view/render-grouped-events-inverted";
@@ -24,9 +24,14 @@ interface IProps {
 }
 
 export function InvertedLocationView({ events, locations }: IProps) {
-    const { selectedDate, use24HourFormat } = useCalendar();
+    const {
+        selectedDate,
+        use24HourFormat,
+        timeSlotMinutes,
+    } = useCalendar();
+
     const locationList = locations;
-    const hourLabels = generateTimeSlots(60, 0, 24);
+    const timeSlots = generateTimeSlots(timeSlotMinutes, 0, 24);
 
     const columnWidth = 120;
     const rowHeight = 112;
@@ -40,71 +45,88 @@ export function InvertedLocationView({ events, locations }: IProps) {
             transition={transition}
         >
             <motion.div className="hidden flex-col sm:flex" variants={staggerContainer}>
-                {/* Header de horas */}
-                <motion.div className="relative z-20 flex border-b bg-muted">
-                    <div className="w-36" /> {/* espacio para nombres de entidades */}
-                    <div
-                        className="grid flex-1 border-l"
-                        style={{
-                            gridTemplateColumns: `repeat(${hourLabels.length}, ${columnWidth}px)`,
-                        }}
-                    >
-                        {hourLabels.map(({ hour }, index) => (
-                            <motion.span
-                                key={`hour-${hour}`}
-                                className="py-2 text-center text-xs font-medium text-t-quaternary"
-                                initial={{ opacity: 0, y: -10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: index * 0.01, ...transition }}
+                <div className="flex w-full h-[736px]">
+
+                    {/* Columna izquierda fija con nombres de entidades */}
+                    <div className="shrink-0 w-36 border-r">
+                        <div className="h-[48px] border-b bg-muted" />
+                        {locationList.map((location) => (
+                            <div
+                                key={`label-${location.id}`}
+                                className="h-[112px] flex items-center justify-end pr-2 text-xs text-t-quaternary border-b"
+                                style={{ height: `${rowHeight}px` }}
                             >
-                                {format(
-                                    new Date().setHours(hour, 0, 0, 0),
-                                    use24HourFormat ? "HH:mm" : "h a"
-                                )}
-                            </motion.span>
+                                {location.name}
+                            </div>
                         ))}
                     </div>
-                </motion.div>
 
-                <ScrollArea className="h-[736px]" type="always">
-                    <div className="relative">
-                        <div className="flex flex-col">
-                            {locationList.map((location) => {
-                                const locationEvents = events.filter(
-                                    (e) => e.location?.id === location.id
-                                );
-                                const groupedEvents = groupEvents(locationEvents);
+                    {/* Scroll horizontal que contiene header + grilla */}
+                    <div className="w-full overflow-x-auto">
+                        <div className="min-w-fit">
 
-                                return (
-                                    <div
-                                        key={location.id}
-                                        className="relative flex border-b border-border"
-                                        style={{ height: `${rowHeight}px` }}
-                                    >
-                                        {/* Nombre del location */}
-                                        <div className="w-36 flex items-center justify-end pr-2 text-xs text-t-quaternary">
-                                            {location.name}
-                                        </div>
+                            {/* Header de horas */}
+                            <div
+                                className="grid border-b bg-muted"
+                                style={{
+                                    gridTemplateColumns: `repeat(${timeSlots.length}, ${columnWidth}px)`,
+                                    minWidth: `${timeSlots.length * columnWidth}px`,
+                                    height: "48px",
+                                }}
+                            >
+                                {timeSlots.map(({ hour, minute }, i) => {
+                                    const shouldShowLabel = timeSlotMinutes < 60 || minute === 0;
 
-                                        {/* Grilla de horas */}
+                                    return (
                                         <div
-                                            className="relative grid flex-1 divide-x border-l"
+                                            key={`slot-header-${i}`}
+                                            className="flex items-center justify-center text-xs font-medium text-t-quaternary border-r"
+                                        >
+                                            {shouldShowLabel
+                                                ? format(
+                                                    new Date().setHours(hour, minute, 0, 0),
+                                                    use24HourFormat ? "HH:mm" : "h:mm a"
+                                                )
+                                                : null}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+
+                            {/* Grilla de eventos */}
+                            <div className="flex flex-col">
+                                {locationList.map((location) => {
+                                    const locationEvents = events.filter(
+                                        (e) => e.location?.id === location.id
+                                    );
+                                    const groupedEvents = groupEvents(locationEvents);
+
+                                    return (
+                                        <div
+                                            key={location.id}
+                                            className="grid border-b border-border relative"
                                             style={{
-                                                gridTemplateColumns: `repeat(${hourLabels.length}, ${columnWidth}px)`,
+                                                gridTemplateColumns: `repeat(${timeSlots.length}, ${columnWidth}px)`,
+                                                minWidth: `${timeSlots.length * columnWidth}px`,
+                                                height: `${rowHeight}px`,
                                             }}
                                         >
-                                            {hourLabels.map(({ hour }) => (
-                                                <div key={`${location.id}-${hour}`} className="relative">
+                                            {/* Celdas droppables */}
+                                            {timeSlots.map(({ hour, minute }) => (
+                                                <div
+                                                    key={`${location.id}-${hour}-${minute}`}
+                                                    className="relative border-r"
+                                                >
                                                     <DroppableArea
                                                         date={selectedDate}
                                                         hour={hour}
-                                                        minute={0}
+                                                        minute={minute}
                                                         entityId={location.id}
-                                                        className="absolute inset-0"
+                                                        className="w-full h-full"
                                                     >
                                                         <AddEditEventDialog
                                                             startDate={selectedDate}
-                                                            startTime={{ hour, minute: 0 }}
+                                                            startTime={{ hour, minute }}
                                                             entity={location}
                                                             entityType="location"
                                                         >
@@ -114,18 +136,19 @@ export function InvertedLocationView({ events, locations }: IProps) {
                                                 </div>
                                             ))}
 
-                                            {/* Renderizado de eventos */}
+                                            {/* Eventos alineados por columna */}
                                             <RenderGroupedEventsInverted
                                                 groupedEvents={groupedEvents}
                                                 day={selectedDate}
                                             />
                                         </div>
-                                    </div>
-                                );
-                            })}
+                                    );
+                                })}
+                            </div>
+
                         </div>
                     </div>
-                </ScrollArea>
+                </div>
             </motion.div>
         </motion.div>
     );

@@ -1,3 +1,5 @@
+"use client";
+
 import { format } from "date-fns";
 import { motion } from "framer-motion";
 
@@ -8,28 +10,32 @@ import {
     transition,
 } from "@/modules/calendar/animations";
 
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { AddEditEventDialog } from "@/modules/calendar/components/dialogs/add-edit-event-dialog";
-import { CalendarTimeline } from "@/modules/calendar/components/week-and-day-view/calendar-time-line";
 import { groupEvents } from "@/modules/calendar/helpers";
 import type { ICustomEvent } from "@/types/custom-event";
-import { RenderGroupedEvents } from "@/modules/calendar/components/week-and-day-view/render-grouped-events";
+import { RenderGroupedEventsInverted } from "@/modules/calendar/components/timeline-Inverted-view/render-grouped-events-inverted";
 import { DroppableArea } from "@/modules/calendar/components/dnd/droppable-area";
 import { TProvider } from "../../../mocks/types";
 import { generateTimeSlots } from "@/modules/calendar/utils/timeSlots";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface IProps {
     events: ICustomEvent[];
     providers: TProvider[];
 }
 
-export function TimelineProviderView({ events, providers }: IProps) {
-    const { selectedDate, use24HourFormat, timeSlotMinutes } = useCalendar();
-    const providersList = providers;
-    const timeSlots = generateTimeSlots(timeSlotMinutes, 0, 24);
-    const hourLabels = generateTimeSlots(60, 0, 24); // Para las etiquetas horarias
+export function InvertedProviderView({ events, providers }: IProps) {
+    const {
+        selectedDate,
+        use24HourFormat,
+        timeSlotMinutes,
+    } = useCalendar();
 
-    const cellHeight = 96 / (60 / timeSlotMinutes); // Alto por slot
+    const providerList = providers;
+    const timeSlots = generateTimeSlots(timeSlotMinutes, 0, 24);
+
+    const columnWidth = 120;
+    const rowHeight = 112;
 
     return (
         <motion.div
@@ -39,86 +45,90 @@ export function TimelineProviderView({ events, providers }: IProps) {
             variants={fadeIn}
             transition={transition}
         >
-            <motion.div
-                className="flex flex-col items-center justify-center border-b py-4 text-sm text-t-quaternary sm:hidden"
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={transition}
-            >
-                <p>Weekly view is not available on smaller devices.</p>
-                <p>Please switch to daily or monthly view.</p>
-            </motion.div>
-
             <motion.div className="hidden flex-col sm:flex" variants={staggerContainer}>
-                {/* Header */}
-                <motion.div
-                    className="relative z-20 flex border-b"
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={transition}
-                >
-                    <div className="w-18" />
-                    <div
-                        className="grid flex-1 border-l"
-                        style={{
-                            gridTemplateColumns: `repeat(${providersList.length}, minmax(0, 1fr))`,
-                        }}
-                    >
-                        {providersList.map((provider, index) => (
-                            <motion.span
-                                key={provider.id}
-                                className="py-2 text-center text-xs font-medium text-t-quaternary"
-                                initial={{ opacity: 0, y: -10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: index * 0.05, ...transition }}
+                <div className="flex w-full h-[736px]">
+
+                    {/* Columna izquierda fija con nombres de entidades */}
+                    <div className="shrink-0 w-48 border-r">
+                        <div className="h-[48px] border-b bg-muted" />
+                        {providerList.map((provider) => (
+                            <div
+                                key={`label-${provider.id}`}
+                                className="h-[112px] flex items-center justify-start pl-2 border-b"
+                                style={{ height: `${rowHeight}px` }}
                             >
-                                {provider.name}
-                            </motion.span>
+                                <div className="flex items-center gap-2 w-full max-w-full">
+                                    <Avatar className="w-8 h-8 shrink-0">
+                                        <AvatarImage src={provider.avatarUrl} />
+                                        <AvatarFallback>
+                                            {provider.name?.charAt(0) ?? "P"}
+                                        </AvatarFallback>
+                                    </Avatar>
+
+                                    <div className="flex flex-col justify-center leading-tight w-full truncate text-left">
+                                        <span className="font-semibold text-sm truncate">{provider.name}</span>
+                                        <span className="text-xs text-muted-foreground truncate">5 Cases 6:30 Hours</span> {/* mock */}
+                                    </div>
+                                </div>
+                            </div>
                         ))}
                     </div>
-                </motion.div>
 
-                <ScrollArea className="h-[736px]" type="always">
-                    <div className="relative"> {/* 👈 Contenedor necesario para posicionar correctamente el timeline */}
-                        <div className="flex">
-                            {/* Columna de horas */}
-                            <div className="relative w-18">
-                                {hourLabels.map(({ hour }) => (
-                                    <div
-                                        key={`label-${hour}`}
-                                        className="relative"
-                                        style={{ height: "96px" }}
-                                    >
-                                        <span className="absolute -top-3 right-2 text-xs text-t-quaternary">
-                                            {format(
-                                                new Date().setHours(hour, 0, 0, 0),
-                                                use24HourFormat ? "HH:mm" : "h a"
-                                            )}
-                                        </span>
-                                    </div>
-                                ))}
-                            </div>
+                    {/* Scroll horizontal que contiene header + grilla */}
+                    <div className="w-full overflow-x-auto">
+                        <div className="min-w-fit">
 
-                            {/* Grilla */}
+                            {/* Header de horas */}
                             <div
-                                className="relative flex-1 grid divide-x border-l"
+                                className="grid border-b bg-muted"
                                 style={{
-                                    gridTemplateColumns: `repeat(${providersList.length}, minmax(0, 1fr))`,
+                                    gridTemplateColumns: `repeat(${timeSlots.length}, ${columnWidth}px)`,
+                                    minWidth: `${timeSlots.length * columnWidth}px`,
+                                    height: "48px",
                                 }}
                             >
-                                {providersList.map((provider) => {
+                                {timeSlots.map(({ hour, minute }, i) => {
+                                    const shouldShowLabel = timeSlotMinutes < 60 || minute === 0;
+
+                                    return (
+                                        <div
+                                            key={`slot-header-${i}`}
+                                            className="flex items-center justify-center text-xs font-medium text-t-quaternary border-r"
+                                        >
+                                            {shouldShowLabel
+                                                ? format(
+                                                    new Date().setHours(hour, minute, 0, 0),
+                                                    use24HourFormat ? "HH:mm" : "h:mm a"
+                                                )
+                                                : null}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+
+                            {/* Grilla de eventos */}
+                            <div className="flex flex-col">
+                                {providerList.map((provider) => {
                                     const providerEvents = events.filter(
                                         (e) => e.provider?.id === provider.id
                                     );
                                     const groupedEvents = groupEvents(providerEvents);
 
                                     return (
-                                        <div key={provider.id} className="relative">
+                                        <div
+                                            key={provider.id}
+                                            className="grid border-b border-border relative"
+                                            style={{
+                                                gridTemplateColumns: `repeat(${timeSlots.length}, ${columnWidth}px)`,
+                                                minWidth: `${timeSlots.length * columnWidth}px`,
+                                                height: `${rowHeight}px`,
+                                            }}
+                                        >
+                                            {/* Celdas droppables */}
                                             {timeSlots.map(({ hour, minute }) => (
                                                 <div
-                                                    key={`${hour}-${minute}`}
-                                                    className="relative border-b border-border"
-                                                    style={{ height: `${cellHeight}px` }}
+                                                    key={`${provider.id}-${hour}-${minute}`}
+                                                    className="relative border-r"
                                                 >
                                                     <DroppableArea
                                                         date={selectedDate}
@@ -133,13 +143,14 @@ export function TimelineProviderView({ events, providers }: IProps) {
                                                             entity={provider}
                                                             entityType="provider"
                                                         >
-                                                            <div className="absolute inset-0 cursor-pointer transition-colors hover:bg-secondary" />
+                                                            <div className="absolute inset-0 cursor-pointer transition-colors hover:bg-secondary/40" />
                                                         </AddEditEventDialog>
                                                     </DroppableArea>
                                                 </div>
                                             ))}
 
-                                            <RenderGroupedEvents
+                                            {/* Eventos alineados por columna */}
+                                            <RenderGroupedEventsInverted
                                                 groupedEvents={groupedEvents}
                                                 day={selectedDate}
                                             />
@@ -148,11 +159,9 @@ export function TimelineProviderView({ events, providers }: IProps) {
                                 })}
                             </div>
 
-                            <CalendarTimeline />
                         </div>
                     </div>
-                </ScrollArea>
-
+                </div>
             </motion.div>
         </motion.div>
     );

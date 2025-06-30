@@ -4,16 +4,12 @@ import React from "react";
 import { useCalendar } from "@/modules/calendar/contexts/calendar-context";
 import { motion } from "framer-motion";
 import { fadeIn, transition } from "@/modules/calendar/animations";
-import { AgendaEvents } from "@/modules/calendar/components/agenda-view/agenda-events";
-import { CalendarMonthView } from "@/modules/calendar/components/month-view/calendar-month-view";
-import { CalendarWeekView } from "@/modules/calendar/components/week-and-day-view/calendar-week-view";
-import { CalendarDayView } from "@/modules/calendar/components/week-and-day-view/calendar-day-view";
-import { CalendarYearView } from "@/modules/calendar/components/year-view/calendar-year-view";
 import { isSameDay, parseISO } from "date-fns";
-import { TimelineLocationView } from "@/modules/calendar/components/timeline-view/views/TimelineLocationView";
 import { mockLocations, mockProviders } from "../mocks/mock-data";
+import { TimelineLocationView } from "@/modules/calendar/components/timeline-view/views/TimelineLocationView";
 import { TimelineProviderView } from "./timeline-view/views/TimelineProviderView";
 import { InvertedLocationView } from "./timeline-Inverted-view/views/InvertedLocationView";
+import { InvertedProviderView } from "./timeline-Inverted-view/views/InvertedProviderView";
 
 
 export function CalendarBody() {
@@ -27,12 +23,6 @@ export function CalendarBody() {
         return isSameDay(startDate, endDate);
     });
 
-    const multiDayEvents = events.filter((event) => {
-        const startDate = parseISO(event.startDate);
-        const endDate = parseISO(event.endDate);
-        return !isSameDay(startDate, endDate);
-    });
-
     return (
         <div className='w-full h-full overflow-scroll relative'>
             <motion.div
@@ -43,44 +33,7 @@ export function CalendarBody() {
                 variants={fadeIn}
                 transition={transition}
             >
-                {view === "month" && (
-                    <CalendarMonthView
-                        singleDayEvents={singleDayEvents}
-                        multiDayEvents={multiDayEvents}
-                    />
-                )}
-                {view === "week" && (
-                    <CalendarWeekView
-                        singleDayEvents={singleDayEvents}
-                        multiDayEvents={multiDayEvents}
-                    />
-                )}
-                {view === "day" && (
-                    <CalendarDayView
-                        singleDayEvents={singleDayEvents}
-                        multiDayEvents={multiDayEvents}
-                    />
-                )}
-                {view === "year" && (
-                    <CalendarYearView
-                        singleDayEvents={singleDayEvents}
-                        multiDayEvents={multiDayEvents}
-                    />
-                )}
-                {
-                    view === "agenda" && (
-                        <motion.div
-                            key="agenda"
-                            initial="initial"
-                            animate="animate"
-                            exit="exit"
-                            variants={fadeIn}
-                            transition={transition}
-                        >
-                            <AgendaEvents />
-                        </motion.div>
-                    )
-                }
+
                 {view === "timelineLocation" && (
                     <TimelineLocationView
                         events={singleDayEvents}
@@ -100,12 +53,12 @@ export function CalendarBody() {
                         locations={mockLocations}
                     />
                 )}
-                {/* {view === "invertedProvider" && (
+                {view === "invertedProvider" && (
                     <InvertedProviderView
                         events={singleDayEvents}
                         providers={mockProviders}
                     />
-                )} */}
+                )}
             </motion.div>
         </div>
     );

@@ -1,7 +1,7 @@
 import { ICustomEvent } from "@/types/custom-event";
 import { getEventBlockStyle } from "@/modules/calendar/helpers";
 import { areIntervalsOverlapping, parseISO } from "date-fns";
-import { EventBlock } from "@/modules/calendar/components/week-and-day-view/event-block";
+import { TimelineEventBlock } from "@/modules/calendar/components/timeline-view/event-block";
 
 interface RenderGroupedEventsProps {
     groupedEvents: ICustomEvent[][];
@@ -33,7 +33,7 @@ export function RenderGroupedEvents(
 
                 return (
                     <div key={event.id} className="absolute p-1" style={style}>
-                        <EventBlock event={event} />
+                        <TimelineEventBlock event={event} />
                     </div>
                 );
             })

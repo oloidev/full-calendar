@@ -1,3 +1,5 @@
+"use client";
+
 import { format } from "date-fns";
 import { motion } from "framer-motion";
 
@@ -24,12 +26,17 @@ interface IProps {
 }
 
 export function TimelineLocationView({ events, locations }: IProps) {
-    const { selectedDate, use24HourFormat, timeSlotMinutes } = useCalendar();
+    const {
+        selectedDate,
+        use24HourFormat,
+        timeSlotMinutes: rawSlot,
+    } = useCalendar();
+
+    const timeSlotMinutes = Number(rawSlot);
     const locationList = locations;
     const timeSlots = generateTimeSlots(timeSlotMinutes, 0, 24);
-    const hourLabels = generateTimeSlots(60, 0, 24); // Para las etiquetas horarias
 
-    const cellHeight = 96 / (60 / timeSlotMinutes); // Alto por slot
+    const cellHeight = 96;
 
     return (
         <motion.div
@@ -39,6 +46,7 @@ export function TimelineLocationView({ events, locations }: IProps) {
             variants={fadeIn}
             transition={transition}
         >
+            {/* Mensaje solo para móviles */}
             <motion.div
                 className="flex flex-col items-center justify-center border-b py-4 text-sm text-t-quaternary sm:hidden"
                 initial={{ opacity: 0, y: -20 }}
@@ -50,7 +58,7 @@ export function TimelineLocationView({ events, locations }: IProps) {
             </motion.div>
 
             <motion.div className="hidden flex-col sm:flex" variants={staggerContainer}>
-                {/* Header */}
+                {/* Encabezado */}
                 <motion.div
                     className="relative z-20 flex border-b"
                     initial={{ opacity: 0, y: -20 }}
@@ -78,28 +86,29 @@ export function TimelineLocationView({ events, locations }: IProps) {
                     </div>
                 </motion.div>
 
+                {/* Cuerpo del calendario */}
                 <ScrollArea className="h-[736px]" type="always">
-                    <div className="relative"> {/* 👈 Contenedor necesario para posicionar correctamente el timeline */}
+                    <div className="relative">
                         <div className="flex">
                             {/* Columna de horas */}
                             <div className="relative w-18">
-                                {hourLabels.map(({ hour }) => (
+                                {timeSlots.map(({ hour, minute }) => (
                                     <div
-                                        key={`label-${hour}`}
+                                        key={`label-${hour}-${minute}`}
                                         className="relative"
-                                        style={{ height: "96px" }}
+                                        style={{ height: `${cellHeight}px` }}
                                     >
                                         <span className="absolute -top-3 right-2 text-xs text-t-quaternary">
                                             {format(
-                                                new Date().setHours(hour, 0, 0, 0),
-                                                use24HourFormat ? "HH:mm" : "h a"
+                                                new Date().setHours(hour, minute, 0, 0),
+                                                use24HourFormat ? "HH:mm" : "h:mm a"
                                             )}
                                         </span>
                                     </div>
                                 ))}
                             </div>
 
-                            {/* Grilla */}
+                            {/* Grilla de columnas por location */}
                             <div
                                 className="relative flex-1 grid divide-x border-l"
                                 style={{
@@ -139,6 +148,7 @@ export function TimelineLocationView({ events, locations }: IProps) {
                                                 </div>
                                             ))}
 
+                                            {/* Eventos renderizados en su lugar */}
                                             <RenderGroupedEvents
                                                 groupedEvents={groupedEvents}
                                                 day={selectedDate}
@@ -148,11 +158,11 @@ export function TimelineLocationView({ events, locations }: IProps) {
                                 })}
                             </div>
 
+                            {/* Línea de tiempo vertical (ahora) */}
                             <CalendarTimeline />
                         </div>
                     </div>
                 </ScrollArea>
-
             </motion.div>
         </motion.div>
     );
