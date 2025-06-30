@@ -9,12 +9,12 @@ export const mockLocations: TLocation[] = [
 ];
 
 export const mockProviders: TProvider[] = [
-    { id: "prov-1", name: "Dr. A" },
-    { id: "prov-2", name: "Dr. B" },
-    { id: "prov-3", name: "Dr. C" },
-    { id: "prov-4", name: "Dr. D" },
-    { id: "prov-5", name: "Dr. E" },
-    { id: "prov-6", name: "Dr. F" },
+    { id: "prov-1", name: "Dr. A", avatarUrl: "https://i.pravatar.cc/100?u=dr-a", color: "#FF5733" },
+    { id: "prov-2", name: "Dr. B", avatarUrl: "https://i.pravatar.cc/100?u=dr-b", color: "#6366f1" },
+    { id: "prov-3", name: "Dr. C", avatarUrl: "https://i.pravatar.cc/100?u=dr-c", color: "#10b981" },
+    { id: "prov-4", name: "Dr. D", avatarUrl: "https://i.pravatar.cc/100?u=dr-d", color: "#0ea5e9" },
+    { id: "prov-5", name: "Dr. E", avatarUrl: "https://i.pravatar.cc/100?u=dr-e", color: "#8b5cf6" },
+    { id: "prov-6", name: "Dr. F", avatarUrl: "https://i.pravatar.cc/100?u=dr-f", color: "#33C1FF" },
 ];
 
 export const mockPatients: TPatient[] = [

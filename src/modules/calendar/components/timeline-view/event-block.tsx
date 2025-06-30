@@ -29,9 +29,10 @@ export function TimelineEventBlock({ event, className }: Props) {
   const pixelsPerMinute = cellHeight / Number(timeSlotMinutes);
   const heightInPixels = durationInMinutes * pixelsPerMinute;
 
-  const anesthesiologist = event.anesthesiologist;
+  const anesthesiologist = event.provider;
   const patient = event.patient;
   const provider = event.provider;
+  const color = anesthesiologist?.color || "#14b8a6"; // fallback a teal
 
   return (
     <EventDetailsDialog event={event}>
@@ -40,32 +41,42 @@ export function TimelineEventBlock({ event, className }: Props) {
           role="button"
           tabIndex={0}
           className={cn(
-            "w-full rounded-md border border-border bg-muted px-2 py-1.5 text-xs flex flex-col gap-1 overflow-hidden shadow-sm",
+            "w-full rounded-md border border-border bg-gray-50 text-gray-800 text-xs px-2 py-2 shadow-sm flex flex-col gap-1 relative",
             className
           )}
           style={{ height: `${heightInPixels}px` }}
         >
+          {/* Línea de color a la izquierda */}
+          <div
+            className="absolute top-0 left-0 h-full w-1 rounded-l-md"
+            style={{ backgroundColor: color }}
+          />
+
+          {/* Header: avatar + nombre + quirófano + hora */}
           <div className="flex items-center gap-2">
-            <Avatar className="w-5 h-5">
-              {anesthesiologist?.avatarUrl ? (
-                <AvatarImage src={anesthesiologist.avatarUrl} />
+            <Avatar className="w-5 h-5 shrink-0">
+              {provider?.avatarUrl ? (
+                <AvatarImage src={provider?.avatarUrl} />
               ) : (
                 <AvatarFallback>
                   {anesthesiologist?.name?.charAt(0) ?? "A"}
                 </AvatarFallback>
               )}
             </Avatar>
-            <span className="font-semibold truncate">
-              {anesthesiologist?.name || "Anestesiólogo"}
-            </span>
+
+            <div className="flex flex-col leading-4">
+              <span className="font-semibold text-[0.7rem] leading-tight">
+                {event.title || provider?.name}
+              </span>
+              <span className="text-[0.7rem] text-muted-foreground">
+                <strong>{event.location?.name || "OR"}</strong> {formattedTime}
+              </span>
+            </div>
           </div>
 
-          <p className="text-xs text-muted-foreground">
-            <strong>{event.location?.name || "OR"}</strong> {formattedTime}
-          </p>
-
-          <p className="truncate">{patient?.name || "Paciente"}</p>
-          <p className="truncate">{provider?.name || "Médico"}</p>
+          {/* Paciente y médico */}
+          <p className="text-[0.7rem] mt-1">{patient?.name || "Paciente"}</p>
+          <p className="text-[0.7rem]">{provider?.name || "Médico"}</p>
         </div>
       </DraggableEvent>
     </EventDetailsDialog>

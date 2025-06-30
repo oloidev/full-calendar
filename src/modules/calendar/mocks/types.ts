@@ -1,6 +1,8 @@
 export type TProvider = {
     id: string;
     name: string;
+    avatarUrl?: string;
+    color: string;
 };
 
 export type TLocation = {
