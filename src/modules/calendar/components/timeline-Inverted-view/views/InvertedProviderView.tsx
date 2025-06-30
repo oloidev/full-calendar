@@ -17,6 +17,7 @@ import { RenderGroupedEventsInverted } from "@/modules/calendar/components/timel
 import { DroppableArea } from "@/modules/calendar/components/dnd/droppable-area";
 import { TProvider } from "../../../mocks/types";
 import { generateTimeSlots } from "@/modules/calendar/utils/timeSlots";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface IProps {
     events: ICustomEvent[];
@@ -48,15 +49,27 @@ export function InvertedProviderView({ events, providers }: IProps) {
                 <div className="flex w-full h-[736px]">
 
                     {/* Columna izquierda fija con nombres de entidades */}
-                    <div className="shrink-0 w-36 border-r">
+                    <div className="shrink-0 w-48 border-r">
                         <div className="h-[48px] border-b bg-muted" />
                         {providerList.map((provider) => (
                             <div
                                 key={`label-${provider.id}`}
-                                className="h-[112px] flex items-center justify-end pr-2 text-xs text-t-quaternary border-b"
+                                className="h-[112px] flex items-center justify-start pl-2 border-b"
                                 style={{ height: `${rowHeight}px` }}
                             >
-                                {provider.name}
+                                <div className="flex items-center gap-2 w-full max-w-full">
+                                    <Avatar className="w-8 h-8 shrink-0">
+                                        <AvatarImage src={provider.avatarUrl} />
+                                        <AvatarFallback>
+                                            {provider.name?.charAt(0) ?? "P"}
+                                        </AvatarFallback>
+                                    </Avatar>
+
+                                    <div className="flex flex-col justify-center leading-tight w-full truncate text-left">
+                                        <span className="font-semibold text-sm truncate">{provider.name}</span>
+                                        <span className="text-xs text-muted-foreground truncate">5 Cases 6:30 Hours</span> {/* mock */}
+                                    </div>
+                                </div>
                             </div>
                         ))}
                     </div>
