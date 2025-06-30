@@ -18,15 +18,16 @@ export function InvertedEventBlock({ event, className }: Props) {
 
     const start = parseISO(event.startDate);
     const end = parseISO(event.endDate);
-
     const formattedTime = `${format(start, use24HourFormat ? "HH:mm" : "h:mm a")} - ${format(
         end,
         use24HourFormat ? "HH:mm" : "h:mm a"
     )}`;
 
-    const anesthesiologist = event.anesthesiologist;
+    const provider = event.provider;
+    const patient = event.patient;
     const orName = event.location?.name || "OR";
-    const role = event.surgeon?.role || "Surgeon";
+
+    const color = provider?.color || "#14b8a6"; // fallback
 
     return (
         <EventDetailsDialog event={event}>
@@ -35,23 +36,34 @@ export function InvertedEventBlock({ event, className }: Props) {
                     role="button"
                     tabIndex={0}
                     className={cn(
-                        "flex items-center justify-between gap-2 rounded-md border px-2 py-1.5 text-xs bg-muted text-foreground shadow-sm",
+                        "flex items-center justify-between gap-2 rounded-md border border-border px-3 py-1.5 text-xs text-gray-800 bg-white shadow-sm relative",
                         className
                     )}
                 >
+                    {/* Línea de color a la izquierda */}
+                    <div
+                        className="absolute top-0 left-0 h-full w-1 rounded-l-md"
+                        style={{ backgroundColor: color }}
+                    />
+
                     {/* Contenido principal */}
                     <div className="flex flex-col truncate">
-                        <span className="font-semibold truncate">{event.title}</span>
-                        <span className="text-muted-foreground truncate">
-                            {`${orName} · ${formattedTime} · ${role}`}
-                        </span>
+                        <p className="font-semibold truncate">{patient?.name || "Paciente"}</p>
+                        <p className="text-muted-foreground truncate">
+                            {orName} {formattedTime} {provider?.name ? `· ${provider.name}` : ""}
+                        </p>
                     </div>
 
-                    {/* Avatar del anestesiólogo */}
-                    {anesthesiologist && (
+                    {/* Avatar */}
+                    {provider && (
                         <Avatar className="h-5 w-5 shrink-0">
-                            <AvatarImage src={anesthesiologist.avatarUrl} />
-                            <AvatarFallback>{anesthesiologist.name?.charAt(0)}</AvatarFallback>
+                            {provider.avatarUrl ? (
+                                <AvatarImage src={provider.avatarUrl} />
+                            ) : (
+                                <AvatarFallback>
+                                    {provider.name?.charAt(0) ?? "D"}
+                                </AvatarFallback>
+                            )}
                         </Avatar>
                     )}
                 </div>
