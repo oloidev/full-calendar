@@ -28,11 +28,10 @@ export function TimelineEventBlock({ event, className }: Props) {
   const cellHeight = 96;
   const pixelsPerMinute = cellHeight / Number(timeSlotMinutes);
   const heightInPixels = durationInMinutes * pixelsPerMinute;
-
-  const anesthesiologist = event.provider;
+  const location = event.location;
   const patient = event.patient;
   const provider = event.provider;
-  const color = anesthesiologist?.color || "#14b8a6"; // fallback a teal
+  const color = location?.color || "#14b8a6"; // fallback a teal
 
   return (
     <EventDetailsDialog event={event}>
@@ -59,7 +58,7 @@ export function TimelineEventBlock({ event, className }: Props) {
                 <AvatarImage src={provider?.avatarUrl} />
               ) : (
                 <AvatarFallback>
-                  {anesthesiologist?.name?.charAt(0) ?? "A"}
+                  {provider?.name?.charAt(0) ?? "A"}
                 </AvatarFallback>
               )}
             </Avatar>

@@ -24,10 +24,11 @@ export function InvertedEventBlock({ event, className }: Props) {
     )}`;
 
     const provider = event.provider;
+    const location = event.location;
     const patient = event.patient;
     const orName = event.location?.name || "OR";
 
-    const color = provider?.color || "#14b8a6"; // fallback
+    const color = location?.color || "#14b8a6"; // fallback
 
     return (
         <EventDetailsDialog event={event}>

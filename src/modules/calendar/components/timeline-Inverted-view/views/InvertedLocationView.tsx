@@ -34,7 +34,7 @@ export function InvertedLocationView({ events, locations }: IProps) {
     const timeSlots = generateTimeSlots(timeSlotMinutes, 0, 24);
 
     const columnWidth = 120;
-    const rowHeight = 112;
+    const rowHeight = 55;
 
     return (
         <motion.div
