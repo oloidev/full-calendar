@@ -38,10 +38,10 @@ export const mockProviders: TProvider[] = [
     { id: "prov-17", name: "Dr. Q", avatarUrl: "https://i.pravatar.cc/100?u=dr-q" },
     { id: "prov-19", name: "Dr. R", avatarUrl: "https://i.pravatar.cc/100?u=dr-r" },
     { id: "prov-20", name: "Dr. S", avatarUrl: "https://i.pravatar.cc/100?u=dr-s" },
-    { id: "prov-20", name: "Dr. S", avatarUrl: "https://i.pravatar.cc/100?u=dr-t" },
-    { id: "prov-20", name: "Dr. S", avatarUrl: "https://i.pravatar.cc/100?u=dr-w" },
-    { id: "prov-20", name: "Dr. S", avatarUrl: "https://i.pravatar.cc/100?u=dr-x" },
-    { id: "prov-20", name: "Dr. S", avatarUrl: "https://i.pravatar.cc/100?u=dr-y" },
+    { id: "prov-21", name: "Dr. S", avatarUrl: "https://i.pravatar.cc/100?u=dr-t" },
+    { id: "prov-22", name: "Dr. S", avatarUrl: "https://i.pravatar.cc/100?u=dr-w" },
+    { id: "prov-23", name: "Dr. S", avatarUrl: "https://i.pravatar.cc/100?u=dr-x" },
+    { id: "prov-24", name: "Dr. S", avatarUrl: "https://i.pravatar.cc/100?u=dr-y" },
 ];
 
 export const mockPatients: TPatient[] = [
