@@ -3,18 +3,19 @@
 import { HTMLAttributes } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ICustomEvent } from "@/types/custom-event";
-import { parseISO, format } from "date-fns";
+import { parseISO, format, differenceInMinutes } from "date-fns";
 import { cn } from "@/lib/utils";
 import { useCalendar } from "@/modules/calendar/contexts/calendar-context";
 import { EventDetailsDialog } from "@/modules/calendar/components/dialogs/event-details-dialog";
 import { DraggableEvent } from "@/modules/calendar/components/dnd/draggable-event";
+import { hexToRGBA } from "@/modules/calendar/utils/hextToRGBA";
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
     event: ICustomEvent;
 }
 
 export function InvertedEventBlock({ event, className }: Props) {
-    const { use24HourFormat } = useCalendar();
+    const { use24HourFormat, timeSlotMinutes } = useCalendar();
 
     const start = parseISO(event.startDate);
     const end = parseISO(event.endDate);
@@ -26,9 +27,13 @@ export function InvertedEventBlock({ event, className }: Props) {
     const provider = event.provider;
     const location = event.location;
     const patient = event.patient;
-    const orName = event.location?.name || "OR";
+    const orName = location?.name || "OR";
 
-    const color = location?.color || "#14b8a6"; // fallback
+    const color = location?.color || "#14b8a6";
+    const fadedColor = hexToRGBA(color, 0.12);
+
+    const durationInMinutes = Math.max(1, differenceInMinutes(end, start));
+    const isTooShort = timeSlotMinutes === 15 && durationInMinutes < 10;
 
     return (
         <EventDetailsDialog event={event}>
@@ -37,9 +42,10 @@ export function InvertedEventBlock({ event, className }: Props) {
                     role="button"
                     tabIndex={0}
                     className={cn(
-                        "flex items-center justify-between gap-2 rounded-md border border-border px-3 py-1.5 text-xs text-gray-800 bg-white shadow-sm relative",
+                        "flex items-center justify-between gap-2 rounded-md border border-border px-3 py-1.5 text-xs text-gray-800 shadow-sm relative",
                         className
                     )}
+                    style={{ backgroundColor: fadedColor }}
                 >
                     {/* Línea de color a la izquierda */}
                     <div
@@ -47,25 +53,41 @@ export function InvertedEventBlock({ event, className }: Props) {
                         style={{ backgroundColor: color }}
                     />
 
-                    {/* Contenido principal */}
-                    <div className="flex flex-col truncate">
-                        <p className="font-semibold truncate">{patient?.name || "Paciente"}</p>
-                        <p className="text-muted-foreground truncate">
-                            {orName} {formattedTime} {provider?.name ? `· ${provider.name}` : ""}
-                        </p>
-                    </div>
+                    {isTooShort ? (
+                        provider && (
+                            <Avatar className="h-5 w-5 mx-auto">
+                                {provider.avatarUrl ? (
+                                    <AvatarImage src={provider.avatarUrl} />
+                                ) : (
+                                    <AvatarFallback>
+                                        {provider.name?.charAt(0) ?? "D"}
+                                    </AvatarFallback>
+                                )}
+                            </Avatar>
+                        )
+                    ) : (
+                        <>
+                            {/* Contenido principal */}
+                            <div className="flex flex-col truncate">
+                                <p className="font-semibold truncate">{patient?.name || "Paciente"}</p>
+                                <p className="text-muted-foreground truncate">
+                                    {orName} {formattedTime} {provider?.name ? `· ${provider.name}` : ""}
+                                </p>
+                            </div>
 
-                    {/* Avatar */}
-                    {provider && (
-                        <Avatar className="h-5 w-5 shrink-0">
-                            {provider.avatarUrl ? (
-                                <AvatarImage src={provider.avatarUrl} />
-                            ) : (
-                                <AvatarFallback>
-                                    {provider.name?.charAt(0) ?? "D"}
-                                </AvatarFallback>
+                            {/* Avatar */}
+                            {provider && (
+                                <Avatar className="h-5 w-5 shrink-0">
+                                    {provider.avatarUrl ? (
+                                        <AvatarImage src={provider.avatarUrl} />
+                                    ) : (
+                                        <AvatarFallback>
+                                            {provider.name?.charAt(0) ?? "D"}
+                                        </AvatarFallback>
+                                    )}
+                                </Avatar>
                             )}
-                        </Avatar>
+                        </>
                     )}
                 </div>
             </DraggableEvent>

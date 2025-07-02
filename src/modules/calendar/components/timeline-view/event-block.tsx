@@ -4,6 +4,7 @@ import { HTMLAttributes } from "react";
 import { ICustomEvent } from "@/types/custom-event";
 import { parseISO, format, differenceInMinutes } from "date-fns";
 import { cn } from "@/lib/utils";
+import { hexToRGBA } from "@/modules/calendar/utils/hextToRGBA";
 import { useCalendar } from "@/modules/calendar/contexts/calendar-context";
 import { EventDetailsDialog } from "@/modules/calendar/components/dialogs/event-details-dialog";
 import { DraggableEvent } from "@/modules/calendar/components/dnd/draggable-event";
@@ -31,7 +32,8 @@ export function TimelineEventBlock({ event, className }: Props) {
   const location = event.location;
   const patient = event.patient;
   const provider = event.provider;
-  const color = location?.color || "#14b8a6"; // fallback a teal
+  const color = location?.color || "#14b8a6";
+  const fadedColor = hexToRGBA(color, 0.12);
 
   return (
     <EventDetailsDialog event={event}>
@@ -40,10 +42,14 @@ export function TimelineEventBlock({ event, className }: Props) {
           role="button"
           tabIndex={0}
           className={cn(
-            "w-full rounded-md border border-border bg-gray-50 text-gray-800 text-xs px-2 py-2 shadow-sm flex flex-col gap-1 relative",
+            "w-full rounded-md border border-border text-gray-800 text-xs px-2 py-2 shadow-sm flex flex-col gap-1 relative overflow-hidden",
             className
           )}
-          style={{ height: `${heightInPixels}px` }}
+          style={{
+            height: `${heightInPixels}px`,
+            backgroundColor: fadedColor,
+            minHeight: "24px",
+          }}
         >
           {/* Línea de color a la izquierda */}
           <div
@@ -51,31 +57,34 @@ export function TimelineEventBlock({ event, className }: Props) {
             style={{ backgroundColor: color }}
           />
 
-          {/* Header: avatar + nombre + quirófano + hora */}
-          <div className="flex items-center gap-2">
-            <Avatar className="w-5 h-5 shrink-0">
-              {provider?.avatarUrl ? (
-                <AvatarImage src={provider?.avatarUrl} />
-              ) : (
-                <AvatarFallback>
-                  {provider?.name?.charAt(0) ?? "A"}
-                </AvatarFallback>
-              )}
-            </Avatar>
+          {/* Header */}
+          {heightInPixels >= 32 && (
+            <>
+              <div className="flex items-center gap-2 overflow-hidden">
+                <Avatar className="w-5 h-5 shrink-0">
+                  {provider?.avatarUrl ? (
+                    <AvatarImage src={provider?.avatarUrl} />
+                  ) : (
+                    <AvatarFallback>
+                      {provider?.name?.charAt(0) ?? "A"}
+                    </AvatarFallback>
+                  )}
+                </Avatar>
 
-            <div className="flex flex-col leading-4">
-              <span className="font-semibold text-[0.7rem] leading-tight">
-                {event.title || provider?.name}
-              </span>
-              <span className="text-[0.7rem] text-muted-foreground">
-                <strong>{event.location?.name || "OR"}</strong> {formattedTime}
-              </span>
-            </div>
-          </div>
+                <div className="flex flex-col leading-4 overflow-hidden text-ellipsis">
+                  <span className="font-semibold text-[0.7rem] truncate">
+                    {event.title || provider?.name}
+                  </span>
+                  <span className="text-[0.7rem] text-muted-foreground truncate">
+                    <strong>{event.location?.name || "OR"}</strong> {formattedTime}
+                  </span>
+                </div>
+              </div>
 
-          {/* Paciente y médico */}
-          <p className="text-[0.7rem] mt-1">{patient?.name || "Paciente"}</p>
-          <p className="text-[0.7rem]">{provider?.name || "Médico"}</p>
+              <p className="text-[0.7rem] truncate">{patient?.name || "Paciente"}</p>
+              <p className="text-[0.7rem] truncate">{provider?.name || "Médico"}</p>
+            </>
+          )}
         </div>
       </DraggableEvent>
     </EventDetailsDialog>
