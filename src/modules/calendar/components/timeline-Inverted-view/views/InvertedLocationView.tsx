@@ -34,7 +34,7 @@ export function InvertedLocationView({ events, locations }: IProps) {
     const timeSlots = generateTimeSlots(timeSlotMinutes, 0, 24);
 
     const columnWidth = 120;
-    const rowHeight = 112;
+    const rowHeight = 55;
 
     return (
         <motion.div
@@ -45,29 +45,29 @@ export function InvertedLocationView({ events, locations }: IProps) {
             transition={transition}
         >
             <motion.div className="hidden flex-col sm:flex" variants={staggerContainer}>
-                <div className="flex w-full h-[736px]">
-
-                    {/* Columna izquierda fija con nombres de entidades */}
+                <div className="flex">
+                    {/* Columna fija de entidades */}
                     <div className="shrink-0 w-36 border-r">
                         <div className="h-[48px] border-b bg-muted" />
-                        {locationList.map((location) => (
-                            <div
-                                key={`label-${location.id}`}
-                                className="h-[112px] flex items-center justify-end pr-2 text-xs text-t-quaternary border-b"
-                                style={{ height: `${rowHeight}px` }}
-                            >
-                                {location.name}
-                            </div>
-                        ))}
+                        <div className="h-[736px] overflow-y-auto" id="location-scroll">
+                            {locationList.map((location) => (
+                                <div
+                                    key={`label-${location.id}`}
+                                    className="flex items-center justify-end pr-2 text-xs text-t-quaternary border-b"
+                                    style={{ height: `${rowHeight}px` }}
+                                >
+                                    {location.name}
+                                </div>
+                            ))}
+                        </div>
                     </div>
 
-                    {/* Scroll horizontal que contiene header + grilla */}
+                    {/* Contenedor scroll horizontal + vertical sincronizado */}
                     <div className="w-full overflow-x-auto">
                         <div className="min-w-fit">
-
-                            {/* Header de horas */}
+                            {/* Fila de encabezados fija */}
                             <div
-                                className="grid border-b bg-muted"
+                                className="sticky top-0 z-10 grid border-b bg-muted"
                                 style={{
                                     gridTemplateColumns: `repeat(${timeSlots.length}, ${columnWidth}px)`,
                                     minWidth: `${timeSlots.length * columnWidth}px`,
@@ -75,14 +75,13 @@ export function InvertedLocationView({ events, locations }: IProps) {
                                 }}
                             >
                                 {timeSlots.map(({ hour, minute }, i) => {
-                                    const shouldShowLabel = timeSlotMinutes < 60 || minute === 0;
-
+                                    const show = timeSlotMinutes < 60 || minute === 0;
                                     return (
                                         <div
                                             key={`slot-header-${i}`}
                                             className="flex items-center justify-center text-xs font-medium text-t-quaternary border-r"
                                         >
-                                            {shouldShowLabel
+                                            {show
                                                 ? format(
                                                     new Date().setHours(hour, minute, 0, 0),
                                                     use24HourFormat ? "HH:mm" : "h:mm a"
@@ -93,59 +92,69 @@ export function InvertedLocationView({ events, locations }: IProps) {
                                 })}
                             </div>
 
-                            {/* Grilla de eventos */}
-                            <div className="flex flex-col">
-                                {locationList.map((location) => {
-                                    const locationEvents = events.filter(
-                                        (e) => e.location?.id === location.id
-                                    );
-                                    const groupedEvents = groupEvents(locationEvents);
+                            {/* Grilla de eventos con scroll vertical */}
+                            <div
+                                className="h-[736px] overflow-y-auto"
+                                onScroll={(e) => {
+                                    const target = e.currentTarget;
+                                    const locationScroll = document.getElementById("location-scroll");
+                                    if (locationScroll) {
+                                        locationScroll.scrollTop = target.scrollTop;
+                                    }
+                                }}
+                            >
+                                <div className="flex flex-col">
+                                    {locationList.map((location) => {
+                                        const locationEvents = events.filter(
+                                            (e) => e.location?.id === location.id
+                                        );
+                                        const groupedEvents = groupEvents(locationEvents);
 
-                                    return (
-                                        <div
-                                            key={location.id}
-                                            className="grid border-b border-border relative"
-                                            style={{
-                                                gridTemplateColumns: `repeat(${timeSlots.length}, ${columnWidth}px)`,
-                                                minWidth: `${timeSlots.length * columnWidth}px`,
-                                                height: `${rowHeight}px`,
-                                            }}
-                                        >
-                                            {/* Celdas droppables */}
-                                            {timeSlots.map(({ hour, minute }) => (
-                                                <div
-                                                    key={`${location.id}-${hour}-${minute}`}
-                                                    className="relative border-r"
-                                                >
-                                                    <DroppableArea
-                                                        date={selectedDate}
-                                                        hour={hour}
-                                                        minute={minute}
-                                                        entityId={location.id}
-                                                        className="w-full h-full"
+                                        return (
+                                            <div
+                                                key={location.id}
+                                                className="grid border-b border-border relative"
+                                                style={{
+                                                    gridTemplateColumns: `repeat(${timeSlots.length}, ${columnWidth}px)`,
+                                                    minWidth: `${timeSlots.length * columnWidth}px`,
+                                                    height: `${rowHeight}px`,
+                                                }}
+                                            >
+                                                {/* Celdas droppables */}
+                                                {timeSlots.map(({ hour, minute }) => (
+                                                    <div
+                                                        key={`${location.id}-${hour}-${minute}`}
+                                                        className="relative border-r"
                                                     >
-                                                        <AddEditEventDialog
-                                                            startDate={selectedDate}
-                                                            startTime={{ hour, minute }}
-                                                            entity={location}
-                                                            entityType="location"
+                                                        <DroppableArea
+                                                            date={selectedDate}
+                                                            hour={hour}
+                                                            minute={minute}
+                                                            entityId={location.id}
+                                                            className="w-full h-full"
                                                         >
-                                                            <div className="absolute inset-0 cursor-pointer transition-colors hover:bg-secondary/40" />
-                                                        </AddEditEventDialog>
-                                                    </DroppableArea>
-                                                </div>
-                                            ))}
+                                                            <AddEditEventDialog
+                                                                startDate={selectedDate}
+                                                                startTime={{ hour, minute }}
+                                                                entity={location}
+                                                                entityType="location"
+                                                            >
+                                                                <div className="absolute inset-0 cursor-pointer transition-colors hover:bg-secondary/40" />
+                                                            </AddEditEventDialog>
+                                                        </DroppableArea>
+                                                    </div>
+                                                ))}
 
-                                            {/* Eventos alineados por columna */}
-                                            <RenderGroupedEventsInverted
-                                                groupedEvents={groupedEvents}
-                                                day={selectedDate}
-                                            />
-                                        </div>
-                                    );
-                                })}
+                                                {/* Eventos alineados por columna */}
+                                                <RenderGroupedEventsInverted
+                                                    groupedEvents={groupedEvents}
+                                                    day={selectedDate}
+                                                />
+                                            </div>
+                                        );
+                                    })}
+                                </div>
                             </div>
-
                         </div>
                     </div>
                 </div>

@@ -35,7 +35,7 @@ export function InvertedProviderView({ events, providers }: IProps) {
     const timeSlots = generateTimeSlots(timeSlotMinutes, 0, 24);
 
     const columnWidth = 120;
-    const rowHeight = 112;
+    const rowHeight = 55;
 
     return (
         <motion.div
@@ -46,41 +46,42 @@ export function InvertedProviderView({ events, providers }: IProps) {
             transition={transition}
         >
             <motion.div className="hidden flex-col sm:flex" variants={staggerContainer}>
-                <div className="flex w-full h-[736px]">
-
-                    {/* Columna izquierda fija con nombres de entidades */}
+                <div className="flex">
+                    {/* Columna fija de entidades */}
                     <div className="shrink-0 w-48 border-r">
                         <div className="h-[48px] border-b bg-muted" />
-                        {providerList.map((provider) => (
-                            <div
-                                key={`label-${provider.id}`}
-                                className="h-[112px] flex items-center justify-start pl-2 border-b"
-                                style={{ height: `${rowHeight}px` }}
-                            >
-                                <div className="flex items-center gap-2 w-full max-w-full">
-                                    <Avatar className="w-8 h-8 shrink-0">
-                                        <AvatarImage src={provider.avatarUrl} />
-                                        <AvatarFallback>
-                                            {provider.name?.charAt(0) ?? "P"}
-                                        </AvatarFallback>
-                                    </Avatar>
-
-                                    <div className="flex flex-col justify-center leading-tight w-full truncate text-left">
-                                        <span className="font-semibold text-sm truncate">{provider.name}</span>
-                                        <span className="text-xs text-muted-foreground truncate">5 Cases 6:30 Hours</span> {/* mock */}
+                        <div className="h-[736px] overflow-y-auto" id="provider-scroll">
+                            {providerList.map((provider) => (
+                                <div
+                                    key={`label-${provider.id}`}
+                                    className="flex items-center justify-start pr-2 text-xs text-t-quaternary border-b"
+                                    style={{ height: `${rowHeight}px` }}
+                                >
+                                    <div className="flex items-center gap-2 w-full max-w-full pl-2">
+                                        <Avatar className="w-8 h-8 shrink-0">
+                                            <AvatarImage src={provider.avatarUrl} />
+                                            <AvatarFallback>
+                                                {provider.name?.charAt(0) ?? "P"}
+                                            </AvatarFallback>
+                                        </Avatar>
+                                        <div className="flex flex-col justify-center leading-tight w-full truncate text-left">
+                                            <span className="font-semibold text-sm truncate">{provider.name}</span>
+                                            <span className="text-xs text-muted-foreground truncate">
+                                                5 Cases 6:30 Hours
+                                            </span> {/* mock */}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
                     </div>
 
-                    {/* Scroll horizontal que contiene header + grilla */}
+                    {/* Contenedor scroll horizontal + vertical sincronizado */}
                     <div className="w-full overflow-x-auto">
                         <div className="min-w-fit">
-
-                            {/* Header de horas */}
+                            {/* Fila de encabezados fija */}
                             <div
-                                className="grid border-b bg-muted"
+                                className="sticky top-0 z-10 grid border-b bg-muted"
                                 style={{
                                     gridTemplateColumns: `repeat(${timeSlots.length}, ${columnWidth}px)`,
                                     minWidth: `${timeSlots.length * columnWidth}px`,
@@ -88,14 +89,13 @@ export function InvertedProviderView({ events, providers }: IProps) {
                                 }}
                             >
                                 {timeSlots.map(({ hour, minute }, i) => {
-                                    const shouldShowLabel = timeSlotMinutes < 60 || minute === 0;
-
+                                    const show = timeSlotMinutes < 60 || minute === 0;
                                     return (
                                         <div
                                             key={`slot-header-${i}`}
                                             className="flex items-center justify-center text-xs font-medium text-t-quaternary border-r"
                                         >
-                                            {shouldShowLabel
+                                            {show
                                                 ? format(
                                                     new Date().setHours(hour, minute, 0, 0),
                                                     use24HourFormat ? "HH:mm" : "h:mm a"
@@ -106,59 +106,69 @@ export function InvertedProviderView({ events, providers }: IProps) {
                                 })}
                             </div>
 
-                            {/* Grilla de eventos */}
-                            <div className="flex flex-col">
-                                {providerList.map((provider) => {
-                                    const providerEvents = events.filter(
-                                        (e) => e.provider?.id === provider.id
-                                    );
-                                    const groupedEvents = groupEvents(providerEvents);
+                            {/* Grilla de eventos con scroll vertical */}
+                            <div
+                                className="h-[736px] overflow-y-auto"
+                                onScroll={(e) => {
+                                    const target = e.currentTarget;
+                                    const providerScroll = document.getElementById("provider-scroll");
+                                    if (providerScroll) {
+                                        providerScroll.scrollTop = target.scrollTop;
+                                    }
+                                }}
+                            >
+                                <div className="flex flex-col">
+                                    {providerList.map((provider) => {
+                                        const providerEvents = events.filter(
+                                            (e) => e.provider?.id === provider.id
+                                        );
+                                        const groupedEvents = groupEvents(providerEvents);
 
-                                    return (
-                                        <div
-                                            key={provider.id}
-                                            className="grid border-b border-border relative"
-                                            style={{
-                                                gridTemplateColumns: `repeat(${timeSlots.length}, ${columnWidth}px)`,
-                                                minWidth: `${timeSlots.length * columnWidth}px`,
-                                                height: `${rowHeight}px`,
-                                            }}
-                                        >
-                                            {/* Celdas droppables */}
-                                            {timeSlots.map(({ hour, minute }) => (
-                                                <div
-                                                    key={`${provider.id}-${hour}-${minute}`}
-                                                    className="relative border-r"
-                                                >
-                                                    <DroppableArea
-                                                        date={selectedDate}
-                                                        hour={hour}
-                                                        minute={minute}
-                                                        entityId={provider.id}
-                                                        className="w-full h-full"
+                                        return (
+                                            <div
+                                                key={provider.id}
+                                                className="grid border-b border-border relative"
+                                                style={{
+                                                    gridTemplateColumns: `repeat(${timeSlots.length}, ${columnWidth}px)`,
+                                                    minWidth: `${timeSlots.length * columnWidth}px`,
+                                                    height: `${rowHeight}px`,
+                                                }}
+                                            >
+                                                {/* Celdas droppables */}
+                                                {timeSlots.map(({ hour, minute }) => (
+                                                    <div
+                                                        key={`${provider.id}-${hour}-${minute}`}
+                                                        className="relative border-r"
                                                     >
-                                                        <AddEditEventDialog
-                                                            startDate={selectedDate}
-                                                            startTime={{ hour, minute }}
-                                                            entity={provider}
-                                                            entityType="provider"
+                                                        <DroppableArea
+                                                            date={selectedDate}
+                                                            hour={hour}
+                                                            minute={minute}
+                                                            entityId={provider.id}
+                                                            className="w-full h-full"
                                                         >
-                                                            <div className="absolute inset-0 cursor-pointer transition-colors hover:bg-secondary/40" />
-                                                        </AddEditEventDialog>
-                                                    </DroppableArea>
-                                                </div>
-                                            ))}
+                                                            <AddEditEventDialog
+                                                                startDate={selectedDate}
+                                                                startTime={{ hour, minute }}
+                                                                entity={provider}
+                                                                entityType="provider"
+                                                            >
+                                                                <div className="absolute inset-0 cursor-pointer transition-colors hover:bg-secondary/40" />
+                                                            </AddEditEventDialog>
+                                                        </DroppableArea>
+                                                    </div>
+                                                ))}
 
-                                            {/* Eventos alineados por columna */}
-                                            <RenderGroupedEventsInverted
-                                                groupedEvents={groupedEvents}
-                                                day={selectedDate}
-                                            />
-                                        </div>
-                                    );
-                                })}
+                                                {/* Eventos alineados por columna */}
+                                                <RenderGroupedEventsInverted
+                                                    groupedEvents={groupedEvents}
+                                                    day={selectedDate}
+                                                />
+                                            </div>
+                                        );
+                                    })}
+                                </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
